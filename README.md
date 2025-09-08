@@ -1,6 +1,6 @@
-# API 6º Semestre ADS
+# API 5º Semestre Banco de dados
 
-# DomRock AI - Auxia
+# Necto <-> Jibóia
 
 <p align="center">
       <h2 align="center"> 🐍</h2>
