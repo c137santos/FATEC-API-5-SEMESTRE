@@ -4,7 +4,7 @@
 | 1 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | | 1 |
 | 2 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | | 1 |
 | 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | | 3 |
-| 9 | Média | Como gestor, quero que o dashboard de issues exiba as issues resolvidas por membro e o total do time. | | 3 |
+| 9 | Média | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto.. | | 3 |
 
 # Critérios de aceitação
 
@@ -50,9 +50,9 @@ Então: A lista de issues é exibida corretamente, e os campos ausentes na issue
 
 #### Critérios de Aceitação:
 
-* [ ] O sistema deve adicionar as colunas Tempo Total Gasto e Data de Início na tela de listagem de issues.
+* [ ] O sistema deve adicionar um popup com informações adicionais sobre a issue, Tempo Total Gasto e Data de Início na tela de listagem de issues.
 
-* [ ] O campo Tempo Total Gasto deve ser exibido em um formato legível (ex: horas, dias ou minutos).
+* [ ] O campo Tempo Total Gasto deve ser exibido em um formato legível.
 
 * [ ] O campo Data de Início deve ser exibido no formato de data e hora.
 
@@ -64,7 +64,7 @@ Dado: Um projeto com issues com tempo total gasto e data de início preenchidos.
 
 Quando: O usuário seleciona o projeto.
 
-Então: As colunas Tempo Total Gasto e Data de Início são exibidas com os dados corretos para cada issue.
+Então: pode clicar na issue listada e ver o popup com as informações adicionais da issue.
 
 #### Cenário de edge case (Issue sem tempo):
 
@@ -72,7 +72,7 @@ Dado: Um projeto com uma issue que ainda não tem tempo registrado.
 
 Quando: O usuário seleciona o projeto.
 
-Então: O campo Tempo Total Gasto deve exibir um valor 0h.
+Então: O popup é exibido com a informação padrão: não informado.
 
 #### Cenário de edge case (Issue sem data de início):
 
@@ -80,7 +80,7 @@ Dado: Um projeto com uma issue que ainda não tem data de início.
 
 Quando: O usuário seleciona o projeto.
 
-Então: O campo Data de Início deve ser exibido como (não informada).
+Então: O popup é exibido com a informação padrão: não informado.
 
 > User Story: Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues.
 
@@ -118,7 +118,7 @@ Quando: O usuário aplica o filtro de data e o filtro de membro ao mesmo tempo.
 
 Então: O dashboard exibe apenas as issues que correspondem a ambos os critérios.
 
-> User Story: Como gestor, quero que o dashboard de issues exiba as issues resolvidas por membro e o total do time.
+> User Story: Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto..
 
 #### Critérios de Aceitação:
 
@@ -126,7 +126,7 @@ Então: O dashboard exibe apenas as issues que correspondem a ambos os critério
 
 * [ ] O dashboard deve exibir uma métrica de destaque com o Total de Issues Resolvidas de todo o time no período selecionado.
 
-* [ ] As informações exibidas devem ser precisas e baseadas nos dados da API do Jira.
+* [ ] As informações exibidas devem ser precisas e baseadas nos dados que foram coletados da API do Jira.
 
 #### Casos de Teste:
 

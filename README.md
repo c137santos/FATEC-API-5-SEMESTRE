@@ -48,7 +48,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 | 6 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. | | 2 |
 | 7 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | | 2 |
 | 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | | 3 |
-| 9 | Média | Como gestor, quero que o dashboard de issues exiba as issues resolvidas por membro e o total do time. | | 3 |
+| 9 | Média | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto.. | | 3 |
 | 10 | Baixa | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | | 3 |
 | 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | | 3 |
 | 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | | 3 |
