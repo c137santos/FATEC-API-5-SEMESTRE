@@ -16,7 +16,9 @@
   <a href ="#sprint"> Cronograma de Sprints</a>  |
   <a href ="#tecnologias">Tecnologias</a> |
   <a href ="#manual">Manual de Instalação</a>  |
-  <a href ="#branchs">Manual de Branchs</a>  | 
+  <a href ="#branchs">Manual de Branchs</a>  |
+  <a href ="#pb">Product backlog -> DOR e DOD</a>  |
+  <a href ="#manual_usuario">Manual do usuário</a>  | 
   <a href ="#equipe"> Equipe</a> |
 </p>
 
@@ -29,7 +31,7 @@
 
 ## 🏅 Desafio <a id="desafio"></a>
 
-Esse desafio consiste em criar uma ferramenta analítica que consuma dados diretamente por meio da api desse sistema, consolide-os em um data warehouse e permita gerar indicadores, dashboard e boards sobre o andamento do projeto.
+Esse desafio consiste em criar uma ferramenta analítica que consuma dados diretamente por meio da api do jira, consolide-os em um data warehouse e permita gerar indicadores, dashboard e boards sobre o andamento do projeto.
 ## 🏅 Solução <a id="solucao"></a>
 
 Jiboia é um sistema de ETL de dados do Jira que transforma informações brutas em métricas úteis para acompanhamento de projetos.
@@ -60,9 +62,9 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 
 | Sprint          |    Período    | Documentação                                     |
 | --------------- | :-----------: | ------------------------------------------------ |
-| 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./docs/processo/sprints/sprint-1/README.md) |
-| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./docs/processo/sprints/sprint-2/README.md) |
-| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs](./docs/processo/sprints/sprint-3/README.md) |
+| 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs]() |
+| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |
 | ⚡️ **feira de soluções** |04/12 | |
 
 
@@ -82,11 +84,17 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
  <a href="https://dbeaver.io/"><img src="https://img.shields.io/badge/DBeaver-372923?style=for-the-badge&logo=dbeaver&logoColor=white"></a>
 </h4>
 
-## 📖 Manual de Instalação <a id="manual"></a>
+## 📖 Manual de Instalação e testagem <a id="manual"></a>
 [manual de instalação](./documentacao/tecnica/manual_de_instalacao.md)
 
 ## 🪵 Estrutura de branchs  <a id="branchs"></a>
 [Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
+
+## 📦 Product Backlog -> DOR e DOD  <a id="pb"></a>
+[Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
+
+## 📖 Manual do usuário  <a id="manual_usuario"></a>
+[Estrutura de branchs](./documentacao/produto/manual_do_usuario.md)
 
 
 ## 🎓 Equipe <a id="equipe"></a>
