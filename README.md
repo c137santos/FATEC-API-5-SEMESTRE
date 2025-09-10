@@ -15,7 +15,8 @@
   <a href ="#dod">DoD</a>  |
   <a href ="#sprint"> Cronograma de Sprints</a>  |
   <a href ="#tecnologias">Tecnologias</a> |
-  <a href ="#manual">Manual de Instalação</a>  | 
+  <a href ="#manual">Manual de Instalação</a>  |
+  <a href ="#branchs">Manual de Branchs</a>  | 
   <a href ="#equipe"> Equipe</a> |
 </p>
 
@@ -40,18 +41,18 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 
 | Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | | 1 |
-| 2 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | | 1 |
-| 3 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | | 1 |
-| 4 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | | 1 |
-| 5 | Média | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | | 2 |
-| 6 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. | | 2 |
-| 7 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | | 2 |
-| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | | 3 |
-| 9 | Média | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto.. | | 3 |
-| 10 | Baixa | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | | 3 |
-| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | | 3 |
-| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | | 3 |
+| 1 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 1 |
+| 2 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 1 |
+| 3 | Alta | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto. | 8| 1 |
+| 4 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 1 |
+| 5 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 1 |
+| 6 | Média | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 2 |
+| 7 | Média | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 2 |
+| 8 | Média | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 2 |
+| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. |5| 3 |
+| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | 3| 3 |
+| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | 3| 3 |
+| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | 5| 3 |
 
 ---
 
@@ -62,7 +63,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./docs/processo/sprints/sprint-1/README.md) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./docs/processo/sprints/sprint-2/README.md) |
 | 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs](./docs/processo/sprints/sprint-3/README.md) |
-| ⚡️ **feira de soluções 3** |04/12 | |
+| ⚡️ **feira de soluções** |04/12 | |
 
 
 ## 💻 Tecnologias <a id="tecnologias"></a>
@@ -74,10 +75,19 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
  <a href="https://www.atlassian.com/software/jira"><img src="https://img.shields.io/badge/Jira-0052CC?style=for-the-badge&logo=jira&logoColor=white"/></a>
  <a href="https://github.com/"><img src="https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white"/></a>
  <a href="https://www.figma.com/"><img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/></a>
+ <a href="https://aws.amazon.com/"><img src="https://img.shields.io/badge/Amazon_AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white"></a>
+ <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white"></a>
+ <a href="https://www.djangoproject.com/"><img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white"></a>
+ <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"></a>
+ <a href="https://dbeaver.io/"><img src="https://img.shields.io/badge/DBeaver-372923?style=for-the-badge&logo=dbeaver&logoColor=white"></a>
 </h4>
 
 ## 📖 Manual de Instalação <a id="manual"></a>
 [manual de instalação](./documentacao/tecnica/manual_de_instalacao.md)
+
+## 🪵 Estrutura de branchs  <a id="branchs"></a>
+[Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
+
 
 ## 🎓 Equipe <a id="equipe"></a>
 
@@ -118,18 +128,6 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
       <td>Desenvolvedor</td>
       <td><a href="https://github.com/JeanRodrigues1"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/jean-rodrigues-0569a0251/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
-    </tr>
-    <tr>
-      <td>Pedro Davi</td>
-      <td>Desenvolvedor</td>
-      <td><a href="https://github.com/PedrohDavi"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/pedro-davi-jobs/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
-    </tr>
-    <tr>
-      <td>Rafael Motta</td>
-      <td>Desenvolvedor</td>
-      <td><a href="https://github.com/Rafael-Motta"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/rafaelmotta97"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
   </table>
 </div>

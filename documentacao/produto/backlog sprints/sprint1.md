@@ -1,12 +1,16 @@
+| **Capacidade estimada da Equipe por Sprint:** | 16 Story Points |
+|-----------------------------------------------|-----------------|
+| **Meta da Sprint:**                           | User Stories de rank 1, rank 2, rank 3, rank 4 (total de *13 Story Points*) |
+| **Previsão da Sprint (extras, sem compromisso de entrega):** | User Story de rank 5 (*5 Story Points*) |
+
 # Backlog da Sprint 1
 | Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | | 1 |
-| 2 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | | 1 |
-| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | | 3 |
-| 9 | Média | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto.. | | 3 |
-
-# Critérios de aceitação
+| 1 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 1 |
+| 2 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 1 |
+| 3 | Alta | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto. | 8| 1 |
+| 4 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 1 |
+| 5 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 1 |
 
 > User Story: Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação.
 
