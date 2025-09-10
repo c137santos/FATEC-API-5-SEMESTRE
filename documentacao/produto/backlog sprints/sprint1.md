@@ -1,151 +1,186 @@
 | **Capacidade estimada da Equipe por Sprint:** | 16 Story Points |
 |-----------------------------------------------|-----------------|
-| **Meta da Sprint:**                           | User Stories de rank 1, rank 2, rank 3, rank 4 (total de *13 Story Points*) |
-| **Previsão da Sprint (extras, sem compromisso de entrega):** | User Story de rank 5 (*5 Story Points*) |
+| **Meta da Sprint:**                           | User Stories de rank 1, rank 2, rank 3 (total de *14 Story Points*) |
+| **Previsão da Sprint (extras, sem compromisso de entrega):** | User Story de rank 4 (*3 Story Points*) |
 
 # Backlog da Sprint 1
+## Backlog
 | Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 1 |
-| 2 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 1 |
-| 3 | Alta | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto. | 8| 1 |
-| 4 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 1 |
-| 5 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 1 |
-
-> User Story: Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação.
-
-#### Critérios de Aceitação:
-
-* [ ] O sistema deve exibir uma tela de listagem de issues após a seleção de um projeto.
-
-* [ ] A tela de listagem deve exibir as issues em uma tabela ou lista.
-
-* [ ] Para cada issue, os seguintes campos devem ser exibidos: ID da Issue, Autor e Data de Criação.
-
-* [ ] A exibição deve ser clara e organizada.
-
-#### Casos de Teste:
-
-#### Cenário de Sucesso:
-
-Dado: Um projeto com 10 issues válidas e com campos autor, ID e data de criação preenchidos.
-
-Quando: O usuário seleciona o projeto.
-
-Então: A tela de listagem deve ser exibida, mostrando as 10 issues com seus respectivos dados corretos.
-
-#### Cenário de Falha:
-
-Dado: Uma falha no banco com os dados.
-
-Quando: O usuário seleciona o projeto.
-
-Então: O sistema deve exibir uma mensagem de erro amigável ao usuário e registrar o erro no log.
-
-#### Cenário de Dados Incompletos:
-
-Dado: Um projeto com uma issue sem o campo autor ou data de criação.
-
-Quando: O usuário seleciona o projeto.
-
-Então: A lista de issues é exibida corretamente, e os campos ausentes na issue são mostrados com um valor padrão (não informado).
-
-> User Story: Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma.
-
-#### Critérios de Aceitação:
-
-* [ ] O sistema deve adicionar um popup com informações adicionais sobre a issue, Tempo Total Gasto e Data de Início na tela de listagem de issues.
-
-* [ ] O campo Tempo Total Gasto deve ser exibido em um formato legível.
-
-* [ ] O campo Data de Início deve ser exibido no formato de data e hora.
-
-#### Casos de Teste:
-
-#### Cenário de Sucesso:
-
-Dado: Um projeto com issues com tempo total gasto e data de início preenchidos.
-
-Quando: O usuário seleciona o projeto.
-
-Então: pode clicar na issue listada e ver o popup com as informações adicionais da issue.
-
-#### Cenário de edge case (Issue sem tempo):
-
-Dado: Um projeto com uma issue que ainda não tem tempo registrado.
-
-Quando: O usuário seleciona o projeto.
-
-Então: O popup é exibido com a informação padrão: não informado.
-
-#### Cenário de edge case (Issue sem data de início):
-
-Dado: Um projeto com uma issue que ainda não tem data de início.
-
-Quando: O usuário seleciona o projeto.
-
-Então: O popup é exibido com a informação padrão: não informado.
-
-> User Story: Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues.
-
-#### Critérios de Aceitação:
-
-* [ ] O dashboard de issues deve ter um filtro para Intervalo de datas de criação (Data Início e Data Fim).
-
-* [ ] O dashboard de issues deve ter um filtro para Membro da Equipe, listando todos os membros do projeto.
-
-* [ ] Ao aplicar os filtros, o dashboard deve recarregar e exibir apenas as issues que correspondem aos critérios selecionados.
-
-#### Casos de Teste:
-
-#### Cenário de Filtragem por Data:
-
-Dado: Existem issues criadas em diferentes datas.
-
-Quando: O usuário aplica o filtro de Data de Criação para o intervalo de 01/09/2025 a 07/09/2025.
-
-Então: O dashboard exibe apenas as issues criadas dentro desse período.
-
-#### Cenário de Filtragem por Membro:
-
-Dado: Existem issues atribuídas a diferentes membros da equipe.
-
-Quando: O usuário aplica o filtro por um membro específico.
-
-Então: O dashboard exibe apenas as issues criadas ou atribuídas àquele membro.
-
-#### Cenário de Filtros Combinados:
-
-Dado: Existem issues criadas em diferentes datas e por diferentes membros.
-
-Quando: O usuário aplica o filtro de data e o filtro de membro ao mesmo tempo.
-
-Então: O dashboard exibe apenas as issues que correspondem a ambos os critérios.
-
-> User Story: Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto..
-
-#### Critérios de Aceitação:
-
-* [ ] O dashboard deve exibir um gráfico ou tabela mostrando o total de issues resolvidas por cada membro da equipe.
-
-* [ ] O dashboard deve exibir uma métrica de destaque com o Total de Issues Resolvidas de todo o time no período selecionado.
-
-* [ ] As informações exibidas devem ser precisas e baseadas nos dados que foram coletados da API do Jira.
-
-#### Casos de Teste:
-
-#### Cenário de Sucesso:
-
-Dado: A equipe tem 5 membros e um total de 20 issues resolvidas.
-
-Quando: O usuário acessa o dashboard de issues.
-
-Então: O dashboard deve exibir o total de issues resolvidas (20) e um detalhamento por membro, como "João: 5, Maria: 8, Pedro: 7", com os dados corretos.
-
-#### Cenário de Nenhum Resultado:
-
-Dado: Nenhum membro resolveu issues no período filtrado.
-
-Quando: O usuário acessa o dashboard.
-
-Então: O dashboard deve exibir "0" como total de issues resolvidas, e o detalhamento por membro deve mostrar 0 para todos.
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 1 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 1 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
+
+## User Story 1 (Rank 1 - 3 SP)
+**Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim.**
+
+### Critérios de Aceitação:
+
+**CA1.1 - Lista de Projetos**
+- DADO que a API retorna os projetos e eles já foram tratados
+- QUANDO visualizo a lista
+- ENTÃO devo ver pelo menos os 2 projetos confirmados:
+  - "SM2 - SOS MNT 2025"
+  - "SE - SOS Edital"
+- E cada projeto deve exibir o nome completo
+
+**CA1.2 - Data de Início**
+- DADO que cada projeto tem um campo `created`
+- QUANDO visualizo um projeto
+- ENTÃO devo ver a data de criação formatada como "Data de início: DD/MM/AAAA"
+- E a data deve estar no fuso horário "America/Sao_Paulo"
+
+**CA1.4 - Tratamento de Erros**
+- DADO que os DADOS podem estar indisponível
+- QUANDO há falha no retorno dos dados
+- ENTÃO devo ver mensagem "Erro ao conectar com Jira. Tente novamente."
+- E um botão "Tentar novamente"
+
+---
+
+## User Story 2 (Rank 2 - 3 SP)
+**Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas.**
+
+### Critérios de Aceitação:
+
+**CA2.1 - Quantidade de Issues**
+- DADO que o projeto SM2 tem 82 issues
+- QUANDO visualizo o projeto SM2
+- ENTÃO devo ver "82 issues"
+- E o número deve ser obtido via JQL `project = SM2`
+
+**CA2.2 - Total de Horas por Projeto**
+- DADO que as issues possuem worklogs
+- QUANDO visualizo um projeto
+- ENTÃO devo ver o total de horas no formato "150.5h"
+- E as horas devem ser calculadas somando `timeSpentSeconds/3600` de todas as issues
+
+**CA2.3 - Dados Específicos dos Projetos da Necto**
+- DADO os projetos 
+- QUANDO visualizo a lista
+- ENTÃO devo ver:
+  - SM2: aproximadamente 82 issues com horas registradas
+  - SE: aproximadamente 76 issues com horas registradas
+
+**CA2.4 - Atualização de Dados**
+- DADO que os dados podem mudar no Jira
+- QUANDO acesso a tela
+- ENTÃO os números devem refletir o estado atual da API
+- E deve haver timestamp "Última atualização: HH:MM"
+
+**CA2.5 - Projetos Sem Issues**
+- DADO que um projeto pode não ter issues
+- QUANDO visualizo tal projeto
+- ENTÃO devo ver "0 issues" e "0h"
+- E não deve haver erro na interface
+
+**CA2.6 - Formatação de Horas**
+- DADO que as horas podem ter decimais
+- QUANDO visualizo o total
+- ENTÃO deve ser formatado como "123.5h" (máximo 1 casa decimal)
+- E valores menores que 1h devem aparecer como "0.5h"
+
+---
+
+## User Story 3 (Rank 3 - 8 SP)
+**Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto.**
+
+### Critérios de Aceitação:
+
+**CA3.1 - Seleção de Projeto**
+- DADO que tenho múltiplos projetos
+- QUANDO acesso o dashboard
+- ENTÃO devo ver um dropdown com "SM2 - SOS MNT 2025" e "SE - SOS Edital"
+- E ao selecionar um projeto, o dashboard deve atualizar automaticamente
+
+**CA3.2 - Cards de Métricas Principais**
+- DADO que selecionei um projeto
+- QUANDO visualizo o dashboard
+- ENTÃO devo ver 4 cards principais:
+  - "Total de Issues: X"
+  - "Horas Trabalhadas: Xh"
+  - "Issues Ativas: X" (não concluídas)
+  - "Issues Concluídas: X"
+
+**CA3.3 - Breakdown por Status**
+- DADO que o projeto tem issues com diferentes status
+- QUANDO visualizo o dashboard
+- ENTÃO devo ver a distribuição:
+  - "Tarefas pendentes: X issues"
+  - "Em andamento: X issues" 
+  - "MR: X issues"
+  - "Concluído: X issues"
+- E deve usar os status reais da Necto confirmados nos testes
+
+**CA3.4 - Gráfico de Status**
+- DADO que tenho breakdown por status
+- QUANDO visualizo o dashboard
+- ENTÃO devo ver um gráfico de pizza ou barras
+- E cada status deve ter cor distinta
+- E deve mostrar percentuais
+
+**CA3.5 - Dados do Projeto SM2 (Validação)**
+- DADO que selecionei o projeto SM2
+- QUANDO carrego o dashboard
+- ENTÃO devo ver dados consistentes com os testes:
+  - Total próximo de 82 issues
+  - Issues com status "Tarefas pendentes", "Em andamento", etc.
+  - Horas reais registradas nos worklogs
+
+**CA3.6 - Responsividade**
+- DADO que acesso de diferentes dispositivos
+- QUANDO visualizo o dashboard
+- ENTÃO deve funcionar em mobile, tablet e desktop
+- E os cards devem se reorganizar adequadamente
+
+**CA3.8 - Estado Vazio**
+- DADO que um projeto não tem issues
+- QUANDO visualizo seu dashboard
+- ENTÃO devo ver cards com "0" e mensagem "Nenhuma issue encontrada"
+- E não deve haver erro ou tela quebrada
+
+---
+
+## User Story 4 (Rank 4 - 3 SP - Extra/Sem Compromisso)
+**Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação.**
+
+### Critérios de Aceitação:
+
+**CA4.1 - Navegação para Lista**
+- DADO que estou no dashboard de um projeto
+- QUANDO clico em "Ver todas as issues" ou similar
+- ENTÃO devo ir para uma tela de lista detalhada
+- E o projeto selecionado deve ser mantido
+
+**CA4.2 - Colunas da Lista**
+- DADO que estou na lista de issues
+- QUANDO visualizo a tabela
+- ENTÃO devo ver as colunas:
+  - "ID" (ex: SM2-82)
+  - "Título" (summary da issue)
+  - "Autor" (reporter ou assignee)
+  - "Data Criação" (formatada DD/MM/AAAA)
+
+**CA4.3 - Dados das Issues**
+- DADO que selecionei o projeto SM2
+- QUANDO visualizo a lista
+- ENTÃO devo ver issues como:
+  - "SM2-82: Editar a Descrição Categoria - Gestão"
+  - Autor: conforme dados do Jira
+  - Datas de setembro/agosto de 2025
+
+**CA4.4 - Paginação**
+- DADO que o SM2 tem 82 issues
+- QUANDO visualizo a lista
+- ENTÃO deve haver paginação com 20 issues por página
+- E controles "Anterior/Próximo" funcionais
+
+
+**Critérios de Pronto da Sprint:**
+- Todas as user stories de rank 1-3 atendem seus critérios de aceitação
+- Testes manuais validam com dados reais da API da Necto
+- Interface responsiva em mobile e desktop
+- Performance adequada (carregamento < 5s)
+- Tratamento de erros implementado
+- Código revisado e sem bugs críticos
