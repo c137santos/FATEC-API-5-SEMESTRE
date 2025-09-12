@@ -28,13 +28,3 @@ fi
 
 GREEN="\e[32m"
 ENDCOLOR="\e[0m"
-
-echo -e "\n${GREEN}"
-echo -e " _______         __       ___   ____    ____  __    __   _______   "
-echo -e "|       \       |  |     /   \  \   \  /   / |  |  |  | |   ____|  "
-echo -e "|  .--.  |      |  |    /  ^  \  \   \/   /  |  |  |  | |  |__     "
-echo -e "|  |  |  |.--.  |  |   /  /_\  \  \      /   |  |  |  | |   __|    "
-echo -e "|  '--'  ||  \`--'  |  /  _____  \  \    /    |  \`--'  | |  |____   "
-echo -e "|_______/  \______/  /__/     \__\  \__/      \______/  |_______|  "
-echo -e "\n${GREEN}   👉 Django não está rodando no Dev Container automaticamente."
-echo -e "      Use ./manage.py runserver OU Use o PLAY/DEBUG do VSCODE\n\n${ENDCOLOR}"
