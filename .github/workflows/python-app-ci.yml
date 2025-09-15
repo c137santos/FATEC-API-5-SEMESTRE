@@ -49,7 +49,7 @@ jobs:
           uv pip install --no-cache -r requirements-dev.txt
 
       - name: Run Python Linter (Ruff)
-        run: uv run ruff check .
+        run: ruff check .
 
       - name: Run backend Tests
         env:
