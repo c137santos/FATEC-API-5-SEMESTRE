@@ -25,18 +25,25 @@ jobs:
           --health-timeout 5s
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Enable caching
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          
       - name: Install dependencies
         run: |
-          pip install uv -system
           uv pip install --no-cache -r requirements-dev.txt
           
       - name: Dockerfile linter using Hadolint
@@ -45,7 +52,7 @@ jobs:
           path: Dockerfile
 
       - name: Run Python Linter (FRuff)
-        run: ruff check .
+        run: uv run ruff check .
 
       - name: Run backend Tests
         env:
