@@ -109,6 +109,6 @@ classDiagram
 - 🐍 Python 3.11.x 
 - Um terminal (de preferência um terminal Linux, é para funcionar em um terminal WSL no Windows)
 
-Temos três formas para **Rodar**:
+Temos duas formas para **Rodar**:
 - Sem Docker 📦: Apenas **Python** instalando requiriments.txt
 - Apenas Banco de dados usando 🐋 Docker (melhor para debug)
