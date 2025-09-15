@@ -1,10 +1,10 @@
 # coding: utf-8
-import logging
 import json
+import logging
+
 from django.contrib import auth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
 
 logger = logging.getLogger(__name__)
 

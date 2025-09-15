@@ -1,19 +1,13 @@
 # coding: utf-8
-import logging
-
 import json
+import logging
 
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
-
 from django.views.decorators.http import require_http_methods
 
 from ..commons.django_views_utils import ajax_login_required
-
-
 from .service import cards_svc
-
 
 logger = logging.getLogger(__name__)
 

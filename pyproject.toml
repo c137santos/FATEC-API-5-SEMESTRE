@@ -25,9 +25,7 @@ dev = [
     "dj-database-url==2.2.0",
     "django==4.2.16",
     "django-extensions==3.2.3",
-    "flake8==7.1.1",
     "ipython==8.28.0",
-    "isort==5.13.2",
     "mock==5.1.0",
     "psycopg2==2.9.9",
     "pytest==8.3.3",
@@ -54,6 +52,13 @@ filterwarnings = [
 
 [tool.ruff]
 line-length = 120
-
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "migrations",
+    "build",
+    "dist",
+]
 [tool.ruff.lint]
 select = ["E", "F", "I", "C90"]
