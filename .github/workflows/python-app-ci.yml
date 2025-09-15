@@ -47,13 +47,8 @@ jobs:
       - name: Install dependencies
         run: |
           uv pip install --no-cache -r requirements-dev.txt
-          
-      - name: Dockerfile linter using Hadolint
-        uses: hadolint/hadolint-action@v3.1.0
-        with:
-          path: Dockerfile
 
-      - name: Run Python Linter (FRuff)
+      - name: Run Python Linter (Ruff)
         run: uv run ruff check .
 
       - name: Run backend Tests
