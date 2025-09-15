@@ -17,6 +17,7 @@ jobs:
           POSTGRES_DB: db_test
           POSTGRES_PASSWORD: db_test_pwd_ci
           POSTGRES_USER: postgres
+          UV_SYSTEM_PYTHON: 1
         ports:
           - 5432:5432
         options: >-
