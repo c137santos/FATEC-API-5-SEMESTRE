@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import ANY
+
+import pytest
 
 from jiboia.accounts.models import User
 

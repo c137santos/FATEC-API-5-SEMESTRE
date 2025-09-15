@@ -1,7 +1,10 @@
 import os
+
 from django.db import connection
 from django.http import JsonResponse
+
 from .exceptions import BusinessError
+
 
 def dapau(request, error: str = None):
     """
