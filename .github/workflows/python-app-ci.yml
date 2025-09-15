@@ -33,7 +33,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
-          cache: uv
 
       - name: Install dependencies
         run: |
@@ -45,10 +44,10 @@ jobs:
         with:
           path: Dockerfile
 
-      - name: Run Python Linter (Flake8)
-        run: flake8
+      - name: Run Python Linter (FRuff)
+        run: ruff check .
 
       - name: Run backend Tests
         env:
           DATABASE_URL: postgres://postgres:db_test_pwd_ci@localhost:5432/db_test
-        run: pytest --cache-clear
+        run: pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing
