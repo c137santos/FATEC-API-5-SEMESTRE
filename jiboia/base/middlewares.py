@@ -11,7 +11,7 @@ class DjavueApiErrorHandlingMiddleware:
         response = self.get_response(request)
         return response
 
-    def process_exception(self, request, exc):
+    def process_exception(self, exc):
         error = str(exc)
         if isinstance(exc, ValueError):
             response = JsonResponse({"message": f"[INVALID INPUT] {error}"}, status=422)
