@@ -1,6 +1,6 @@
 <template>
 	<v-sheet 
-	class="mx-auto mt-12"
+	class="mx-auto my-12"
 	max-width="800"
 	elevation="8"
 	>
@@ -45,6 +45,11 @@
 						:options="{
 							responsive: true,
 							indexAxis: 'y',
+							plugins: {
+								legend: {
+									display: false,
+								}
+							}
 						}"
 					></Bar>
 				</v-col>
@@ -76,7 +81,6 @@ const perHourData = computed(() => ({
 	datasets: [
 		{
 			label: 'Horas',
-			borderWidth: 2,
 			data: projectList.value.map(project => project.total_hours),
 			backgroundColor: chartColors[3],
 		}
