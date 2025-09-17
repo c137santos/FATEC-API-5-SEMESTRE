@@ -1,11 +1,10 @@
 
 
 import DefaultLayout from "@/layouts/default/DefaultLayout.vue"
-import DashboardView from '@/pages/core/ProjectDashboardView.vue'
-import DashboardByProject from "@/pages/core/DashboardByProject"
-import Issues from "@/pages/core/Issues"
-import Overview from "@/pages/core/Overview"
-import User from "@/pages/core/User"
+import DashboardByProjectView from "@/pages/core/DashboardByProjectView"
+import IssuesView from "@/pages/core/IssuesView"
+import OverviewView from "@/pages/core/OverviewView"
+import UserView from "@/pages/core/UserView"
 
 export default [
   {
@@ -15,27 +14,23 @@ export default [
       {
         path: "overview",
         name: "overview",
-        component: Overview,
+        component: OverviewView,
       },
       {
         path: "dashboard-by-project",
         name: "dashboard-by-project",
-        component: DashboardByProject,
+        component: DashboardByProjectView,
       },
       {
         path: "issues",
         name: "issues",
-        component: Issues,
+        component: IssuesView,
       },
       {
         path: "user",
         name: "user",
-        component: User,
+        component: UserView,
       }
     ],
-  },
-  {
-    path: "/projects",
-    component: DashboardView
   }
 ]
