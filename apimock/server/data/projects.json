@@ -1,0 +1,14 @@
+[
+	{
+		"id": 1,
+		"name": "Project Foo",
+		"total_hours": 20,
+		"total_issues": 30
+	},
+	{
+		"id": 2,
+		"name": "Project Bar",
+		"total_hours": 50,
+		"total_issues": 140
+	}
+]
