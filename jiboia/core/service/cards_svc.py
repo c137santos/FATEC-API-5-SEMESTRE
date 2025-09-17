@@ -1,7 +1,8 @@
 import logging
 
-from ..models import Card
 from jiboia.base.exceptions import BusinessError
+
+from ..models import Card
 
 logger = logging.getLogger(__name__)
 

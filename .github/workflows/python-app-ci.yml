@@ -2,13 +2,15 @@ name: jiboia CI
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, dev]
   pull_request:
-    branches: [main, master]
+    branches: [main, dev]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      UV_SYSTEM_PYTHON: 1
 
     services:
       postgres:
@@ -25,29 +27,31 @@ jobs:
           --health-timeout 5s
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Dockerfile linter using Hadolint
-        uses: jbergstroem/hadolint-gh-action@v1
-
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
 
-      - name: Install dependencies (using requirements)
+      - name: Enable caching
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements-dev.txt
+          uv pip install --no-cache -r requirements-dev.txt
 
-      - name: Run Python Linter
-        run: flake8
+      - name: Run Python Linter (Ruff)
+        run: ruff check .
 
       - name: Run backend Tests
         env:
           DATABASE_URL: postgres://postgres:db_test_pwd_ci@localhost:5432/db_test
-        run: pytest --cache-clear
+        run: pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing

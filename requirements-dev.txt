@@ -1,9 +1,7 @@
 -r requirements.txt
 
 # Code style / formatting
-black==24.10.0
-isort==5.13.2
-flake8==7.1.1
+ruff>=0.13.0
 
 #Testes
 pytest==8.3.3
@@ -14,4 +12,3 @@ mock==5.1.0
 ipython==8.28.0
 
 # CORS (para quando o frontend está em domínio diferente)
-

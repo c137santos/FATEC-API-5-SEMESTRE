@@ -1,5 +1,6 @@
-import pytest
 from unittest.mock import ANY
+
+import pytest
 
 from jiboia.accounts.models import User
 
@@ -34,7 +35,7 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
 
 @pytest.mark.django_db
 def test_deve_fazer_login(client):
-    jon = User.objects.create_user(
+    User.objects.create_user(
         username="jon",
         first_name="Jon",
         last_name="Snow",
