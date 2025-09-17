@@ -31,9 +31,6 @@
 			</v-col>
 		 </v-row>
 		 <v-row>
-			<v-col>
-				<div class="bg-grey w-100" style="height: 362px;"></div>
-			</v-col>
 		 </v-row>
 		 <div :key="projectList.map(p => p.id).join()">
 			 <v-row>
