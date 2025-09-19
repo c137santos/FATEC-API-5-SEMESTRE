@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from .models import Card
+from .models import Issue
 
 
-class CardAdmin(admin.ModelAdmin):
+class IssueAdmin(admin.ModelAdmin):
     list_display = ("description", "done")
 
 
-admin.site.register(Card, CardAdmin)
+admin.site.register(Issue, IssueAdmin)

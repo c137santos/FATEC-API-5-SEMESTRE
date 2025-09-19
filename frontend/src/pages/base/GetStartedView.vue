@@ -3,9 +3,9 @@
     <v-responsive class="d-flex align-center text-center fill-height">
       <v-img contain height="240" src="@/assets/logo.svg" />
 
-      <v-card>
-        <v-card-title class="headline">Template de App Djàvue </v-card-title>
-        <v-card-text>
+      <v-issue>
+        <v-issue-title class="headline">Template de App Djàvue </v-issue-title>
+        <v-issue-text>
           <p>
             Djávue tem Vue 3 + Vuetify 3 no frontend e Django no Backend, tudo já configurado e
             pronto para uso em Produção.
@@ -63,12 +63,12 @@
             <em><small>&mdash; Enzo Pascal 🎩</small></em>
           </div>
           <hr class="my-3" />
-        </v-card-text>
-        <v-card-actions>
+        </v-issue-text>
+        <v-issue-actions>
           <v-spacer />
           <v-btn color="primary" :to="{ name: 'base-home' }"> Início </v-btn>
-        </v-card-actions>
-      </v-card>
+        </v-issue-actions>
+      </v-issue>
     </v-responsive>
   </v-container>
 </template>

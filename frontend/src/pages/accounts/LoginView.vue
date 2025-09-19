@@ -72,7 +72,7 @@ export default {
     await this.accountsStore.whoAmI()
     if (this.loggedUser) {
       this.baseStore.showSnackbar("Usuário já logado", "warning")
-      this.showCards()
+      this.showIssues()
     }
   },
   methods: {
@@ -83,11 +83,11 @@ export default {
         return
       }
       console.log("logged")
-      this.showCards()
+      this.showIssues()
     },
-    showCards() {
-      this.$router.push({ name: "cards-list" })
-      console.log("--> cards")
+    showIssues() {
+      this.$router.push({ name: "issues-list" })
+      console.log("--> issues")
     },
   },
 }

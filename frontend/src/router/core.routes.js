@@ -1,7 +1,7 @@
 
 
 import DefaultLayout from "@/layouts/default/DefaultLayout.vue"
-import CardListView from "@/pages/core/CardListView.vue"
+import IssueListView from "@/pages/core/IssueListView.vue"
 import DashboardByProject from "@/pages/core/DashboardByProject"
 import Issues from "@/pages/core/Issues"
 import Overview from "@/pages/core/Overview"

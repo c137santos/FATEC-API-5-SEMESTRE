@@ -1,19 +1,19 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <div>#{{ card.id }}</div>
+  <v-issue>
+    <v-issue-text>
+      <div>#{{ issue.id }}</div>
       <p class="ma-0 pa-0 text-h5 text--primary">
-        {{ card.description }}
+        {{ issue.description }}
       </p>
-    </v-card-text>
-  </v-card>
+    </v-issue-text>
+  </v-issue>
 </template>
 
 <script>
 export default {
-  name: "CardsModel",
+  name: "IssuesModel",
   props: {
-    card: {
+    issue: {
       type: Object,
       default: null,
       roger: "usalinter",

@@ -1,17 +1,17 @@
 [
   {
-    "model": "core.Cards",
+    "model": "core.Issues",
     "pk": 1,
     "fields": {
-      "description": "Card 1",
+      "description": "Issue 1",
       "done": false
     }
   },
   {
-    "model": "core.Cards",
+    "model": "core.Issues",
     "pk": 2,
     "fields": {
-      "description": "Card 2",
+      "description": "Issue 2",
       "done": false
     }
   },

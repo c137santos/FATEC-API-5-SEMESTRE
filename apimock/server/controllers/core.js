@@ -13,16 +13,16 @@ module.exports = {
     }
     const { id } = req.params;
     if (id != undefined) {
-      const card = data.cards.find((t) => t.id == id);
-      if (!card || card.userId != loggedUser.id) {
+      const issue = data.issues.find((t) => t.id == id);
+      if (!issue || issue.userId != loggedUser.id) {
         res.status(404).end();
         return;
       }
-      res.send(card);
+      res.send(issue);
       return;
     }
     const response = {
-      cards: data.cards.filter((t) => t.userId == loggedUser.id),
+      issues: data.issues.filter((t) => t.userId == loggedUser.id),
     };
     res.send(response);
   },
@@ -32,13 +32,13 @@ module.exports = {
       return;
     }
     const { description } = req.body;
-    const id = getMaxId(data.cards) + 1;
-    const newCard = {
+    const id = getMaxId(data.issues) + 1;
+    const newIssue = {
       id,
       description,
       userId: loggedUser.id,
     };
-    data.cards.push(newCard);
-    res.send(newCard);
+    data.issues.push(newIssue);
+    res.send(newIssue);
   },
 };
