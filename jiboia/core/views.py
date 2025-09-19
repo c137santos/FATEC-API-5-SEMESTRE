@@ -12,7 +12,7 @@ from .service import issues_svc
 logger = logging.getLogger(__name__)
 
 
-
+@require_http_methods(["POST"])
 @csrf_exempt
 @ajax_login_required
 def add_issue(request):
