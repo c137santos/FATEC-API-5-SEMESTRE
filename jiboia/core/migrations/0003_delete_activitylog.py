@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0002_create_card"),
+        ("core", "0002_create_issue"),
     ]
 
     operations = [

@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Card(models.Model):
+class Issue(models.Model):
     description = models.CharField(max_length=512)
     done = models.BooleanField(default=False)
 
