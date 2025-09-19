@@ -265,8 +265,10 @@ JIRA_API_URL = config("JIRA_API_URL", default="https://necto.atlassian.net")
 
 # Configuração do django-crontab
 CRONJOBS = [
-    # Formato: ('minuto hora dia_do_mês mês dia_da_semana', 'caminho.para.função', ['argumentos opcionais'], {'kwargs opcionais'}, 'id_único')
-    ('0 0 * * *', 'jiboia.core.cron.jira_healthcheck', '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck')
+    # Formato: ('minuto hora dia_do_mês mês dia_da_semana', 'caminho.para.função', 
+    #           ['argumentos opcionais'], {'kwargs opcionais'}, 'id_único')
+    ('0 0 * * *', 'jiboia.core.cron.jira_healthcheck', 
+     '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck')
 ]
 
 

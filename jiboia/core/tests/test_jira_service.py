@@ -1,6 +1,6 @@
-import pytest
-from unittest.mock import patch, MagicMock
-from requests.exceptions import RequestException, ConnectionError, Timeout
+from unittest.mock import MagicMock, patch
+
+from requests.exceptions import ConnectionError, Timeout
 
 from jiboia.core.service.jira_svc import JiraService
 
@@ -23,20 +23,6 @@ class TestJiraService:
         assert "OK - 2 projects found" in message
         mock_get.assert_called_once()
 
-    @patch('jiboia.core.service.jira_svc.requests.get')
-    def test_healthcheck_empty_response(self, mock_get):
-        # Configurar o mock para simular uma resposta vazia
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = []
-        mock_get.return_value = mock_response
-
-        # Executar o healthcheck
-        success, message = JiraService.healthcheck()
-
-        # Verificar o resultado
-        assert success is True
-        assert "OK - 0 projetos encontrados" in message
     @patch('jiboia.core.service.jira_svc.requests.get')
     def test_healthcheck_empty_response(self, mock_get):
         mock_response = MagicMock()
