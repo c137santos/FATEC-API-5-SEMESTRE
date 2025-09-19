@@ -1,7 +1,6 @@
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
+
 from freezegun import freeze_time
-from datetime import datetime
 
 from jiboia.core.cron import jira_healthcheck
 

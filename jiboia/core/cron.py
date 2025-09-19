@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+
 from .service.jira_svc import JiraService
 
 logger = logging.getLogger(__name__)
