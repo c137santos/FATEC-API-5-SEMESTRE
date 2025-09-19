@@ -6,13 +6,12 @@ logger = logging.getLogger(__name__)
 
 def jira_healthcheck():
     """
-    Função executada pelo cron para fazer o healthcheck da API do Jira.
-    Esta função é chamada pelo django-crontab de acordo com o agendamento configurado
-    no settings.py. Ela registra o resultado em logs e pode ser expandida para
-    enviar alertas em caso de falha.
+    Function executed by cron to perform a healthcheck on the Jira API.
+    This function is called by django-crontab according to the schedule configured
+    in settings.py. It logs the result and can be expanded to send alerts in case of failure.
     """
     start_time = datetime.now()
-    logger.info(f"[CRON] Iniciando healthcheck da API do Jira em {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"[CRON] Starting Jira API healthcheck at {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     
     success, message = JiraService.healthcheck()
     
@@ -20,8 +19,8 @@ def jira_healthcheck():
     duration = (end_time - start_time).total_seconds()
     
     if success:
-        logger.info(f"[CRON] Healthcheck da API do Jira concluído com sucesso em {duration:.2f}s: {message}")
+        logger.info(f"[CRON] Jira API healthcheck completed successfully in {duration:.2f}s: {message}")
     else:
-        logger.error(f"[CRON] Healthcheck da API do Jira falhou após {duration:.2f}s: {message}")
+        logger.error(f"[CRON] Jira API healthcheck failed after {duration:.2f}s: {message}")
     
     return success

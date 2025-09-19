@@ -5,16 +5,16 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 class JiraService:
-    """Serviço para interação com a API do Jira"""
+    """Service for Jira API integration"""
     
     @staticmethod
     def healthcheck():
         """
-        Realiza um healthcheck na API do Jira verificando o endpoint de projetos.
+        Performs a healthcheck on the Jira API by checking the projects endpoint.
         
         Returns:
-            tuple: (success, message) onde success é um booleano indicando se o healthcheck foi bem-sucedido
-                   e message é uma string com detalhes adicionais.
+            tuple: (success, message) where success is a boolean indicating if the healthcheck was successful
+                   and message is a string with additional details.
         """
         email = settings.JIRA_API_EMAIL
         token = settings.JIRA_API_TOKEN
@@ -22,7 +22,7 @@ class JiraService:
         
         url = f"{base_url}/rest/api/3/project"
         
-        logger.info(f"Realizando healthcheck na API do Jira: {url}")
+        logger.info(f"Performing Jira API healthcheck: {url}")
         
         try:
             response = requests.get(
@@ -33,12 +33,12 @@ class JiraService:
             
             if response.status_code == 200:
                 projects_count = len(response.json())
-                logger.info(f"Jira API healthcheck bem-sucedido. {projects_count} projetos encontrados.")
-                return True, f"OK - {projects_count} projetos encontrados"
+                logger.info(f"Jira API healthcheck successful. {projects_count} projects found.")
+                return True, f"OK - {projects_count} projects found"
             else:
-                logger.error(f"Jira API healthcheck falhou com status {response.status_code}: {response.text}")
-                return False, f"Falhou com status {response.status_code}"
+                logger.error(f"Jira API healthcheck failed with status {response.status_code}: {response.text}")
+                return False, f"Failed with status {response.status_code}"
                 
         except Exception as e:
-            logger.exception("Erro durante o healthcheck da API do Jira")
+            logger.exception("Error during Jira API healthcheck")
             return False, str(e)
