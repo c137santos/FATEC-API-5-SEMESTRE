@@ -10,6 +10,7 @@ RUN apt-get update --fix-missing \
     build-essential \
     libpq-dev \
     wget curl vim locales zip unzip apt-utils \
+    cron \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir uWSGI==2.0.25.1 uwsgitop==0.12 uv
 

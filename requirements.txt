@@ -22,3 +22,6 @@ python-decouple==3.8
 # PROD
 #uWSGI==2.0.21
 
+# CRON JOB
+django-crontab==0.7.1
+requests==2.31.0
