@@ -16,7 +16,7 @@ def dapau(error: str = None):
 
 
 
-def status():
+def status(request):
     """
     Retorna o estado atual da aplicação
     """
