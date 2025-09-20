@@ -25,8 +25,6 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
             "first_name": "Jon",
             "last_name": "Snow",
             "email": "jon@example.com",
-            "avatar": None,
-            "bio": "bio",
             "permissions": {"ADMIN": False, "STAFF": False},
         },
         "authenticated": True,
@@ -41,7 +39,6 @@ def test_deve_fazer_login(client):
         last_name="Snow",
         email="jon@example.com",
         password="snow",
-        bio="bio",
     )
 
     resp = client.post(
@@ -65,8 +62,6 @@ def test_deve_fazer_login(client):
             "first_name": "Jon",
             "last_name": "Snow",
             "email": "jon@example.com",
-            "avatar": None,
-            "bio": "bio",
             "permissions": {"ADMIN": False, "STAFF": False},
         },
         "authenticated": True,
