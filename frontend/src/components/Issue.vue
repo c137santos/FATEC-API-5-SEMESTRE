@@ -1,12 +1,12 @@
 <template>
-  <v-issue>
-    <v-issue-text>
+  <v-card>
+    <v-card-text>
       <div>#{{ issue.id }}</div>
       <p class="ma-0 pa-0 text-h5 text--primary">
         {{ issue.description }}
       </p>
-    </v-issue-text>
-  </v-issue>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>

@@ -2,9 +2,9 @@
   <v-container class="fill-height">
     <v-row justify="center" align="center">
       <v-col cols="12">
-        <v-issue>
-          <v-issue-title class="headline"> Issues </v-issue-title>
-        </v-issue>
+        <v-card>
+          <v-card-title class="headline"> Issues </v-card-title>
+        </v-card>
       </v-col>
 
       <v-col cols="12">

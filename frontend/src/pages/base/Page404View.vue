@@ -1,14 +1,14 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="d-flex align-center text-center fill-height">
-      <v-issue>
-        <v-issue-title class="headline">Opps!</v-issue-title>
-        <v-issue-text> Não foi possível achar está página </v-issue-text>
-        <v-issue-actions>
+      <v-card>
+        <v-card-title class="headline">Opps!</v-card-title>
+        <v-card-text> Não foi possível achar está página </v-card-text>
+        <v-card-actions>
           <v-spacer />
           <v-btn color="primary" :to="{ name: 'base-home' }"> Início </v-btn>
-        </v-issue-actions>
-      </v-issue>
+        </v-card-actions>
+      </v-card>
     </v-responsive>
   </v-container>
 </template>

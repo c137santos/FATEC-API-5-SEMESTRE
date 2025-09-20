@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-issue>
-      <v-issue-text>
+    <v-card>
+      <v-card-text>
         <v-text-field
           v-model="title"
           :label="formLabel"
@@ -9,8 +9,8 @@
           outlined
           append-icon="fa-pen"
           @keyup.enter="addNewIssue" />
-      </v-issue-text>
-    </v-issue>
+      </v-card-text>
+    </v-card>
   </div>
 </template>
 
