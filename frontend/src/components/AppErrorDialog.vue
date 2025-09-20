@@ -1,15 +1,15 @@
 <template>
   <v-dialog v-model="showValue" persistent max-width="960px">
-    <v-issue class="pa-5">
-      <v-issue-title class="text-h5"> Opps! Algo deu errado </v-issue-title>
-      <v-issue-text>
+    <v-card class="pa-5">
+      <v-card-title class="text-h5"> Opps! Algo deu errado </v-card-title>
+      <v-card-text>
         {{ message }}
-      </v-issue-text>
-      <v-issue-actions>
+      </v-card-text>
+      <v-card-actions>
         <v-spacer />
         <v-btn color="primary" text @click="close"> Fechar </v-btn>
-      </v-issue-actions>
-    </v-issue>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 

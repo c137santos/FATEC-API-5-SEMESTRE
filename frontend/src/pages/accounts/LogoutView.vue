@@ -2,9 +2,9 @@
   <v-container>
     <v-row align="start" no-gutters style="height: 150px">
       <v-col cols="12">
-        <v-issue class="text-center">
-          <v-issue-title class="headline"> Bye Bye </v-issue-title>
-          <v-issue-text>
+        <v-card class="text-center">
+          <v-card-title class="headline"> Bye Bye </v-card-title>
+          <v-card-text>
             <h2>Finalizar sessão?</h2>
             <p class="ma-4">
               <v-btn :loading="loading" color="primary" class="mr-4" x-large block @click="logout">
@@ -19,8 +19,8 @@
                 Início
               </v-btn>
             </p>
-          </v-issue-text>
-        </v-issue>
+          </v-card-text>
+        </v-card>
       </v-col>
     </v-row>
   </v-container>
