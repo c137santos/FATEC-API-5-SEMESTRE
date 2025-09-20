@@ -74,35 +74,6 @@ classDiagram
 
 ```
 
-### Diagrama de Entidade e Relacionamento
-
-- Inicialmente o projeto tem apenas uma tabela na aplicação principal (core): Issue
-- O Django já fornece a tabela de usuários (User), a qual está organizada na app accounts. Note que podemos adicionar campos adicionais na tabela de usuário.
-
-**🌈 NOTA:** Em versões mais antigas do Django, a forma de adicionar campos extras na tabela User era utilizando a tabela `Profile` com um relacionamento 1 para 1 com a User. Na versão mais nova do Django, podemos estender a tabela user diretamente igual está feito na app `accounts.models.User`.
-
-```mermaid
----
-title: Diagrama inicial do Djàvue
----
-classDiagram
-    direction LR
-    AbstractUser <|-- User
-    namespace accounts {
-        class User {
-            bio
-            avatar
-        }
-    }
-    namespace core {
-        class Issue {
-            description
-            done
-            to_dict_json()
-        }
-    }
-```
-
 ## Requisitos
 
 - Git
