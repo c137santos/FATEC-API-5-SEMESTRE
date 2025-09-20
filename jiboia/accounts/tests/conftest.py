@@ -11,7 +11,6 @@ def user_jon(db):
         last_name="Snow",
         email="jon@example.com",
         password="snow",
-        bio="bio",
     )
     return jon
 

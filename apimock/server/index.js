@@ -32,9 +32,9 @@ app.post("/api/accounts/login", accounts.login);
 app.post("/api/accounts/logout", accounts.logout);
 app.get("/api/accounts/whoami", accounts.whoami);
 
-// Cards
-app.get("/api/core/cards/list", core.find);
-app.post("/api/core/cards/add", core.add);
+// Issues
+app.get("/api/core/issues/list", core.find);
+app.post("/api/core/issues/add", core.add);
 
 app.listen(PORT, () => {
   console.log(

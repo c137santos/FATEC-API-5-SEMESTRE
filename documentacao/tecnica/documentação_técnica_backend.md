@@ -47,7 +47,7 @@ jiboia                   👉 Pasta raiz do projeto
         └── wsgi.py
 ```
 
-O Django tem o conceito de "apps" com a ideia de separar os contextos do seu projeto, ao invés de ter tudo na app principal, podemos ir criando novas apps como por exemplo, dashboard, issue, card,  agrupar funcionalidades da mesma natureza. Cada app segue a estrutura abaixo: 
+O Django tem o conceito de "apps" com a ideia de separar os contextos do seu projeto, ao invés de ter tudo na app principal, podemos ir criando novas apps como por exemplo, dashboard, issue, issue,  agrupar funcionalidades da mesma natureza. Cada app segue a estrutura abaixo: 
 
 ```mermaid
 classDiagram
@@ -72,35 +72,6 @@ classDiagram
 │   └── templates              👉 Não utilizado nas apps de API, mas pode gerar páginas HTML
 
 
-```
-
-### Diagrama de Entidade e Relacionamento
-
-- Inicialmente o projeto tem apenas uma tabela na aplicação principal (core): Card
-- O Django já fornece a tabela de usuários (User), a qual está organizada na app accounts. Note que podemos adicionar campos adicionais na tabela de usuário.
-
-**🌈 NOTA:** Em versões mais antigas do Django, a forma de adicionar campos extras na tabela User era utilizando a tabela `Profile` com um relacionamento 1 para 1 com a User. Na versão mais nova do Django, podemos estender a tabela user diretamente igual está feito na app `accounts.models.User`.
-
-```mermaid
----
-title: Diagrama inicial do Djàvue
----
-classDiagram
-    direction LR
-    AbstractUser <|-- User
-    namespace accounts {
-        class User {
-            bio
-            avatar
-        }
-    }
-    namespace core {
-        class Card {
-            description
-            done
-            to_dict_json()
-        }
-    }
 ```
 
 ## Requisitos
