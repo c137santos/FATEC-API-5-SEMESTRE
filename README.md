@@ -97,7 +97,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 [Estrutura de branchs](./documentacao/produto/manual_do_usuario.md)
 
 ## 📦 Figma Projeto <a id="figma"></a>
-[Figma](https://www.figma.com/design/YBuIsfRpONwxIMrR1xqMyv/API-5%C2%BA-SEM?node-id=0-1&t=ZWqGjJXrsCpHYu7s-1 )
+[Figma](https://www.figma.com/design/YBuIsfRpONwxIMrR1xqMyv/API-5%C2%BA-SEM?node-id=0-1&t=ZWqGjJXrsCpHYu7s-1 ) - Atualizado o Figma conforme aprovação da equipe com os ajustes solicitados pelo cliente.
 
 ## 🎓 Equipe <a id="equipe"></a>
 
