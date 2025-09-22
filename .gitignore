@@ -36,3 +36,4 @@ venv/
 ENV/
 .python-version
 .env
+.scannerwork/
