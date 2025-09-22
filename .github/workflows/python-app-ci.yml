@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       UV_SYSTEM_PYTHON: 1
+      JIRA_API_URL: ${JIRA_API_URL}
+      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
 
     services:
       postgres:
