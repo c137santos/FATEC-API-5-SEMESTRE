@@ -1,5 +1,6 @@
 import logging
-from typing import Tuple, List, Dict, Any, TypeVar, Generic, Optional
+from typing import Tuple, TypeVar
+
 from django.conf import settings
 
 from .strategy import JiraStrategy
