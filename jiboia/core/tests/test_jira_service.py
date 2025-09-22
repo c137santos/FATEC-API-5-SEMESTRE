@@ -5,7 +5,7 @@ from requests.exceptions import ConnectionError, Timeout
 from jiboia.core.service.jira_svc import JiraService
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_success(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -22,7 +22,7 @@ def test_healthcheck_success(mock_get):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_empty_response(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -36,7 +36,7 @@ def test_healthcheck_empty_response(mock_get):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_http_error(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 401
@@ -50,7 +50,7 @@ def test_healthcheck_http_error(mock_get):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_server_error(mock_get):
     mock_response = MagicMock()
     mock_response.status_code = 500
@@ -64,7 +64,7 @@ def test_healthcheck_server_error(mock_get):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_connection_error(mock_get):
     mock_get.side_effect = ConnectionError("Connection failure")
 
@@ -75,7 +75,7 @@ def test_healthcheck_connection_error(mock_get):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_timeout(mock_get):
     mock_get.side_effect = Timeout("Request timeout")
 
@@ -86,7 +86,7 @@ def test_healthcheck_timeout(mock_get):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.jira_svc.requests.get')
+@patch('jiboia.core.service.strategy.base.requests.get')
 def test_healthcheck_generic_exception(mock_get):
     mock_get.side_effect = Exception("Unexpected error")
 
