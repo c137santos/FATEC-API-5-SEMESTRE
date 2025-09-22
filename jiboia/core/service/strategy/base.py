@@ -1,8 +1,9 @@
 """Base Jira strategy implementation."""
 
 import abc
+from typing import Generic, TypeVar
+
 import requests
-from typing import TypeVar, Generic, Any
 
 T = TypeVar('T')
 

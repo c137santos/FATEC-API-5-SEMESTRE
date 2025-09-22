@@ -1,7 +1,6 @@
 """Tests for healthcheck strategies."""
 
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from jiboia.core.service.strategy.healthcheck import ProjectsHealthCheckStrategy
 

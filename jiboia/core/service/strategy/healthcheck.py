@@ -1,7 +1,7 @@
 """Health check strategies for Jira API."""
 
-import logging
 import abc
+import logging
 from typing import Tuple
 
 from .base import JiraStrategy
