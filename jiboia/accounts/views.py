@@ -21,8 +21,7 @@ def login(request):
     password = body["password"]
     user_authenticaded = auth.authenticate(username=username, password=password)
     user_dict = None
-    if user_authenticaded is not None:
-        if user_authenticaded.is_active:
+    if user_authenticaded is not None and user_authenticaded.is_active:
             auth.login(request, user_authenticaded)
             user_dict = user_authenticaded.to_dict_json()
             logger.info("API login success")
@@ -38,7 +37,7 @@ def logout(request):
     Encerra sessão do usuário
     """
     if request.method.lower() != "post":
-        raise Exception("Logout only via post")
+        raise ValueError("Logout only via post")
     logger.info(f"API logout: {request.user.username}")
     auth.logout(request)
     return JsonResponse({})

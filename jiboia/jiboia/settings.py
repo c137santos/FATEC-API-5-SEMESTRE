@@ -174,40 +174,39 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOG_LEVEL = config("LOG_LEVEL", default="INFO")
 
+DEFAULT_FORMATTER_CONFIG = {
+    "format": "{levelname} {asctime} {module}:{lineno} {process:d} {message}",
+    "style": "{",
+}
+
+BASE_STREAM_HANDLER = {
+    "class": "logging.StreamHandler",
+    "formatter": "verbose",
+}
+
+BASE_LOGGER_CONFIG = {
+    "level": LOG_LEVEL,
+    "handlers": [
+        "console",
+    ],
+}
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module}:{lineno} {process:d} {message}",
-            "style": "{",
-        },
-        "console": {
-            "format": "{levelname} {asctime} {module}:{lineno} {process:d} {message}",
-            "style": "{",
-        },
-        "django": {
-            "format": "{levelname} {asctime} {module}:{lineno} {process:d} {message}",
-            "style": "{",
-        },
+        "verbose": DEFAULT_FORMATTER_CONFIG,
+        "console": DEFAULT_FORMATTER_CONFIG,
+        "django":DEFAULT_FORMATTER_CONFIG,
     },
+
     "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
-        "django": {"class": "logging.StreamHandler", "formatter": "verbose"},
+        "console": BASE_STREAM_HANDLER,
+        "django": BASE_STREAM_HANDLER,
     },
     "loggers": {
-        "": {
-            "level": LOG_LEVEL,
-            "handlers": [
-                "console",
-            ],
-        },
-        "django.server": {
-            "level": LOG_LEVEL,
-            "handlers": [
-                "console",
-            ],
-        },
+        "": BASE_LOGGER_CONFIG,
+        "django.server": BASE_LOGGER_CONFIG
     },
 }
 

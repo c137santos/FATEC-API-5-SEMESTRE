@@ -5,14 +5,23 @@ WORKDIR /app
 
 
 # Install basic SO and Python
-RUN apt-get update --fix-missing \
+RUN apt-get update --fix-missing \ 
     && apt-get install -y --no-install-recommends \
+    apt-utils \
     build-essential \
-    libpq-dev \
-    wget curl vim locales zip unzip apt-utils \
     cron \
+    curl \
+    libpq-dev \
+    locales \
+    unzip \
+    vim \
+    wget \
+    zip \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir uWSGI==2.0.25.1 uwsgitop==0.12 uv
+    && pip install --no-cache-dir \
+    uWSGI==2.0.25.1 \
+    uv \
+    uwsgitop==0.12
 
 # Replace shell with bash so we can source files
 SHELL ["/bin/bash", "-c"]
