@@ -1,8 +1,8 @@
 import api from './config.js'
 
 export default {
-	list: async () => {
-		const response = await api.get('/api/projects/list')
+	overview: async () => {
+		const response = await api.get('/api/projects/overview')
 		return response.data
 	}
 }

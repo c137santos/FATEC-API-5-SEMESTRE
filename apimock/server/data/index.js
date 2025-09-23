@@ -3,5 +3,5 @@ const utils = require('../utils')
 module.exports = {
   users: utils.parseJson('./data/users.json'),
   cards: utils.parseJson('./data/cards.json'),
-  projects: utils.parseJson('./data/projects.json')
+  projectsOverview: utils.parseJson('./data/projects/overview.json')
 }
