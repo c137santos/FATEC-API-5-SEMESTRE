@@ -1,0 +1,99 @@
+[
+	{
+		"project_id": 1,
+		"issues_per_month":  [
+			{
+				"date": "02/2020",
+				"pending": 10,
+				"on_going": 4,
+				"mr": 5,
+				"concluded": 22
+			},
+			{
+				"date": "03/2020",
+				"pending": 7,
+				"on_going": 3,
+				"mr": 2,
+				"concluded": 26
+			},
+			{
+				"date": "04/2020",
+				"pending": 15,
+				"on_going": 1,
+				"mr": 4,
+				"concluded": 28
+			},
+			{
+				"date": "05/2020",
+				"pending": 12,
+				"on_going": 6,
+				"mr": 2,
+				"concluded": 33
+			},
+			{
+				"date": "06/2020",
+				"pending": 8,
+				"on_going": 7,
+				"mr": 4,
+				"concluded": 38
+			},
+			{
+				"date": "07/2020",
+				"pending": 4,
+				"on_going": 9,
+				"mr": 5,
+				"concluded": 46
+			}
+		],
+		"issues_today": {
+			"date": "07/2020",
+			"pending": 3,
+			"on_going": 8,
+			"mr": 7,
+			"concluded": 48
+		},
+		"burndown": {
+			"end_date": "01/08/2020",
+			"pending_per_day": [
+				{
+					"date": "01/08/2020",
+					"pending": 8
+				},
+				{
+					"date": "02/08/2020",
+					"pending": 5
+				},
+				{
+					"date": "03/08/2020",
+					"pending": 4
+				},
+				{
+					"date": "04/08/2020",
+					"pending": 2
+				},
+				{
+					"date": "05/08/2020",
+					"pending": 1
+				}
+			]
+		},
+		"total_worked_hours": 60,
+		"issues_status": {
+			"task": 15,
+			"bug": 30,
+			"story": 24
+		},
+		"dev_hours": [
+			{
+				"dev_id": 1,
+				"name": "Maria",
+				"hours": 20
+			},
+			{
+				"dev_id": 2,
+				"name": "Julio",
+				"hours": 30
+			}
+		]
+	}
+]
