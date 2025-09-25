@@ -1,6 +1,6 @@
 <template>
 	<DashboardLayout>
-		<template #title> Project Dashboard </template>
+		<template #title> Project Dashboard: {{ name }} </template>
     <v-container>
 			<v-row>
 				<v-col>
@@ -132,9 +132,13 @@ import { Line, Doughnut, Bar } from 'vue-chartjs'
 import DashboardLayout from '@/layouts/default/DashboardLayout.vue';
 import StatusBreakdownGraph from '@/components/StatusBreakdownGraph.vue'
 import { chartColors } from '@/utils/chart-utils';
+import { useRoute } from 'vue-router';
+
+const route = useRoute()
 
 const issuesList = ref([])
 const dataRef = ref()
+const name = ref('')
 
 const hourValue = ref(0)
 
@@ -255,7 +259,8 @@ const issuesTotal = computed(() => !dataRef.value ? 0 : (() => {
 })())
 
 onMounted(async () => {
-	const data = await projectsApi.dashboard(1)
+	const data = await projectsApi.dashboard(route.params.id)
+	name.value = data.name
 	dataRef.value = data
 	issuesList.value = data.issues_per_month
 })
