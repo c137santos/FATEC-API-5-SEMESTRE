@@ -1,6 +1,7 @@
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
+
 from jiboia.core.service.strategy.healthcheck import ProjectsHealthCheckStrategy
+
 
 def test_execute_healthcheck(monkeypatch):
     strategy = ProjectsHealthCheckStrategy('email', 'token', 'http://fake-jira')

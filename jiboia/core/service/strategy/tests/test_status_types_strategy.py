@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from jiboia.core.service.strategy.status_types import SyncStatusTypesStrategy
+
 
 @pytest.fixture
 def mock_status_type_model(monkeypatch):

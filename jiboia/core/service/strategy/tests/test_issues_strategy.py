@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from jiboia.core.service.strategy.issues import SyncIssuesStrategy
+
 
 @pytest.fixture
 def mock_issue_model(monkeypatch):
