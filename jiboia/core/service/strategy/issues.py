@@ -65,7 +65,6 @@ class SyncIssuesStrategy(JiraStrategy[int]):
             for issue_data in issues_data:
                 issue_obj = self._sync_issue(issue_data, project)
                 self._sync_worklogs(issue_obj, issue_data)
-                self._sync_status_logs(issue_obj, issue_data)
                 synced_count += 1
             if (start_at + len(issues_data)) >= data.get("total", 0):
                 break
@@ -125,18 +124,3 @@ class SyncIssuesStrategy(JiraStrategy[int]):
                     "description_log": self._get_worklog_comment_text(log_data.get("comment"))
                 }
             )
-
-    def _sync_status_logs(self, issue_obj: Issue, data: dict):
-        histories = data.get("changelog", {}).get("histories", [])
-        for history in histories:
-            for item in history.get("items", []):
-                if item.get("fieldId") == "status":
-                    log_obj, created = StatusLog.objects.get_or_create(
-                        id_issue=issue_obj,
-                        created_at=history['created'],
-                        defaults={
-                            "old_status": StatusType.objects.filter(name=item['fromString']).first(),
-                            "new_status": StatusType.objects.filter(name=item['toString']).first(),
-                        }
-                    )
-                    break
