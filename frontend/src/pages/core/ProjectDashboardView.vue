@@ -14,7 +14,7 @@
 			</v-row>
 			<v-row>
 				<v-col>
-					<span class="w-100 d-flex justify-center">Movimentação de issues (por mês)</span>
+					<span class="w-100 d-flex justify-center"> Movimentação de issues (por mês) </span>
 					<StatusBreakdownGraph v-model="issuesList"></StatusBreakdownGraph>
 				</v-col>
 				<v-col>
