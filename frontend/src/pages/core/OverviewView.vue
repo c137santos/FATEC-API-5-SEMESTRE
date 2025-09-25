@@ -8,30 +8,47 @@
 					<img src="@/assets/Group 22.png" alt="Easter Egg" />
 				</template>
 				<template #title> Project Overview </template>
-				<div :key="projectList.map(p => p.id).join()">
-				 <v-row>
-					 <v-col>
-						 <span class="w-100 d-flex justify-center">Horas de desenvolvedores</span>
-						 <Bar
-							 :data="devProjectData"
-							 :options="{
-								 responsive: true,
-								 scales: {
-									 x: {
-										 stacked: true,
-									 },
-									 y: {
-										 stacked: true,
-									 }
-								 }
-							 }"
-						 ></Bar>
-					 </v-col>
-					 <v-col>
-						 <span class="w-100 d-flex justify-center">Movimentação de issues (por mês)</span>
-						 <StatusBreakdownGraph v-model="issuesList"></StatusBreakdownGraph>
-					 </v-col>
-				 </v-row>
+				<v-container :key="projectList.map(p => p.id).join()">
+					<v-row>
+						<v-col>
+							<v-container>
+								<v-row class="mx-100 d-flex justify-center"> Selecionar Projeto </v-row>
+								<v-row>
+									<v-slide-group show-arrows>
+										<v-slide-group-item v-for="(project, i) in projectList" :key="i">
+											<v-btn
+												class="ma-2"
+												@click="() => { router.push({ path: `/projects/${project.project_id}` }) }"
+											> {{ project.name }} </v-btn>
+										</v-slide-group-item>
+									</v-slide-group>
+								</v-row>
+							</v-container>
+						</v-col>
+					</v-row>
+					<v-row>
+						<v-col>
+							<span class="w-100 d-flex justify-center">Horas de desenvolvedores</span>
+							<Bar
+								:data="devProjectData"
+								:options="{
+									responsive: true,
+									scales: {
+										x: {
+											stacked: true,
+										},
+										y: {
+											stacked: true,
+										}
+									}
+								}"
+							></Bar>
+						</v-col>
+						<v-col>
+							<span class="w-100 d-flex justify-center">Movimentação de issues (por mês)</span>
+							<StatusBreakdownGraph v-model="issuesList"></StatusBreakdownGraph>
+						</v-col>
+					</v-row>
 					<v-row>
 					 <v-col class="">
 						 <span class="w-100 d-flex justify-center">Horas por projeto</span>
@@ -70,7 +87,7 @@
 						 </div>
 					 </v-col>
 					</v-row>
-				</div>
+				</v-container>
 		</DashboardLayout>
 	</v-sheet>
 </template>
@@ -82,7 +99,9 @@ import projectsApi from '@/api/projects.api'
 import { chartColors } from '@/utils/chart-utils'
 import StatusBreakdownGraph from '@/components/StatusBreakdownGraph'
 import DashboardLayout from '@/layouts/default/DashboardLayout.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const projectList = ref([])
 const devList = ref([])
 const issuesList = ref([])
