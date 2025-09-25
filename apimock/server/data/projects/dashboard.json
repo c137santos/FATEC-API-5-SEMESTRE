@@ -53,26 +53,26 @@
 			"concluded": 48
 		},
 		"burndown": {
-			"end_date": "01/08/2020",
+			"end_date": "2025-08-08",
 			"pending_per_day": [
 				{
-					"date": "01/08/2020",
+					"date": "2025-08-01",
 					"pending": 8
 				},
 				{
-					"date": "02/08/2020",
+					"date": "2025-08-02",
 					"pending": 5
 				},
 				{
-					"date": "03/08/2020",
+					"date": "2025-08-03",
 					"pending": 4
 				},
 				{
-					"date": "04/08/2020",
+					"date": "2025-08-04",
 					"pending": 2
 				},
 				{
-					"date": "05/08/2020",
+					"date": "2025-08-05",
 					"pending": 1
 				}
 			]
@@ -85,15 +85,31 @@
 		},
 		"dev_hours": [
 			{
-				"dev_id": 1,
-				"name": "Maria",
-				"hours": 20
-			},
-			{
-				"dev_id": 2,
-				"name": "Julio",
-				"hours": 30
-			}
+					"dev_id": 1,
+					"name": "Maria",
+					"hours": 20
+				},
+				{
+					"dev_id": 2,
+					"name": "Julio",
+					"hours": 30
+				},
+				{
+					"dev_id": 3,
+					"name": "Mario",
+					"hours": 10
+				},
+				{
+					"dev_id": 4,
+					"name": "Luana",
+					"hours": 50
+				},
+
+				{
+					"dev_id": 5,
+					"name": "Lola",
+					"hours": 30
+				}
 		]
 	}
 ]
