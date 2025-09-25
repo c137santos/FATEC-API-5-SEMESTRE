@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from ..commons.django_views_utils import ajax_login_required
-from .service import issues_svc
+from .service import issues_svc, project_svc
 
 logger = logging.getLogger(__name__)
 
@@ -46,3 +46,25 @@ def list_issues(request):
     logger.info("API list issues")
     issues = issues_svc.list_issues()
     return JsonResponse({"issues": issues})
+
+
+@require_http_methods(["GET"])
+@ajax_login_required
+
+def list_projects_general(request):
+    """Lista projetos em geral"""
+    logger.info("API list projects")
+    issue_breakdown_months = int(request.GET.get("issues_breakdown_months", 1))
+    projects = project_svc.list_projects_general(issue_breakdown_months)
+    return JsonResponse({"projects": projects})
+
+@require_http_methods(["GET"])
+@ajax_login_required
+
+def list_projects_especific(request, project_id):
+    """Lista projetos em específicos"""
+    logger.info("API list especific projects")
+    issue_breakdown_months = int(request.GET.get("issues_breakdown_months", 1))
+    burndown_days = int(request.GET.get("burndown_days", 1))
+    especific_projects = project_svc.list_projects_especific(project_id, issue_breakdown_months, burndown_days)
+    return JsonResponse({"projects": especific_projects})
