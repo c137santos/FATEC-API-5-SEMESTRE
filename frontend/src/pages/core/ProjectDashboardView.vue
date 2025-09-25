@@ -153,8 +153,6 @@ const burndownData = computed(() => {
 
 	const daysRange = dateDiffInDays(burndown.end_date, burndown.pending_per_day[0].date)
 
-	console.log(burndown.end_date, burndown)
-
 	const endDateTimestamp = new Date(burndown.end_date).getTime()
 	const formatter = new Intl.DateTimeFormat('pt-BR', {
 		year: 'numeric',
