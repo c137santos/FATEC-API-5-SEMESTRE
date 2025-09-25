@@ -1,13 +1,12 @@
 import logging
+
 import requests
 from django.contrib.auth import get_user_model
-from django.db import transaction
+
+from jiboia.core.models import Issue, IssueType, Project, StatusLog, StatusType, TimeLog
+from jiboia.core.service.strategy.users import SyncUserStrategy
 
 from .base import JiraStrategy
-from jiboia.core.models import (
-    Issue, Project, IssueType, StatusType, TimeLog, StatusLog
-)
-from jiboia.core.service.strategy.users import SyncUserStrategy
 
 logger = logging.getLogger(__name__)
 User = get_user_model()
@@ -38,7 +37,10 @@ class SyncIssuesStrategy(JiraStrategy[int]):
         try:
             project = Project.objects.get(key=project_key)
         except Project.DoesNotExist:
-            logger.error(f"Projeto com a chave '{project_key}' não encontrado no banco. Sincronize os projetos primeiro.")
+            logger.error(
+                f"Projeto com a chave '{project_key}' não encontrado no banco. "
+                "Sincronize os projetos primeiro."
+            )
             return 0
 
         while True:
@@ -91,7 +93,14 @@ class SyncIssuesStrategy(JiraStrategy[int]):
                 "type_issue": issue_type,
                 "id_user": assignee,
                 "description": fields.get("summary", ""),
-                "details": fields.get("description", {}).get('content', [{}])[0].get('content', [{}])[0].get('text', '') if fields.get("description") else "",
+                    "details": (
+                        fields.get("description", {})
+                        .get('content', [{}])[0]
+                        .get('content', [{}])[0]
+                        .get('text', '')
+                        if fields.get("description")
+                        else ""
+                    ),
                 "created_at": fields.get("created"),
                 "end_date": fields.get("resolutiondate"),
                 "time_estimate_seconds": time_estimate_seconds,

@@ -1,6 +1,9 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from jiboia.core.service.strategy.users import SyncUserStrategy
+
 
 @pytest.fixture
 def mock_user_model(monkeypatch):
@@ -13,7 +16,11 @@ def test_execute_user(monkeypatch, mock_user_model):
     strategy = SyncUserStrategy()
     user_data = {'accountId': 'abc', 'displayName': 'Test User'}
     mock_response = MagicMock()
-    mock_response.json.return_value = {"accountId": "abc", "displayName": "Test User", "emailAddress": "test@example.com"}
+    mock_response.json.return_value = {
+        "accountId": "abc",
+        "displayName": "Test User",
+        "emailAddress": "test@example.com",
+    }
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr('requests.get', lambda *a, **k: mock_response)
     # Mock User no namespace do módulo users

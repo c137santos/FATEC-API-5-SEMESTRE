@@ -1,7 +1,8 @@
 import logging
-import requests
-from .base import JiraStrategy
+
 from jiboia.core.models import StatusType
+
+from .base import JiraStrategy
 
 logger = logging.getLogger(__name__)
 
