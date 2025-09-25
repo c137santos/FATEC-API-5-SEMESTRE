@@ -153,6 +153,12 @@ class Migration(migrations.Migration):
                         help_text="A sigla identificadora", max_length=50, unique=True
                     ),
                 ),
+                (
+                    "projectTypeKey",
+                    models.CharField(
+                        help_text="Tipo de projeto", max_length=100, unique=True
+                    ),
+                ),
                 ("name", models.CharField(help_text="Nome do projeto", max_length=255)),
                 (
                     "description",
@@ -160,7 +166,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "start_date_project",
-                    models.DateField(help_text="Data de início do projeto"),
+                    models.DateField(
+                        blank=True, help_text="Data de início do projeto", null=True
+                    ),
                 ),
                 (
                     "end_date_project",

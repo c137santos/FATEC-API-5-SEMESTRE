@@ -3,7 +3,8 @@ from typing import Tuple, TypeVar
 
 from django.conf import settings
 
-from .strategy import JiraStrategy
+from jiboia.core.service.strategy.projects import ProjectsApiStrategy
+
 from .strategy.healthcheck import ProjectsHealthCheckStrategy
 
 logger = logging.getLogger(__name__)
@@ -35,17 +36,18 @@ class JiraService:
         strategy = ProjectsHealthCheckStrategy(email, token, base_url)
         return strategy.execute()
     
+    
     @classmethod
-    def execute_strategy(cls, strategy: JiraStrategy[T]) -> T:
+    def get_projects(cls) -> T:
         """
-        Execute a custom Jira API strategy.
+        Fetch all projects from Jira.
         
-        This method allows for executing any strategy that conforms to the JiraStrategy interface.
-        
-        Args:
-            strategy: A strategy instance that conforms to the JiraStrategy interface
-            
         Returns:
-            T: The result of the strategy execution
+            T: The list of projects retrieved from Jira
         """
-        return strategy.execute()
+        
+        email, token, base_url = cls._get_credentials()
+        strategy = ProjectsApiStrategy(email, token, base_url)
+        projects_raw = strategy.execute()
+        projects_dict = strategy.process(projects_raw)
+        return strategy.save_projects(projects_dict)

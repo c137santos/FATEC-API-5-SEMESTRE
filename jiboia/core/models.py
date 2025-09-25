@@ -99,6 +99,7 @@ class Project(models.Model):
     end_date_project = models.DateField(null=True, blank=True, help_text="Data limite de conclusão")
     uuid = models.IntegerField(unique=True, help_text="Identificador único do Jira")
     jira_id = models.IntegerField(unique=True, help_text="Identificador numérico do Jira")
+    projectTypeKey = models.CharField(max_length=100, help_text="Tipo do projeto no Jira")
 
 
     class Meta:
