@@ -20,26 +20,18 @@ def list_projects_general(issue_breakdown_months: int):
 def list_projects_especific(project_id: int, issue_breakdown_months: int, burndown_days: int):
     today = date.today()
 
-    start_of_period_monthly = today.replace(day=1)
-    start_date_monthly = start_of_period_monthly - relativedelta(months=issue_breakdown_months - 1)    
+    start_date_monthly = today.replace(day=1) - relativedelta(months=issue_breakdown_months - 1)    
     
     start_date_burndown = today - timedelta(days=burndown_days)
+
     all_project_issues = Issue.objects.filter(project_id=project_id)
+    
+    issues_per_month = all_project_issues.filter(created_at__gte=start_date_monthly)
 
-    issues_per_month_data = aggregate_by_month(all_project_issues, start_date_monthly)
-
-    burndown_data = aggregate_burndown(all_project_issues, start_date_burndown)
-
-    total_hours = calculate_total_hours(all_project_issues)
-    status_counts = calculate_status_counts(all_project_issues)
-    dev_hours = calculate_dev_hours(all_project_issues)
+    issues_burndown = all_project_issues.filter(created_at__gte=start_date_burndown)
 
     return {
         "project_id": project_id,
-        "issues_per_month": issues_per_month_data,
-        "issues_today": {}, 
-        "burndown": burndown_data,
-        "total_worked_hours": total_hours,
-        "issues_status": status_counts,
-        "dev_hours": dev_hours
+        "issues_per_month": [i.to_dict_json() for i in issues_per_month],
+        "issues_burndown": [i.to_dict_json() for i in issues_burndown],
     }
