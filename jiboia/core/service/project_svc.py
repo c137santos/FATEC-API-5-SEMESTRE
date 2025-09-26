@@ -18,7 +18,7 @@ def build_issues_per_month(issues_qs, start_date: date, months: int):
     
     for i in range(months):
         month_date = start_date + relativedelta(months=i)
-        month_label = month_date.strftime("%m/%Y")
+        month_label = month_date.isoformat()
         month_issues = issues_qs.filter(
             created_at__year=month_date.year,
             created_at__month=month_date.month

@@ -16,7 +16,6 @@ def test_list_projects_general_success():
     developer_one = user.objects.create_user(username="dev1", password="x")
     developer_two = user.objects.create_user(username="dev2", password="x")
 
-    # Criar todos os status esperados de forma limpa
     statuses = [
         ("pending", 1),
         ("on_going", 2),
@@ -81,8 +80,8 @@ def test_list_projects_general_success():
     result = list_projects_general(2)
 
     assert result["issues_per_month"] == [
-        {"date": "08/2025", "pending": 0, "on_going": 0, "mr": 0, "concluded": 1},
-        {"date": "09/2025", "pending": 1, "on_going": 0, "mr": 0, "concluded": 0},
+        {"date": "2025-08-01", "pending": 0, "on_going": 0, "mr": 0, "concluded": 1},
+        {"date": "2025-09-01", "pending": 1, "on_going": 0, "mr": 0, "concluded": 0},
     ]
 
     assert result["projects"] == [
@@ -111,7 +110,6 @@ def test_list_projects_general_success():
 @pytest.mark.django_db
 @freeze_time("2025-09-24")
 def test_list_projects_general_empty_data():
-    # Criar todos os status esperados
     statuses = [
         ("pending", 1),
         ("on_going", 2),
@@ -124,8 +122,8 @@ def test_list_projects_general_empty_data():
     result = list_projects_general(3)
 
     assert result["issues_per_month"] == [
-        {"date": "07/2025", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
-        {"date": "08/2025", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
-        {"date": "09/2025", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
+        {"date": "2025-07-01", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
+        {"date": "2025-08-01", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
+        {"date": "2025-09-01", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
     ]
     assert result["projects"] == []
