@@ -17,7 +17,9 @@ def test_list_projects_general_success():
     developer_two = user.objects.create_user(username="dev2", password="x")
 
     status_pending = StatusType.objects.create(key="k1", name="pending", jira_id=1)
-    status_concluded = StatusType.objects.create(key="k2", name="concluded", jira_id=2)
+    status_ongoing = StatusType.objects.create(key="k2", name="on_going", jira_id=2)
+    status_mr = StatusType.objects.create(key="k3", name="mr", jira_id=3)
+    status_concluded = StatusType.objects.create(key="k4", name="concluded", jira_id=4)
 
     project_alpha = Project.objects.create(
         key="ALPHA",
@@ -38,6 +40,7 @@ def test_list_projects_general_success():
 
     issue_alpha_1 = Issue.objects.create(description="ia1", project=project_alpha)
     issue_beta_1 = Issue.objects.create(description="ib1", project=project_beta)
+
     Issue.objects.filter(pk=issue_alpha_1.id).update(
         created_at=timezone.make_aware(datetime(2025, 8, 5, 10, 0))
     )
@@ -103,7 +106,13 @@ def test_list_projects_general_success():
 @pytest.mark.django_db
 @freeze_time("2025-09-24")
 def test_list_projects_general_empty_data():
+    StatusType.objects.create(key="k1", name="pending", jira_id=1)
+    StatusType.objects.create(key="k2", name="on_going", jira_id=2)
+    StatusType.objects.create(key="k3", name="mr", jira_id=3)
+    StatusType.objects.create(key="k4", name="concluded", jira_id=4)
+
     result = list_projects_general(3)
+
     assert result["issues_per_month"] == [
         {"date": "07/2025", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
         {"date": "08/2025", "pending": 0, "on_going": 0, "mr": 0, "concluded": 0},
