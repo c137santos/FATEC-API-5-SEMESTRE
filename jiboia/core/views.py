@@ -49,22 +49,12 @@ def list_issues(request):
 
 
 @require_http_methods(["GET"])
-@ajax_login_required
 
 def list_projects_general(request):
     """Lista projetos em geral"""
     logger.info("API list projects")
+    
     issue_breakdown_months = int(request.GET.get("issues_breakdown_months", 1))
     projects = project_svc.list_projects_general(issue_breakdown_months)
-    return JsonResponse({"projects": projects})
-
-@require_http_methods(["GET"])
-@ajax_login_required
-
-def list_projects_especific(request, project_id):
-    """Lista projetos em específicos"""
-    logger.info("API list especific projects")
-    issue_breakdown_months = int(request.GET.get("issues_breakdown_months", 1))
-    burndown_days = int(request.GET.get("burndown_days", 1))
-    especific_projects = project_svc.list_projects_especific(project_id, issue_breakdown_months, burndown_days)
-    return JsonResponse({"projects": especific_projects})
+    
+    return JsonResponse(projects)
