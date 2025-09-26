@@ -6,16 +6,8 @@ import pytest
 MOCK_TODAY = date(2025, 9, 24)
 
 @pytest.fixture
-def mock_today():
-    """Mocka date.today() para retornar uma data fixa."""
-    with patch("jiboia.core.service.project_svc.date") as mock_date:
-        mock_date.today.return_value = MOCK_TODAY
-        mock_date.side_effect = lambda *args, **kwargs: date(*args, **kwargs)
-        yield mock_date
-
-@pytest.fixture
 def mock_project_model():
-    """Simula a classe Project."""
+    """Simulate the classs Project."""
     class MockProject:
         def __init__(self, id, name, start_date_project):
             self.id = id
@@ -25,7 +17,7 @@ def mock_project_model():
 
 @pytest.fixture
 def mock_issue_model():
-    """Simula a classe Issue."""
+    """Simulate the classs Issue."""
     class MockIssue:
         def __init__(self, id, project_id, created_at):
             self.id = id
@@ -38,7 +30,7 @@ def mock_issue_model():
 
 @pytest.fixture
 def mock_timelog_model():
-    """Simula a classe TimeLog."""
+    """Simulate the classs TimeLog."""
     class MockTimeLog:
         def __init__(self, id, id_issue_id, id_user_id, id_user__username, seconds):
             self.id = id
@@ -50,17 +42,16 @@ def mock_timelog_model():
 
 @pytest.fixture
 def mock_statuslog_model():
-    """Simula a classe StatusLog."""
+    """Simulate the classs StatusLog."""
     class MockStatusLog:
         def __init__(self, id, id_issue, new_status_name):
             self.id = id
             self.id_issue = id_issue
-            self.new_status = MagicMock(name=new_status_name) # Simula o objeto de status
+            self.new_status = MagicMock(name=new_status_name) 
     return MockStatusLog
 
 @pytest.fixture
 def mock_managers():
-    """Patch em todos os managers de Models do Django usados na função."""
     with (
         patch("jiboia.core.service.project_svc.Project.objects") as mock_project_manager,
         patch("jiboia.core.service.project_svc.Issue.objects") as mock_issue_manager,
