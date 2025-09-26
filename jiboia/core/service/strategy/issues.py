@@ -2,6 +2,7 @@ import logging
 
 import requests
 from django.contrib.auth import get_user_model
+from django.db.models import Max, Min
 
 from jiboia.core.models import Issue, IssueType, Project, TimeLog
 from jiboia.core.service.strategy.users import SyncUserStrategy
@@ -13,9 +14,22 @@ User = get_user_model()
 
 
 class SyncIssuesStrategy(JiraStrategy[int]):
-    """
-    Synchronizes issues from a Jira project, including worklogs and changelog.
-    """
+
+    @staticmethod
+    def update_project_dates(project: Project):
+        """
+        Updates the project's start_date_project to the earliest start_date
+        and end_date_project to the latest end_date among its issues.
+        """
+        issues = project.issue_set.all()
+        min_start = issues.aggregate(Min('start_date'))['start_date__min']
+        max_end = issues.aggregate(Max('end_date'))['end_date__max']
+        if min_start:
+            project.start_date_project = min_start.date() if hasattr(min_start, 'date') else min_start
+        if max_end:
+            project.end_date_project = max_end.date() if hasattr(max_end, 'date') else max_end
+        project.save()
+
     def _get_worklog_comment_text(self, comment):
         if not comment:
             return ""
@@ -67,6 +81,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
             if (start_at + len(issues_data)) >= data.get("total", 0):
                 break
             start_at += len(issues_data)
+        self.update_project_dates(project)
         logger.info(f"Issues synchronization for project '{project_key}' finished. Total: {synced_count}.")
         return synced_count
 
