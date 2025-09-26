@@ -1,3 +1,41 @@
+def test_update_project_dates(monkeypatch):
+    from datetime import date, datetime
+    # Mock Project e issues
+    class DummyIssue:
+        def __init__(self, start, end):
+            self.start_date = start
+            self.end_date = end
+
+    class DummyQuerySet:
+        def __init__(self, issues):
+            self._issues = issues
+        def all(self):
+            return self
+        def aggregate(self, agg):
+            # agg pode ser Min('start_date') ou Max('end_date')
+            from django.db.models import Max, Min
+            if isinstance(agg, Min):
+                return {'start_date__min': min((i.start_date for i in self._issues if i.start_date), default=None)}
+            if isinstance(agg, Max):
+                return {'end_date__max': max((i.end_date for i in self._issues if i.end_date), default=None)}
+            return {}
+    class DummyProject:
+        def __init__(self):
+            self.start_date_project = None
+            self.end_date_project = None
+            self.saved = False
+            self.issue_set = DummyQuerySet([
+                DummyIssue(datetime(2023, 1, 1), datetime(2023, 1, 10)),
+                DummyIssue(datetime(2023, 1, 5), datetime(2023, 1, 20)),
+                DummyIssue(None, None),
+            ])
+        def save(self):
+            self.saved = True
+    project = DummyProject()
+    SyncIssuesStrategy.update_project_dates(project)
+    assert project.start_date_project == date(2023, 1, 1)
+    assert project.end_date_project == date(2023, 1, 20)
+    assert project.saved
 from unittest.mock import MagicMock
 
 import pytest
@@ -10,11 +48,14 @@ from jiboia.core.service.strategy.issues import SyncIssuesStrategy
 @pytest.fixture
 def mock_issue_model(monkeypatch):
     class DummyIssue:
-        objects = MagicMock()
-    monkeypatch.setattr('jiboia.core.models.Issue', DummyIssue)
-    class DummyProject:
-        objects = MagicMock()
-    monkeypatch.setattr('jiboia.core.models.Project', DummyProject)
+        from unittest.mock import MagicMock
+
+        import pytest
+        import requests
+
+        import jiboia.core.service.strategy.issues as issues_mod
+        from jiboia.core.service.strategy.issues import SyncIssuesStrategy
+
     return DummyIssue, DummyProject
 
 def test_execute_issues(monkeypatch, mock_issue_model):
