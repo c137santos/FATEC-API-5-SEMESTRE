@@ -1,6 +1,7 @@
-import pytest
 from datetime import date
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 MOCK_TODAY = date(2025, 9, 24)
 
@@ -92,6 +93,28 @@ def setup_project_order(mock_managers):
     return _apply
 
 
+def _mock_issues_monthly_side_effect(issue_a1, issue_b1, **kwargs):
+    if kwargs.get("created_at__month") == 8:
+        return [issue_a1]
+    if kwargs.get("created_at__month") == 9:
+        return [issue_b1]
+    return []
+
+
+def _mock_issues_project_side_effect(project_a, project_b, issue_a1, issue_b1, **kwargs):
+    project = kwargs.get("project")
+    if project == project_a:
+        result = [issue_a1]
+    elif project == project_b:
+        result = [issue_b1]
+    else:
+        result = []
+    mock_qs = MagicMock(spec=list, return_value=result)
+    mock_qs.__iter__.side_effect = lambda: iter(result)
+    mock_qs.count.return_value = len(result)
+    return mock_qs
+
+
 @pytest.fixture
 def setup_issue_queryset(mock_managers):
     def _apply(all_issues, project_a, project_b, issue_a1, issue_b1):
@@ -99,31 +122,11 @@ def setup_issue_queryset(mock_managers):
         mock_issues_start_date.all.return_value = all_issues
         mock_managers["issue"].filter.return_value = mock_issues_start_date
 
-        def mock_issues_monthly_side_effect(**kwargs):
-            if kwargs.get("created_at__month") == 8:
-                return [issue_a1]
-            if kwargs.get("created_at__month") == 9:
-                return [issue_b1]
-            return []
-
-        def mock_issues_project_side_effect(**kwargs):
-            project = kwargs.get("project")
-            if project == project_a:
-                result = [issue_a1]
-            elif project == project_b:
-                result = [issue_b1]
-            else:
-                result = []
-            mock_qs = MagicMock(spec=list, return_value=result)
-            mock_qs.__iter__.side_effect = lambda: iter(result)
-            mock_qs.count.return_value = len(result)
-            return mock_qs
-
         def issues_filter_side_effect(**kwargs):
             if "created_at__month" in kwargs:
-                return mock_issues_monthly_side_effect(**kwargs)
+                return _mock_issues_monthly_side_effect(issue_a1, issue_b1, **kwargs)
             if "project" in kwargs:
-                return mock_issues_project_side_effect(**kwargs)
+                return _mock_issues_project_side_effect(project_a, project_b, issue_a1, issue_b1, **kwargs)
             return MagicMock(count=lambda: 0)
 
         mock_issues_start_date.filter.side_effect = issues_filter_side_effect

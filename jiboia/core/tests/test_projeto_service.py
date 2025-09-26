@@ -1,8 +1,16 @@
-from jiboia.core.service.project_svc import list_projects_general
 from unittest.mock import MagicMock
 
+from jiboia.core.service.project_svc import list_projects_general
 
-def test_list_projects_general_success(projects_and_issues, setup_project_order, setup_issue_queryset, setup_statuslog_mock, setup_timelog_mock):
+
+def test_list_projects_general_success(
+    mock_today,
+    projects_and_issues,
+    setup_project_order,
+    setup_issue_queryset,
+    setup_statuslog_mock,
+    setup_timelog_mock,
+):
     project_a, project_b, issue_a1, issue_b1, all_issues = projects_and_issues
     setup_project_order(project_b, project_a)
     setup_issue_queryset(all_issues, project_a, project_b, issue_a1, issue_b1)

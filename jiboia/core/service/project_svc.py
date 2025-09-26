@@ -1,10 +1,11 @@
-import logging
+from collections import Counter
 from datetime import date
+import logging
+
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
-from collections import Counter
 
-from ..models import Project, Issue, TimeLog, StatusLog
+from ..models import Issue, Project, StatusLog, TimeLog
 
 logger = logging.getLogger(__name__)
 
