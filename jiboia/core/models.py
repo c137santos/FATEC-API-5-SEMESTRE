@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Sum
 
 
 class Issue(models.Model):
@@ -67,6 +68,21 @@ class Issue(models.Model):
             "description": self.description,
         }
 
+    @classmethod
+    def created_since_month_start_back(cls, start_date):
+        return cls.objects.filter(created_at__date__gte=start_date)
+
+    @classmethod
+    def for_month(cls, issues_qs, month_date):
+        return issues_qs.filter(
+            created_at__year=month_date.year,
+            created_at__month=month_date.month,
+        )
+
+    @classmethod
+    def for_project(cls, issues_qs, project):
+        return issues_qs.filter(project=project)
+
 #}/rest/api/3/issuetype
 class IssueType(models.Model):
     name = models.CharField(
@@ -109,6 +125,10 @@ class Project(models.Model):
     def __str__(self):
         return self.name_project
 
+    @classmethod
+    def starting_since(cls, start_date):
+        return cls.objects.filter(start_date_project__gte=start_date).order_by("-start_date_project")
+
 class TimeLog(models.Model):
     id_issue = models.ForeignKey(
         Issue,
@@ -135,6 +155,18 @@ class TimeLog(models.Model):
 
     def __str__(self):
         return f"Time log for issue #{self.id_issue_id}"
+
+    @classmethod
+    def total_seconds_for_issues(cls, issues_qs):
+        return cls.objects.filter(id_issue__in=issues_qs).aggregate(total=Sum("seconds")).get("total") or 0
+
+    @classmethod
+    def dev_hours_for_issues(cls, issues_qs):
+        return (
+            cls.objects.filter(id_issue__in=issues_qs)
+            .values("id_user_id", "id_user__username")
+            .annotate(hours=Sum("seconds"))
+        )
 
 #}/rest/api/3/status
 class StatusType(models.Model):
@@ -179,4 +211,8 @@ class StatusLog(models.Model):
 
     def __str__(self):
         return f"Status of issue #{self.id_issue_id} changed from {self.old_status} to {self.new_status}"
+
+    @classmethod
+    def count_by_status_for_issues(cls, issues_qs, status_name):
+        return cls.objects.filter(id_issue__in=issues_qs, new_status__name=status_name).count()
     

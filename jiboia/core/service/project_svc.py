@@ -3,7 +3,6 @@ from collections import Counter
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from django.db.models import Sum
 
 from ..models import Issue, Project, StatusLog, TimeLog
 
@@ -50,82 +49,65 @@ def group_issues_per_month(issues, start_date, end_date):
     return results
 
 
-def list_projects_general(issue_breakdown_months: int):
-    logger.info("Service list projects")
+def calc_start_date(issue_breakdown_months: int) -> date:
     today = date.today()
-    start_date = today.replace(day=1) - relativedelta(months=issue_breakdown_months - 1)
-    
-    issues = Issue.objects.filter(created_at__date__gte=start_date)
+    return today.replace(day=1) - relativedelta(months=issue_breakdown_months - 1)
 
+
+def build_issues_per_month(issues_qs, start_date: date, months: int):
     issues_per_month = []
-    for i in range(issue_breakdown_months):
+    for i in range(months):
         month_date = start_date + relativedelta(months=i)
         month_label = month_date.strftime("%m/%Y")
+        month_issues = Issue.for_month(issues_qs, month_date)
 
-        month_issues = issues.filter(
-            created_at__year=month_date.year,
-            created_at__month=month_date.month
-        )
-
-        pending = StatusLog.objects.filter(
-            id_issue__in=month_issues, new_status__name="pending"
-        ).count()
-        on_going = StatusLog.objects.filter(
-            id_issue__in=month_issues, new_status__name="on_going"
-        ).count()
-        mr = StatusLog.objects.filter(
-            id_issue__in=month_issues, new_status__name="mr"
-        ).count()
-        concluded = StatusLog.objects.filter(
-            id_issue__in=month_issues, new_status__name="concluded"
-        ).count()
+        pending = StatusLog.count_by_status_for_issues(month_issues, "pending")
+        on_going = StatusLog.count_by_status_for_issues(month_issues, "on_going")
+        mr = StatusLog.count_by_status_for_issues(month_issues, "mr")
+        concluded = StatusLog.count_by_status_for_issues(month_issues, "concluded")
 
         issues_per_month.append({
             "date": month_label,
             "pending": pending,
             "on_going": on_going,
             "mr": mr,
-            "concluded": concluded
+            "concluded": concluded,
         })
+    return issues_per_month
 
-    projects = Project.objects.filter(
-        start_date_project__gte=start_date
-    ).order_by("-start_date_project")
 
+def serialize_project(project, project_issues):
+    total_hours = TimeLog.total_seconds_for_issues(project_issues)
+    total_issues = project_issues.count()
+    dev_hours = TimeLog.dev_hours_for_issues(project_issues)
+    dev_hours_list = [
+        {
+            "dev_id": d["id_user_id"],
+            "name": d["id_user__username"],
+            "hours": d["hours"] or 0,
+        }
+        for d in dev_hours
+    ]
+    return {
+        "project_id": project.id,
+        "name": project.name,
+        "total_hours": total_hours,
+        "total_issues": total_issues,
+        "dev_hours": dev_hours_list,
+    }
+
+
+def list_projects_general(issue_breakdown_months: int):
+    logger.info("Service list projects")
+    start_date = calc_start_date(issue_breakdown_months)
+    issues_qs = Issue.created_since_month_start_back(start_date)
+
+    issues_per_month = build_issues_per_month(issues_qs, start_date, issue_breakdown_months)
+
+    projects = Project.starting_since(start_date)
     projects_list = []
     for project in projects:
-        project_issues = issues.filter(project=project)
+        project_issues = Issue.for_project(issues_qs, project)
+        projects_list.append(serialize_project(project, project_issues))
 
-        total_hours = TimeLog.objects.filter(
-            id_issue__in=project_issues
-        ).aggregate(total=Sum("seconds"))["total"] or 0
-
-        total_issues = project_issues.count()
-
-        dev_hours = (
-            TimeLog.objects.filter(id_issue__in=project_issues)
-            .values("id_user_id", "id_user__username")
-            .annotate(hours=Sum("seconds"))
-        )
-
-        dev_hours_list = [
-            {
-                "dev_id": d["id_user_id"],
-                "name": d["id_user__username"],
-                "hours": d["hours"] or 0,
-            }
-            for d in dev_hours
-        ]
-
-        projects_list.append({
-            "project_id": project.id,
-            "name": project.name,
-            "total_hours": total_hours,
-            "total_issues": total_issues,
-            "dev_hours": dev_hours_list,
-        })
-
-    return {
-        "issues_per_month": issues_per_month,
-        "projects": projects_list,
-    }
+    return {"issues_per_month": issues_per_month, "projects": projects_list}
