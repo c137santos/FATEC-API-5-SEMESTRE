@@ -16,10 +16,15 @@ def test_list_projects_general_success():
     developer_one = user.objects.create_user(username="dev1", password="x")
     developer_two = user.objects.create_user(username="dev2", password="x")
 
-    status_pending = StatusType.objects.create(key="k1", name="pending", jira_id=1)
-    status_ongoing = StatusType.objects.create(key="k2", name="on_going", jira_id=2)
-    status_mr = StatusType.objects.create(key="k3", name="mr", jira_id=3)
-    status_concluded = StatusType.objects.create(key="k4", name="concluded", jira_id=4)
+    # Criar todos os status esperados de forma limpa
+    statuses = [
+        ("pending", 1),
+        ("on_going", 2),
+        ("mr", 3),
+        ("concluded", 4),
+    ]
+    for name, jira_id in statuses:
+        StatusType.objects.create(key=f"k{jira_id}", name=name, jira_id=jira_id)
 
     project_alpha = Project.objects.create(
         key="ALPHA",
@@ -48,8 +53,8 @@ def test_list_projects_general_success():
         created_at=timezone.make_aware(datetime(2025, 9, 10, 10, 0))
     )
 
-    StatusLog.objects.create(id_issue=issue_alpha_1, new_status=status_concluded)
-    StatusLog.objects.create(id_issue=issue_beta_1, new_status=status_pending)
+    StatusLog.objects.create(id_issue=issue_alpha_1, new_status=StatusType.objects.get(name="concluded"))
+    StatusLog.objects.create(id_issue=issue_beta_1, new_status=StatusType.objects.get(name="pending"))
 
     TimeLog.objects.create(
         id_issue=issue_alpha_1,
@@ -106,10 +111,15 @@ def test_list_projects_general_success():
 @pytest.mark.django_db
 @freeze_time("2025-09-24")
 def test_list_projects_general_empty_data():
-    StatusType.objects.create(key="k1", name="pending", jira_id=1)
-    StatusType.objects.create(key="k2", name="on_going", jira_id=2)
-    StatusType.objects.create(key="k3", name="mr", jira_id=3)
-    StatusType.objects.create(key="k4", name="concluded", jira_id=4)
+    # Criar todos os status esperados
+    statuses = [
+        ("pending", 1),
+        ("on_going", 2),
+        ("mr", 3),
+        ("concluded", 4),
+    ]
+    for name, jira_id in statuses:
+        StatusType.objects.create(key=f"k{jira_id}", name=name, jira_id=jira_id)
 
     result = list_projects_general(3)
 
