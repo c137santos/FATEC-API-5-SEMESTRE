@@ -5,10 +5,9 @@ from django.conf import settings
 
 from .strategy import JiraStrategy
 from .strategy.healthcheck import ProjectsHealthCheckStrategy
-from .strategy.projects import SyncProjectsStrategy
 from .strategy.issue_types import SyncIssueTypesStrategy
-from .strategy.status_types import SyncStatusTypesStrategy
 from .strategy.issues import SyncIssuesStrategy
+from .strategy.status_types import SyncStatusTypesStrategy
 
 logger = logging.getLogger(__name__)
 T = TypeVar('T')

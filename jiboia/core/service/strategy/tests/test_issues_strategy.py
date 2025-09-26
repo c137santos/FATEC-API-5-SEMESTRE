@@ -1,10 +1,10 @@
 from unittest.mock import MagicMock
 
 import pytest
-
-from jiboia.core.service.strategy.issues import SyncIssuesStrategy
-import jiboia.core.service.strategy.issues as issues_mod
 import requests
+
+import jiboia.core.service.strategy.issues as issues_mod
+from jiboia.core.service.strategy.issues import SyncIssuesStrategy
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ import logging
 import requests
 from django.contrib.auth import get_user_model
 
-from jiboia.core.models import Issue, IssueType, Project, StatusLog, StatusType, TimeLog
+from jiboia.core.models import Issue, IssueType, Project, TimeLog
 from jiboia.core.service.strategy.users import SyncUserStrategy
 
 from .base import JiraStrategy
