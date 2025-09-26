@@ -73,10 +73,7 @@ def mock_managers():
             "timelog": mock_timelog_manager,
             "statuslog": mock_statuslog_manager,
         }
-
-
-# ---- Fixtures auxiliares para o teste de projeto_svc ----
-
+        
 @pytest.fixture
 def projects_and_issues(mock_project_model, mock_issue_model):
     project_a = mock_project_model(id=1, name="Project Alpha", start_date_project=date(2025, 8, 15))

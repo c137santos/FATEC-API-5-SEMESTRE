@@ -4,7 +4,6 @@ from jiboia.core.service.project_svc import list_projects_general
 
 
 def test_list_projects_general_success(
-    mock_today,
     projects_and_issues,
     setup_project_order,
     setup_issue_queryset,

@@ -1,6 +1,6 @@
-from collections import Counter
-from datetime import date
 import logging
+from datetime import date
+from collections import Counter
 
 from dateutil.relativedelta import relativedelta
 from django.db.models import Sum
