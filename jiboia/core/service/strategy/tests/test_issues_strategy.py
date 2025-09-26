@@ -28,7 +28,6 @@ def test_execute_issues(monkeypatch, mock_issue_model):
     issues_mod.Project.objects.get.return_value = dummy_project
     monkeypatch.setattr(strategy, '_sync_issue', lambda *a, **k: MagicMock())
     monkeypatch.setattr(strategy, '_sync_worklogs', lambda *a, **k: None)
-    monkeypatch.setattr(strategy, '_sync_status_logs', lambda *a, **k: None)
     monkeypatch.setattr(requests, 'get', lambda *a, **k: mock_response)
     result = strategy.execute('PRJ')
     assert isinstance(result, int)
