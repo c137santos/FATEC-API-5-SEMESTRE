@@ -51,7 +51,6 @@ def list_issues(request):
 @require_http_methods(["GET"])
 
 def list_projects_general(request):
-    """Lista projetos em geral"""
     logger.info("API list projects")
     
     issue_breakdown_months = int(request.GET.get("issues_breakdown_months", 1))

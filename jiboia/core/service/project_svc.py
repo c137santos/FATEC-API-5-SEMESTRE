@@ -1,85 +1,55 @@
 import logging
-from collections import Counter
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
+from django.db.models import Sum
 
-from ..models import Issue, Project, StatusLog, TimeLog
+from ..models import Issue, Project, StatusLog, StatusType, TimeLog
 
 logger = logging.getLogger(__name__)
-
-def group_issues_per_month(issues, start_date, end_date):
-    results = []
-    current = start_date
-
-    while current <= end_date:
-        month_issues = issues.filter(
-            created_at__year=current.year,
-            created_at__month=current.month,
-        )
-
-        counter = Counter({
-            "pending": 0,
-            "on_going": 0,
-            "mr": 0,
-            "concluded": 0,
-        })
-
-        for issue in month_issues:
-            last_log = (
-                issue.statuslog_set.order_by("-created_at")
-                .select_related("new_status")
-                .first()
-            )
-            if last_log and last_log.new_status:
-                status_name = last_log.new_status.name.lower()
-                if status_name in counter:
-                    counter[status_name] += 1
-
-        results.append({
-            "date": current.strftime("%m/%Y"),
-            "pending": counter["pending"],
-            "on_going": counter["on_going"],
-            "mr": counter["mr"],
-            "concluded": counter["concluded"],
-        })
-
-        current += relativedelta(months=1)
-
-    return results
-
 
 def calc_start_date(issue_breakdown_months: int) -> date:
     today = date.today()
     return today.replace(day=1) - relativedelta(months=issue_breakdown_months - 1)
 
-
 def build_issues_per_month(issues_qs, start_date: date, months: int):
     issues_per_month = []
+    statuses = list(StatusType.objects.all())
+    
     for i in range(months):
         month_date = start_date + relativedelta(months=i)
         month_label = month_date.strftime("%m/%Y")
-        month_issues = Issue.for_month(issues_qs, month_date)
+        month_issues = issues_qs.filter(
+            created_at__year=month_date.year,
+            created_at__month=month_date.month
+        )
 
-        pending = StatusLog.count_by_status_for_issues(month_issues, "pending")
-        on_going = StatusLog.count_by_status_for_issues(month_issues, "on_going")
-        mr = StatusLog.count_by_status_for_issues(month_issues, "mr")
-        concluded = StatusLog.count_by_status_for_issues(month_issues, "concluded")
+        status_counts = {
+            status.name: StatusLog.objects.filter(
+                id_issue__in=month_issues, new_status__name=status.name
+            ).count()
+
+            for status in statuses
+        }
 
         issues_per_month.append({
             "date": month_label,
-            "pending": pending,
-            "on_going": on_going,
-            "mr": mr,
-            "concluded": concluded,
+            **status_counts,
         })
     return issues_per_month
 
-
 def serialize_project(project, project_issues):
-    total_hours = TimeLog.total_seconds_for_issues(project_issues)
+    total_hours = TimeLog.objects.filter(
+        id_issue__in=project_issues
+    ).aggregate(total=Sum("seconds"))["total"] or 0
+    
     total_issues = project_issues.count()
-    dev_hours = TimeLog.dev_hours_for_issues(project_issues)
+    
+    dev_hours = (
+        TimeLog.objects.filter(id_issue__in=project_issues)
+        .values("id_user_id", "id_user__username")
+        .annotate(hours=Sum("seconds"))
+    )
     dev_hours_list = [
         {
             "dev_id": d["id_user_id"],
@@ -96,18 +66,20 @@ def serialize_project(project, project_issues):
         "dev_hours": dev_hours_list,
     }
 
-
 def list_projects_general(issue_breakdown_months: int):
     logger.info("Service list projects")
     start_date = calc_start_date(issue_breakdown_months)
-    issues_qs = Issue.created_since_month_start_back(start_date)
+    issues_qs = Issue.objects.filter(created_at__date__gte=start_date)
 
     issues_per_month = build_issues_per_month(issues_qs, start_date, issue_breakdown_months)
 
-    projects = Project.starting_since(start_date)
+    projects = Project.objects.filter(
+        start_date_project__gte=start_date
+    ).order_by("-start_date_project")
+    
     projects_list = []
     for project in projects:
-        project_issues = Issue.for_project(issues_qs, project)
+        project_issues = issues_qs.filter(project=project)
         projects_list.append(serialize_project(project, project_issues))
 
     return {"issues_per_month": issues_per_month, "projects": projects_list}
