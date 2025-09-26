@@ -23,7 +23,6 @@ def test_execute_user(monkeypatch, mock_user_model):
     }
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr('requests.get', lambda *a, **k: mock_response)
-    # Mock User no namespace do módulo users
     import jiboia.core.service.strategy.users as users_mod
     users_mod.User = MagicMock()
     users_mod.User.objects.get_or_create.return_value = (MagicMock(), True)
@@ -55,7 +54,6 @@ def test_execute_user_missing_fields_in_response(monkeypatch, mock_user_model):
     strategy = SyncUserStrategy()
     user_data = {'accountId': 'abc', 'displayName': 'Test User'}
     mock_response = MagicMock()
-    # missing emailAddress, firstName, lastName
     mock_response.json.return_value = {"accountId": "abc", "displayName": "Test User"}
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr('requests.get', lambda *a, **k: mock_response)

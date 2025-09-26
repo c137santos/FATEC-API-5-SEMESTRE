@@ -14,7 +14,7 @@ User = get_user_model()
 
 class SyncIssuesStrategy(JiraStrategy[int]):
     """
-    Sincroniza as issues de um projeto do Jira, incluindo worklogs e changelog.
+    Synchronizes issues from a Jira project, including worklogs and changelog.
     """
     def _get_worklog_comment_text(self, comment):
         if not comment:
@@ -30,21 +30,19 @@ class SyncIssuesStrategy(JiraStrategy[int]):
     _MAX_RESULTS = 100
 
     def execute(self, project_key: str) -> int:
-        logger.info(f"Iniciando sincronização de issues para o projeto '{project_key}'...")
+        logger.info(f"Starting synchronization of issues for project '{project_key}'...")
         synced_count = 0
         start_at = 0
-
         try:
             project = Project.objects.get(key=project_key)
         except Project.DoesNotExist:
             logger.error(
-                f"Projeto com a chave '{project_key}' não encontrado no banco. "
-                "Sincronize os projetos primeiro."
+                f"Project with key '{project_key}' not found in the database. "
+                "Sync projects first."
             )
             return 0
-
         while True:
-            logger.info(f"Buscando issues a partir do índice {start_at}...")
+            logger.info(f"Fetching issues starting at index {start_at}...")
             params = {
                 "jql": f"project = {project_key} ORDER BY updated DESC",
                 "expand": "changelog",
@@ -69,7 +67,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
             if (start_at + len(issues_data)) >= data.get("total", 0):
                 break
             start_at += len(issues_data)
-        logger.info(f"Sincronização de issues para o projeto '{project_key}' concluída. Total: {synced_count}.")
+        logger.info(f"Issues synchronization for project '{project_key}' finished. Total: {synced_count}.")
         return synced_count
 
     def _sync_issue(self, data: dict, project: Project) -> Issue:
