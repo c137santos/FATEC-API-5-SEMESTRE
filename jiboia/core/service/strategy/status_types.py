@@ -8,20 +8,18 @@ logger = logging.getLogger(__name__)
 
 class SyncStatusTypesStrategy(JiraStrategy[int]):
     """
-    Sincroniza todos os status (Status Types) do Jira.
+    Synchronizes all Jira Status Types with the local database.
     """
     _ENDPOINT = "/rest/api/3/status"
 
     def execute(self) -> int:
         """
-        Executa o processo de sincronização de status.
+        Executes the synchronization process for status types.
         """
-        logger.info("Iniciando a sincronização de Status...")
+        logger.info("Starting synchronization of Status Types...")
         synced_count = 0
-
         response = self._make_request("get", self._ENDPOINT)
         response.raise_for_status()
-
         for status_data in response.json():
             try:
                 category = status_data.get("statusCategory", {})
@@ -32,11 +30,10 @@ class SyncStatusTypesStrategy(JiraStrategy[int]):
                         "key": category.get("key", "undefined"),
                     },
                 )
-                log_action = "CRIADO" if created else "ATUALIZADO"
+                log_action = "CREATED" if created else "UPDATED"
                 logger.info(f"Status '{obj.name}' {log_action}.")
                 synced_count += 1
             except Exception as e:
-                logger.error(f"Falha ao sincronizar status com jira_id {status_data.get('id')}: {e}")
-        
-        logger.info(f"Sincronização de Status concluída. Total: {synced_count}.")
+                logger.error(f"Failed to sync status with jira_id {status_data.get('id')}: {e}")
+        logger.info(f"Status Types synchronization finished. Total: {synced_count}.")
         return synced_count

@@ -8,8 +8,8 @@ User = get_user_model()
 
 class SyncUserStrategy:
     """
-    Sincroniza ou atualiza um usuário do Jira no banco local.
-    Recebe um dicionário de dados do Jira (assignee, author, etc).
+    Synchronizes or updates a Jira user in the local database.
+    Receives a dictionary of Jira user data (assignee, author, etc).
     """
     def execute(self, user_data: dict, email=None, token=None, base_url=None) -> User:
         if not user_data or not user_data.get('accountId') or not email or not token or not base_url:
@@ -21,7 +21,7 @@ class SyncUserStrategy:
             resp.raise_for_status()
             user_data = resp.json()
         except Exception as e:
-            logger.error(f"Erro ao buscar usuário {user_data['accountId']} no Jira: {e}")
+            logger.error(f"Error fetching user {user_data['accountId']} from Jira: {e}")
         email_val = user_data.get('emailAddress') or user_data.get('email')
         username = user_data.get('displayName') or user_data.get('name') or user_data.get('accountId')
         display = user_data.get('displayName') or user_data.get('name') or ''

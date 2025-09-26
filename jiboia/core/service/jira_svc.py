@@ -5,13 +5,31 @@ from django.conf import settings
 
 from .strategy import JiraStrategy
 from .strategy.healthcheck import ProjectsHealthCheckStrategy
+from .strategy.projects import SyncProjectsStrategy
+from .strategy.issue_types import SyncIssueTypesStrategy
+from .strategy.status_types import SyncStatusTypesStrategy
+from .strategy.issues import SyncIssuesStrategy
 
 logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 
 class JiraService:
-    """Service for Jira API integration"""
+
+    @classmethod
+    def sync_all(cls, project_key: str = None) -> dict:
+        """
+        Synchronizes all Jira data by calling all implemented strategies.
+        If project_key is provided, synchronizes issues for that project as well.
+        Returns a dictionary with the result of each sync.
+        """
+        email, token, base_url = cls._get_credentials()
+        results = {}
+        results['issue_types'] = SyncIssueTypesStrategy(email, token, base_url).execute()
+        results['status_types'] = SyncStatusTypesStrategy(email, token, base_url).execute()
+        if project_key:
+            results['issues'] = SyncIssuesStrategy(email, token, base_url).execute(project_key)
+        return results
     
     @classmethod
     def _get_credentials(cls) -> Tuple[str, str, str]:

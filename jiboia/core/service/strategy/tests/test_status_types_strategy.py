@@ -46,7 +46,6 @@ def test_execute_status_types_exception(monkeypatch, mock_status_type_model):
 def test_execute_status_types_missing_fields(monkeypatch, mock_status_type_model):
     strategy = SyncStatusTypesStrategy('email', 'token', 'http://fake-jira')
     mock_response = MagicMock()
-    # Missing statusCategory
     mock_response.json.return_value = [{"id": "2", "name": "In Progress"}]
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr(strategy, '_make_request', lambda *a, **k: mock_response)
