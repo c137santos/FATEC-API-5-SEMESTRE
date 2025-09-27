@@ -2,7 +2,7 @@ import api from './config.js'
 
 export default {
 	overview: async () => {
-		const response = await api.get(`/api/projects/overview?issues_breakdown_months=${6}`)
+		const response = await api.get(`/api/core/projects/overview?issues_breakdown_months=${6}`)
 		return response.data
 	},
 	dashboard: async (i) => {
