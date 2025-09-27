@@ -149,4 +149,33 @@ class StatusType(models.Model):
     def __str__(self):
         return self.name
     
+class StatusLog(models.Model):
+    id_issue = models.ForeignKey(
+        Issue,
+        on_delete=models.CASCADE,
+        db_column="id_issue",
+        help_text="Id conexão tabela Issue"
+        )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação do log")
+    old_status = models.ForeignKey(
+        StatusType,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='old_status_logs',
+        help_text="Id conexão com Status que represente o anterior"
+    )
+    new_status = models.ForeignKey(
+        StatusType,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='new_status_logs',
+        help_text="Id conexão com Status que represente o atual"
+    )
+    class Meta:
+        db_table = 'status_log'
+        verbose_name = 'Status Log'
+        verbose_name_plural = 'Status Logs'
+
+    def __str__(self):
+        return f"Status of issue #{self.id_issue_id} changed from {self.old_status} to {self.new_status}"
     
