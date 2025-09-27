@@ -31,12 +31,13 @@ class SyncIssuesStrategy(JiraStrategy[int]):
         project.save()
 
     def _get_worklog_comment_text(self, comment):
-        if  comment:
+        content = []
+        if comment:
             content = comment if isinstance(comment, list) else comment.get("content", [])
         if content:
             inner = content[0].get("content", []) if isinstance(content[0], dict) else []
-        if inner:
-            return inner[0].get("text", "") if isinstance(inner[0], dict) else ""
+            if inner:
+                return inner[0].get("text", "") if isinstance(inner[0], dict) else ""
         return ""
 
     _ENDPOINT = "/rest/api/3/search/jql"
