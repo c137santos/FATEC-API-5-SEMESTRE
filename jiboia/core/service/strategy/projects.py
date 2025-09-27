@@ -5,6 +5,7 @@ import logging
 from typing import Tuple
 
 from jiboia.core.service import projects_svc
+
 from .base import JiraStrategy
 
 logger = logging.getLogger(__name__)

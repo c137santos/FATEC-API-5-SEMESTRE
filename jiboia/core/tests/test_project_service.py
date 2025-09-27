@@ -1,6 +1,8 @@
 import pytest
+
 from jiboia.core.models import Project
 from jiboia.core.service.projects_svc import save_projects
+
 
 @pytest.mark.django_db
 def test_save_projects_creates_new_projects():

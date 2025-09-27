@@ -151,7 +151,7 @@ def test_get_projects_api_error(mock_execute, mock_process, mock_save_projects):
 @patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.save_projects')
 @patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.process')
 @patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.execute')
-def test_get_projects_success(mock_execute, mock_process, mock_save_projects):
+def test_get_projects_success_called(mock_execute, mock_process, mock_save_projects):
     mock_execute.return_value = [
         {"id": "10000", "key": "PROJ1", "name": "Projeto 1"},
         {"id": "10001", "key": "PROJ2", "name": "Projeto 2"}

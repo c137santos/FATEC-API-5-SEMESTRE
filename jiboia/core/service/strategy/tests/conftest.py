@@ -76,7 +76,7 @@ def projects_data():
             {
                 "self": "https://fatec/rest/api/3/issuetype/10555",
                 "id": "10555",
-                "description": "As subtarefas monitoram pequenas partes do trabalho que fazem parte de uma tarefa maior.",
+                "description": "As subtarefas monitoram pequenas partes do trabalho que fazem parte de uma tarefa.",
                 "iconUrl": "https://fatec/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
                 "name": "Subtarefa",
                 "subtask": True,
@@ -139,7 +139,7 @@ def projects_data():
             {
                 "self": "https://fatec/rest/api/3/issuetype/10561",
                 "id": "10561",
-                "description": "As subtarefas monitoram pequenas partes do trabalho que fazem parte de uma tarefa maior.",
+                "description": "As subtarefas monitoram pequenas partes do trabalho que fazem parte de uma tarefa.",
                 "iconUrl": "https://fatec/rest/api/2/universal_avatar/view/type/issuetype/avatar/10316?size=medium",
                 "name": "Subtarefa",
                 "subtask": True,

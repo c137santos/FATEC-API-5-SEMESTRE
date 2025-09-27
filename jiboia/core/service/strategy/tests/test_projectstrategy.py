@@ -58,15 +58,54 @@ def test_projects_strategy_exception(mock_get):
     assert "Connection error" in data
 
 
-from jiboia.core.service.strategy.projects import ProjectsApiStrategy
 
 def test_projects_strategy_process(projects_data):
     strategy = ProjectsApiStrategy('test@example.com', 'token123', 'https://jira.example.com')
     processed = strategy.process(projects_data)
-    assert processed == [{'jira_id': '10200', 'uuid': 'e915ce14-18fc-417a-92fb', 'key': 'SM2', 'name': 'SOS MNT 2025', 'projectTypeKey': 'software', 'simplified': True, 'start_date_project': None, 'end_date_project': None}, {'jira_id': '10202', 'uuid': '950c63a2-e6bb-4e5d-8390', 'key': 'SE', 'name': 'SOS Edital', 'projectTypeKey': 'software', 'simplified': True, 'start_date_project': None, 'end_date_project': None}]
+    assert  processed == [{
+      "jira_id":"10200",
+      "uuid":"e915ce14-18fc-417a-92fb",
+      "key":"SM2",
+      "name":"SOS MNT 2025",
+      "projectTypeKey":"software",
+      "simplified":True,
+      "start_date_project": None,
+      "end_date_project": None
+   },
+   {
+      "jira_id":"10202",
+      "uuid":"950c63a2-e6bb-4e5d-8390",
+      "key":"SE",
+      "name":"SOS Edital",
+      "projectTypeKey":"software",
+      "simplified":True,
+      "start_date_project": None, 
+      "end_date_project":None
+   }
+    ]
 
 def test_projects_strategy_save_projects_success(db):
-    processed = [{'jira_id': '10200', 'uuid': '950c63a2-e6bb-4e5d-8390', 'key': 'SM2', 'name': 'SOS MNT 2025', 'projectTypeKey': 'software', 'simplified': True, 'start_date_project': None, 'end_date_project': None}, {'jira_id': '10202', 'uuid': '950c63a2-e6bb-4e5d-8390', 'key': 'SE', 'name': 'SOS Edital', 'projectTypeKey': 'software', 'simplified': True, 'start_date_project': None, 'end_date_project': None}]
+    processed =[{
+      "jira_id":"10200",
+      "uuid":"e915ce14-18fc-417a-92fb",
+      "key":"SM2",
+      "name":"SOS MNT 2025",
+      "projectTypeKey":"software",
+      "simplified":True,
+      "start_date_project": None,
+      "end_date_project":None
+   },
+   {
+      "jira_id":"10202",
+      "uuid":"950c63a2-e6bb-4e5d-8390",
+      "key":"SE",
+      "name":"SOS Edital",
+      "projectTypeKey":"software",
+      "simplified":True,
+      "start_date_project": None,
+      "end_date_project": None
+   }
+    ] 
 
     strategy = ProjectsApiStrategy('test@example.com', 'token123', 'https://jira.example.com')
     success, msg = strategy.save_projects(processed)
@@ -75,7 +114,27 @@ def test_projects_strategy_save_projects_success(db):
 
 @patch("jiboia.core.service.projects_svc.save_projects")
 def test_projects_strategy_save_projects_exception(mock_save_projects, db):
-    processed = [{'jira_id': '10200', 'uuid': 'e915ce14-18fc-417a-92fb', 'key': 'SM2', 'name': 'SOS MNT 2025', 'projectTypeKey': 'software', 'simplified': True, 'start_date_project': None, 'end_date_project': None}, {'jira_id': '10202', 'uuid': '950c63a2-e6bb-4e5d-8390', 'key': 'SE', 'name': 'SOS Edital', 'projectTypeKey': 'software', 'simplified': True, 'start_date_project': None, 'end_date_project': None}]
+    processed =[{
+      "jira_id":"10200",
+      "uuid":"950c63a2-e6bb-4e5d-8390",
+      "key":"SM2",
+      "name":"SOS MNT 2025",
+      "projectTypeKey":"software",
+      "simplified":True,
+      "start_date_project":None,
+      "end_date_project": None
+   },
+   {
+      "jira_id":"10202",
+      "uuid":"950c63a2-e6bb-4e5d-8390",
+      "key":"SE",
+      "name":"SOS Edital",
+      "projectTypeKey":"software",
+      "simplified":True,
+      "start_date_project":None,
+      "end_date_project": None
+   }
+    ]     
     mock_save_projects.side_effect = Exception("DB error")
     strategy = ProjectsApiStrategy('test@example.com', 'token123', 'https://jira.example.com')
     success, msg = strategy.save_projects(processed)
