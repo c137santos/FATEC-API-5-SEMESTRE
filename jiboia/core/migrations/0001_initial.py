@@ -288,60 +288,6 @@ class Migration(migrations.Migration):
                 "db_table": "log_tempo",
             },
         ),
-        migrations.CreateModel(
-            name="StatusLog",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "created_at",
-                    models.DateTimeField(
-                        auto_now_add=True, help_text="Data de criação do log"
-                    ),
-                ),
-                (
-                    "id_issue",
-                    models.ForeignKey(
-                        db_column="id_issue",
-                        help_text="Id conexão tabela Issue",
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="core.issue",
-                    ),
-                ),
-                (
-                    "new_status",
-                    models.ForeignKey(
-                        help_text="Id conexão com Status que represente o atual",
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="new_status_logs",
-                        to="core.statustype",
-                    ),
-                ),
-                (
-                    "old_status",
-                    models.ForeignKey(
-                        help_text="Id conexão com Status que represente o anterior",
-                        null=True,
-                        on_delete=django.db.models.deletion.SET_NULL,
-                        related_name="old_status_logs",
-                        to="core.statustype",
-                    ),
-                ),
-            ],
-            options={
-                "verbose_name": "Status Log",
-                "verbose_name_plural": "Status Logs",
-                "db_table": "status_log",
-            },
-        ),
         migrations.AddField(
             model_name="issue",
             name="project",

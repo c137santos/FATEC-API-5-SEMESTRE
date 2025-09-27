@@ -12,7 +12,7 @@ def test_save_projects_creates_new_projects():
             "description": "Desc 1",
             "start_date_project": "2024-01-01",
             "end_date_project": "2024-12-31",
-            "uuid": 101,
+            "uuid": "uiahisuah",
             "projectTypeKey": "software"
         },
         {
@@ -22,7 +22,7 @@ def test_save_projects_creates_new_projects():
             "description": "Desc 2",
             "start_date_project": "2024-02-01",
             "end_date_project": "2024-11-30",
-            "uuid": 102,
+            "uuid": "aloualoui",
             "projectTypeKey": "business"
         }
     ]
@@ -35,7 +35,7 @@ def test_save_projects_creates_new_projects():
     assert proj1.description == "Desc 1"
     assert str(proj1.start_date_project) == "2024-01-01"
     assert str(proj1.end_date_project) == "2024-12-31"
-    assert proj1.uuid == 101
+    assert proj1.uuid == "uiahisuah"
     assert proj1.projectTypeKey == "software"
 
     proj2 = Project.objects.get(jira_id=2)
@@ -43,7 +43,7 @@ def test_save_projects_creates_new_projects():
     assert proj2.description == "Desc 2"
     assert str(proj2.start_date_project) == "2024-02-01"
     assert str(proj2.end_date_project) == "2024-11-30"
-    assert proj2.uuid == 102
+    assert proj2.uuid == "aloualoui"
     assert proj2.projectTypeKey == "business"
 
 @pytest.mark.django_db
@@ -67,7 +67,7 @@ def test_save_projects_updates_existing_project():
             "description": "Nova descrição",
             "start_date_project": "2024-01-01",
             "end_date_project": "2024-12-31",
-            "uuid": 101,
+            "uuid": "101",
             "projectTypeKey": "software"
         }
     ]
