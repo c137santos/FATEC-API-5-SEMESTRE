@@ -16,7 +16,7 @@ A implementação utiliza o pacote `django-crontab`, que integra os cron jobs do
 
 1. **Serviços** - Classes que encapsulam a lógica de negócios e chamadas externas, localizados em `jiboia/core/service/`.
 2. **Funções de Cron** - Funções que são executadas pelo agendador, localizadas em `jiboia/core/cron.py`.
-3. **Configuração** - Definição dos agendamentos no `settings.py` do Django.
+3. **Configuração** - Definição dos agendamentos no `settings.py` do Django'.
 
 ## Configuração
 

@@ -196,11 +196,15 @@ JIRA_API_TOKEN = config("JIRA_API_TOKEN", default="")
 JIRA_API_URL = config("JIRA_API_URL", default="https://necto.atlassian.net")
 
 # Configuração do django-crontab
+
+# Cron jobs configuration
 CRONJOBS = [
-    # Formato: ('minuto hora dia_do_mês mês dia_da_semana', 'caminho.para.função', 
-    #           ['argumentos opcionais'], {'kwargs opcionais'}, 'id_único')
+    # Healthcheck at midnight (existing)
     ('0 0 * * *', 'jiboia.core.cron.jira_healthcheck', 
      '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck'),
+    # New: Sync issues for all projects at 3 AM (separate flow)
+    ('0 3 * * *', 'jiboia.core.cron.jira_sync_issues_all_projects',
+     '>> /tmp/jira_sync_issues.log 2>&1', {}, 'jira_sync_issues_all_projects'),
     ('0 1 * * *', 'jiboia.core.cron.jira_project', 
      '>> /tmp/jira_project.log 2>&1', {}, 'jira_daily_project')
 ]

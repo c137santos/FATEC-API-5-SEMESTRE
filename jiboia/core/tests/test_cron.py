@@ -1,8 +1,8 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from freezegun import freeze_time
 
-from jiboia.core.cron import jira_healthcheck, jira_project
+from jiboia.core.cron import jira_healthcheck, jira_sync_issues_all_projects, jira_project
 
 
 @freeze_time("2025-09-19 00:00:01")
@@ -65,6 +65,19 @@ def test_jira_healthcheck_logging_failure(mock_logger, mock_healthcheck):
     mock_logger.error.assert_called_once_with(
         '[CRON] Jira API healthcheck failed after 0.00s: Failed with status 500'
     )
+
+@freeze_time("2025-09-19 03:00:00")
+@patch('jiboia.core.cron.JiraService')
+@patch('jiboia.core.cron.Project')
+def test_jira_sync_issues_all_projects(mock_project, mock_jira_service):
+    mock_projects = [MagicMock(key='PRJ1'), MagicMock(key='PRJ2')]
+    mock_project.objects.all.return_value = mock_projects
+    mock_jira_service.sync_all.return_value = {'issues': 2}
+    result = jira_sync_issues_all_projects()
+    assert result is True
+    assert mock_jira_service.sync_all.call_count == 2
+    mock_jira_service.sync_all.assert_any_call(project_key='PRJ1')
+    mock_jira_service.sync_all.assert_any_call(project_key='PRJ2')
 
 
 @freeze_time("2025-09-19 00:00:01")
