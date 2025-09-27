@@ -20,33 +20,47 @@ import { chartColors } from '@/utils/chart-utils'
 
 const issuesList = defineModel()
 
-const statusBreakdownData = computed(() => ({
-	labels: issuesList.value.map(issue => issue.date),
-	datasets: [
-		{
-			label: "Pendente",
-			data: issuesList.value.map(issue => issue.pending),
-			backgroundColor: chartColors[0],
-			borderColor: chartColors[0]
-		},
-		{
-			label: "Em andamento",
-			data: issuesList.value.map(issue => issue.on_going),
-			backgroundColor: chartColors[1],
-			borderColor: chartColors[1]
-		},
-		{
-			label: "MR",
-			data: issuesList.value.map(issue => issue.mr),
-			backgroundColor: chartColors[2],
-			borderColor: chartColors[2]
-		},
-		{
-			label: "Concluido",
-			data: issuesList.value.map(issue => issue.concluded),
-			backgroundColor: chartColors[3],
-			borderColor: chartColors[3]
-		},
-	]
-}))
+const initiateDataset = () => {
+	const datasets = []
+	let i = 0
+	for (const issue of issuesList.value) {
+		for (const key of Object.keys(issue)) {
+			if(key === 'date') continue
+			const dataset = datasets.find(d => d.label === key)
+			if (dataset) continue
+			datasets.push({ 
+				label: key,
+				data: [],
+				backgroundColor: chartColors[i],
+				borderColor: chartColors[i] 
+			})
+			i ++
+		}
+	}
+	return datasets
+}
+
+const populateDataset = (datasets) => {
+	for (const issue of issuesList.value) {
+		for (const [key, value] of Object.entries(issue)) {
+			if(key === 'date') continue
+			const dataset = datasets.find(d => d.label === key)
+			dataset.data.push(value)
+		}
+	}
+}
+
+const statusBreakdownData = computed(() => {
+	const datasets = initiateDataset()
+	console.log(datasets)
+	populateDataset(datasets)
+
+	console.log(datasets)
+	
+	return {
+		labels: issuesList.value.map(issue => issue.date),
+		datasets,
+	} 
+})
+
 </script>
