@@ -51,6 +51,13 @@ class Issue(models.Model):
         null=True,
         help_text="O tipo da issue (ex: História, Tarefa, Bug)"
     )
+
+    status = models.ForeignKey(
+        'StatusType',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        help_text="O status atual da issue"
+    )
     jira_id = models.IntegerField(null=True, help_text="Identificador único da issue no Jira")
 
     class Meta:
