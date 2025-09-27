@@ -1,8 +1,11 @@
 import json
+
 import pytest
 from django.urls import reverse
 from django.utils import timezone
-from jiboia.core.models import Project, StatusType, Issue, IssueType
+
+from jiboia.core.models import Issue, IssueType, Project, StatusType
+
 
 @pytest.fixture
 def setup_project_data(db):

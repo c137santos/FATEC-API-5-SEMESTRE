@@ -1,9 +1,11 @@
-import pytest
 from datetime import timedelta
-from django.utils import timezone
-from django.db.models import Sum
-from jiboia.core.models import Project, Issue, TimeLog, IssueType, StatusType
+
+import pytest
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
+from django.utils import timezone
+
+from jiboia.core.models import Issue, IssueType, Project, StatusType, TimeLog
 from jiboia.core.service.project_overview_svc import get_project_overview
 
 User = get_user_model()

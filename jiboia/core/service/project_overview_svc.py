@@ -1,42 +1,21 @@
 import logging
-import datetime
 from calendar import monthrange
-from django.db.models import Sum, Count, Q
-from django.utils import timezone
 from datetime import timedelta
-from ..models import Project, Issue, IssueType, TimeLog, StatusType
+
+from django.db.models import Sum
+from django.utils import timezone
+
+from ..models import Issue, IssueType, Project, StatusType, TimeLog
 
 logger = logging.getLogger(__name__)
 
-def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5):
-    """
-    Get detailed overview of a specific project
-    
-    Args:
-        project_id (int): The ID of the project
-        issues_breakdown_months (int): Number of months to include in issues breakdown
-        burndown_days (int): Number of days to include in burndown chart
-        
-    Returns:
-        dict: Project overview data
-    """
-    logger.info(f"SERVICE getting overview for project {project_id}")
-    
-    try:
-        project = Project.objects.get(pk=project_id)
-    except Project.DoesNotExist:
-        logger.error(f"Project with ID {project_id} not found")
-        return None
-    
+def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
+    """Helper function to get issues per month breakdown"""
+    issues_per_month = []
     today = timezone.now()
     
-    # Get all status types from the database
-    all_status_types = StatusType.objects.all()
-    
-    issues_per_month = []
     for i in range(issues_breakdown_months - 1, -1, -1):
         date_month = today - timedelta(days=30 * i)
-        month_start = date_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         month_end_day = monthrange(date_month.year, date_month.month)[1]
         month_end = date_month.replace(day=month_end_day, hour=23, minute=59, second=59, microsecond=999999)
         
@@ -63,7 +42,13 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
             month_data["no_status"] = no_status_count
         
         issues_per_month.append(month_data)
-    # Today's issues breakdown using actual status values
+    
+    return issues_per_month
+
+
+def _get_issues_today(project, all_status_types):
+    """Helper function to get today's issues breakdown"""
+    today = timezone.now()
     issues_today = {"date": today.strftime("%m/%Y")}
     
     # Count issues for each status type
@@ -83,8 +68,13 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
     ).count()
     if no_status_count > 0:
         issues_today["no_status"] = no_status_count
-    
-    # Burndown chart data
+        
+    return issues_today
+
+
+def _get_burndown_data(project, burndown_days):
+    """Helper function to get burndown chart data"""
+    today = timezone.now()
     burndown = {
         "end_date": (today + timedelta(days=burndown_days)).strftime("%d/%m/%Y"),
         "pending_per_day": []
@@ -101,19 +91,31 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
             "pending": expected_pending
         })
     
-    total_worked_hours = TimeLog.objects.filter(
+    return burndown
+
+
+def _get_total_worked_hours(project):
+    """Helper function to calculate total worked hours for a project"""
+    total_seconds = TimeLog.objects.filter(
         id_issue__project=project
     ).aggregate(total=Sum('seconds'))['total'] or 0
     
-    total_worked_hours = round(total_worked_hours / 3600)
-    
+    return round(total_seconds / 3600)
+
+
+def _get_issues_by_type(project):
+    """Helper function to get issues by type for a project"""
     issues_by_type = {}
     issue_types = IssueType.objects.all()
     for issue_type in issue_types:
         count = Issue.objects.filter(project=project, type_issue=issue_type).count()
         if count > 0:
             issues_by_type[issue_type.name.lower()] = count
-    
+    return issues_by_type
+
+
+def _get_dev_hours(project):
+    """Helper function to get developer hours for a project"""
     dev_hours = []
     time_logs_by_user = TimeLog.objects.filter(
         id_issue__project=project
@@ -128,6 +130,46 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
                 "name": entry['id_user__username'],
                 "hours": round(entry['total_seconds'] / 3600)
             })
+    return dev_hours
+
+
+def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5):
+    """
+    Get detailed overview of a specific project
+    
+    Args:
+        project_id (int): The ID of the project
+        issues_breakdown_months (int): Number of months to include in issues breakdown
+        burndown_days (int): Number of days to include in burndown chart
+        
+    Returns:
+        dict: Project overview data
+    """
+    logger.info(f"SERVICE getting overview for project {project_id}")
+    
+    try:
+        project = Project.objects.get(pk=project_id)
+    except Project.DoesNotExist:
+        logger.error(f"Project with ID {project_id} not found")
+        return None
+    
+    # Get all status types from the database
+    all_status_types = StatusType.objects.all()
+    
+    # Get issues per month breakdown
+    issues_per_month = _get_issues_per_month(project, all_status_types, issues_breakdown_months)
+    
+    # Get today's issues breakdown
+    issues_today = _get_issues_today(project, all_status_types)
+    
+    # Get burndown chart data
+    burndown = _get_burndown_data(project, burndown_days)
+    
+    total_worked_hours = _get_total_worked_hours(project)
+    
+    issues_by_type = _get_issues_by_type(project)
+    
+    dev_hours = _get_dev_hours(project)
     
     overview = {
         "project_id": project.id,

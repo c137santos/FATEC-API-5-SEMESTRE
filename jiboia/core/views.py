@@ -9,8 +9,7 @@ from django.views.decorators.http import require_http_methods
 from jiboia.core.service.jira_svc import JiraService
 
 from ..commons.django_views_utils import ajax_login_required
-from .service import issues_svc
-from .service import project_overview_svc
+from .service import issues_svc, project_overview_svc
 
 logger = logging.getLogger(__name__)
 
