@@ -172,11 +172,11 @@ const burndownData = computed(() => {
 	const step = burndownMax / daysLabelList.length
 
 	return {	
-		labels: daysLabelList,
+		labels: [...daysLabelList, ''],
 		datasets: [
 			{
 				label: 'Burndown',
-				data: daysLabelList.map((_, i) => burndownMax - (step * i)),
+				data: [...daysLabelList.map((_, i) => burndownMax - (step * i)), 0],
 				borderColor: chartColors[1]
 			},
 			{
@@ -190,16 +190,15 @@ const burndownData = computed(() => {
 
 const issueStatusData = computed(() => {
 	const issuesStatus = dataRef.value?.issues_today
-	
+
 	if(!issuesStatus) return emptyDataset
+	delete issuesStatus.date
 
 	return {
-		labels: ['Pendente', 'Em andamento', 'MR', 'Concluida'],
+		labels: Object.keys(issuesStatus),
 		datasets: [
 			{
-				data: [
-					issuesStatus.pending, issuesStatus.on_going, issuesStatus.mr, issuesStatus.concluded
-				],
+				data: Object.values(issuesStatus),
 				backgroundColor: chartColors,
 				borderColor: 'rgba(0,0,0,0)'
 			},
@@ -212,14 +211,10 @@ const issuesTypeData = computed(() => {
 	if(!issuesType) return emptyDataset
 
 	return {
-		labels: ['Task', 'Bug', 'Story'],
+		labels: Object.keys(issuesType),
 		datasets: [
 			{
-				data: [
-					issuesType.task,
-					issuesType.bug,
-					issuesType.story
-				],
+				data: Object.values(issuesType),
 				borderColor: 'rgba(0, 0, 0, 0)',
 				backgroundColor: chartColors,
 			}
@@ -247,17 +242,18 @@ const workedHours = computed(() => !dataRef.value ? 0 : dataRef.value.total_work
 
 const activeIssues = computed(() => !dataRef.value ? 0 : (() => {
 	const today = dataRef.value.issues_today
-	return today.pending + today.on_going + today.mr
+	return Object.values(today).reduce((total, value) => total + value, 0) - today.concluded
 })())
 const concludedIssues = computed(() => !dataRef.value ? 0 : dataRef.value.issues_today.concluded)
 
 const issuesTotal = computed(() => !dataRef.value ? 0 : (() => {
 	const today = dataRef.value.issues_today
-	return today.pending + today.on_going + today.mr + today.concluded
+	return Object.values(today).reduce((total, value) => total + value, 0)
 })())
 
 onMounted(async () => {
 	const data = await projectsApi.dashboard(route.params.id)
+	console.log(data)
 	name.value = data.name
 	dataRef.value = data
 	issuesList.value = data.issues_per_month
