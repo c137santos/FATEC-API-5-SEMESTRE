@@ -74,9 +74,9 @@ def list_projects_general(issue_breakdown_months: int):
     issues_per_month = build_issues_per_month(issues_qs, start_date, issue_breakdown_months)
 
     projects = Project.objects.filter(
-        start_date_project__gte=start_date
-    ).order_by("-start_date_project")
-    
+        issue__in=issues_qs 
+    ).distinct().order_by("-start_date_project")
+
     projects_list = []
     for project in projects:
         project_issues = issues_qs.filter(project=project)

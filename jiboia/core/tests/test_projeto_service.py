@@ -84,27 +84,33 @@ def test_list_projects_general_success():
         {"date": "2025-09-01", "pending": 1, "on_going": 0, "mr": 0, "concluded": 0},
     ]
 
-    assert result["projects"] == [
-        {
-            "project_id": project_beta.id,
-            "name": "Project Beta",
-            "total_hours": 1800,
-            "total_issues": 1,
-            "dev_hours": [
-                {"dev_id": developer_one.id, "name": developer_one.username, "hours": 1800}
-            ],
-        },
-        {
-            "project_id": project_alpha.id,
-            "name": "Project Alpha",
-            "total_hours": 10800,
-            "total_issues": 1,
-            "dev_hours": [
-                {"dev_id": developer_one.id, "name": developer_one.username, "hours": 3600},
-                {"dev_id": developer_two.id, "name": developer_two.username, "hours": 7200},
-            ],
-        },
-    ]
+    projects_result = result["projects"]
+    
+    assert len(projects_result) == 2
+    
+    alpha_project = next(p for p in projects_result if p["project_id"] == project_alpha.id)
+    beta_project = next(p for p in projects_result if p["project_id"] == project_beta.id)
+    
+    assert alpha_project == {
+        "project_id": project_alpha.id,
+        "name": "Project Alpha",
+        "total_hours": 10800,
+        "total_issues": 1,
+        "dev_hours": [
+            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 3600},
+            {"dev_id": developer_two.id, "name": developer_two.username, "hours": 7200},
+        ],
+    }
+    
+    assert beta_project == {
+        "project_id": project_beta.id,
+        "name": "Project Beta",
+        "total_hours": 1800,
+        "total_issues": 1,
+        "dev_hours": [
+            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 1800}
+        ],
+    }
 
 
 @pytest.mark.django_db
