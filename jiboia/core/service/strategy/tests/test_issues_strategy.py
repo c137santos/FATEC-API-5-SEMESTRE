@@ -1,5 +1,14 @@
+from datetime import date, datetime
+from unittest.mock import MagicMock
+
+import pytest
+import requests
+
+import jiboia.core.service.strategy.issues as issues_mod
+from jiboia.core.service.strategy.issues import SyncIssuesStrategy
+
+
 def test_update_project_dates(monkeypatch):
-    from datetime import date, datetime
     # Mock Project e issues
     class DummyIssue:
         def __init__(self, start, end):
@@ -36,28 +45,9 @@ def test_update_project_dates(monkeypatch):
     assert project.start_date_project == date(2023, 1, 1)
     assert project.end_date_project == date(2023, 1, 20)
     assert project.saved
-from unittest.mock import MagicMock
-
-import pytest
-import requests
-
-import jiboia.core.service.strategy.issues as issues_mod
-from jiboia.core.service.strategy.issues import SyncIssuesStrategy
 
 
 @pytest.fixture
-def mock_issue_model(monkeypatch):
-    class DummyIssue:
-        from unittest.mock import MagicMock
-
-        import pytest
-        import requests
-
-        import jiboia.core.service.strategy.issues as issues_mod
-        from jiboia.core.service.strategy.issues import SyncIssuesStrategy
-
-    return DummyIssue, DummyProject
-
 def test_execute_issues(monkeypatch, mock_issue_model):
     strategy = SyncIssuesStrategy('email', 'token', 'http://fake-jira')
     mock_response = MagicMock()
