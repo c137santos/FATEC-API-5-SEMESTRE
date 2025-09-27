@@ -31,22 +31,19 @@ class SyncIssuesStrategy(JiraStrategy[int]):
         project.save()
 
     def _get_worklog_comment_text(self, comment):
-        if not comment:
-            return ""
-        content = comment.get("content", [])
-        if not content:
-            return ""
-        inner = content[0].get("content", []) if isinstance(content[0], dict) else []
-        if not inner:
-            return ""
-        return inner[0].get("text", "") if isinstance(inner[0], dict) else ""
+        if  comment:
+            content = comment if isinstance(comment, list) else comment.get("content", [])
+        if content:
+            inner = content[0].get("content", []) if isinstance(content[0], dict) else []
+        if inner:
+            return inner[0].get("text", "") if isinstance(inner[0], dict) else ""
+        return ""
+
     _ENDPOINT = "/rest/api/3/search/jql"
     _MAX_RESULTS = 100
-
     def execute(self, project_key: str) -> int:
         logger.info(f"Starting synchronization of issues for project '{project_key}'...")
         synced_count = 0
-        start_at = 0
         try:
             project = Project.objects.get(key=project_key)
         except Project.DoesNotExist:
@@ -55,32 +52,25 @@ class SyncIssuesStrategy(JiraStrategy[int]):
                 "Sync projects first."
             )
             return 0
-        while True:
-            logger.info(f"Fetching issues starting at index {start_at}...")
-            params = {
-                "jql": f"project = {project_key} ORDER BY updated DESC",
-                "expand": "changelog",
-                "fields": "*all",
-                "startAt": start_at,
-                "maxResults": self._MAX_RESULTS,
-            }
-            response = requests.get(
-                f"{self.base_url}{self._ENDPOINT}",
-                params=params,
-                auth=(self.email, self.token),
-                timeout=30
-            )
-            data = response.json()
-            issues_data = data.get("issues", [])
-            if not issues_data:
-                break
-            for issue_data in issues_data:
-                issue_obj = self._sync_issue(issue_data, project)
-                self._sync_worklogs(issue_obj, issue_data)
-                synced_count += 1
-            if (start_at + len(issues_data)) >= data.get("total", 0):
-                break
-            start_at += len(issues_data)
+        params = {
+            "jql": f"project = {project_key} ORDER BY updated DESC",
+            "expand": "changelog",
+            "fields": "*all",
+            "maxResults": 100,
+        }
+        response = requests.get(
+            f"{self.base_url}{self._ENDPOINT}",
+            params=params,
+            auth=(self.email, self.token),
+            timeout=30
+        )
+        data = response.json()
+        issues_data = data.get("issues", [])
+
+        for issue_data in issues_data:
+            issue_obj = self._sync_issue(issue_data, project)
+            self._sync_worklogs(issue_obj, issue_data)
+            synced_count += 1
         self.update_project_dates(project)
         logger.info(f"Issues synchronization for project '{project_key}' finished. Total: {synced_count}.")
         return synced_count
