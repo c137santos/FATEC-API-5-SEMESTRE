@@ -3,15 +3,33 @@ from typing import Tuple, TypeVar
 
 from django.conf import settings
 
-from .strategy import JiraStrategy
+from jiboia.core.service.strategy.projects import ProjectsApiStrategy
+
 from .strategy.healthcheck import ProjectsHealthCheckStrategy
+from .strategy.issue_types import SyncIssueTypesStrategy
+from .strategy.issues import SyncIssuesStrategy
+from .strategy.status_types import SyncStatusTypesStrategy
 
 logger = logging.getLogger(__name__)
 T = TypeVar('T')
 
 
 class JiraService:
-    """Service for Jira API integration"""
+
+    @classmethod
+    def sync_all(cls, project_key: str = None) -> dict:
+        """
+        Synchronizes all Jira data by calling all implemented strategies.
+        If project_key is provided, synchronizes issues for that project as well.
+        Returns a dictionary with the result of each sync.
+        """
+        email, token, base_url = cls._get_credentials()
+        results = {}
+        results['issue_types'] = SyncIssueTypesStrategy(email, token, base_url).execute()
+        results['status_types'] = SyncStatusTypesStrategy(email, token, base_url).execute()
+        if project_key:
+            results['issues'] = SyncIssuesStrategy(email, token, base_url).execute(project_key)
+        return results
     
     @classmethod
     def _get_credentials(cls) -> Tuple[str, str, str]:
@@ -35,17 +53,18 @@ class JiraService:
         strategy = ProjectsHealthCheckStrategy(email, token, base_url)
         return strategy.execute()
     
+    
     @classmethod
-    def execute_strategy(cls, strategy: JiraStrategy[T]) -> T:
+    def get_projects(cls) -> T:
         """
-        Execute a custom Jira API strategy.
+        Fetch all projects from Jira.
         
-        This method allows for executing any strategy that conforms to the JiraStrategy interface.
-        
-        Args:
-            strategy: A strategy instance that conforms to the JiraStrategy interface
-            
         Returns:
-            T: The result of the strategy execution
+            T: The list of projects retrieved from Jira
         """
-        return strategy.execute()
+        
+        email, token, base_url = cls._get_credentials()
+        strategy = ProjectsApiStrategy(email, token, base_url)
+        projects_raw = strategy.execute()
+        projects_dict = strategy.process(projects_raw)
+        return strategy.save_projects(projects_dict)

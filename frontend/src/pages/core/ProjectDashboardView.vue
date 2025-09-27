@@ -14,7 +14,7 @@
 			</v-row>
 			<v-row>
 				<v-col>
-					<span class="w-100 d-flex justify-center">Movimentação de issues (por mês)</span>
+					<span class="w-100 d-flex justify-center"> Movimentação de issues (por mês) </span>
 					<StatusBreakdownGraph v-model="issuesList"></StatusBreakdownGraph>
 				</v-col>
 				<v-col>
@@ -152,8 +152,6 @@ const burndownData = computed(() => {
 	if (!burndown) return emptyDataset
 
 	const daysRange = dateDiffInDays(burndown.end_date, burndown.pending_per_day[0].date)
-
-	console.log(burndown.end_date, burndown)
 
 	const endDateTimestamp = new Date(burndown.end_date).getTime()
 	const formatter = new Intl.DateTimeFormat('pt-BR', {
