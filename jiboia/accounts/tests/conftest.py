@@ -16,6 +16,7 @@ def user_jon(db):
 
 
 @pytest.fixture
-def logged_jon(client, user_jon):
-    client.force_login(User.objects.get(username=user_jon.username))
+def logged_jon(client, user_jon, db):
+    # Adicionamos db como dependência para garantir que a transação seja gerenciada corretamente
+    client.force_login(user_jon)  # Podemos usar user_jon diretamente sem consultar novamente
     return user_jon
