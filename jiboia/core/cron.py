@@ -44,3 +44,24 @@ def jira_sync_issues_all_projects():
     except Exception as e:
         logger.error(f"[CRON] Jira issues sync failed: {e}")
         return False
+
+def jira_project():
+    """
+    Function executed by cron to perform a healthcheck on the Jira API.
+    This function is called by django-crontab according to the schedule configured
+    in settings.py. It logs the result and can be expanded to send alerts in case of failure.
+    """
+    start_time = datetime.now()
+    logger.info(f"[CRON] Starting Jira API projects at {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    success, message = JiraService.get_projects()
+    
+    end_time = datetime.now()
+    duration = (end_time - start_time).total_seconds()
+    
+    if success:
+        logger.info(f"[CRON] Jira API healthcheck completed successfully in {duration:.2f}s: {message}")
+    else:
+        logger.error(f"[CRON] Jira API healthcheck failed after {duration:.2f}s: {message}")
+    
+    return success

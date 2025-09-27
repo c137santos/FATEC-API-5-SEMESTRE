@@ -83,3 +83,96 @@ classDiagram
 Temos duas formas para **Rodar**:
 - Sem Docker 📦: Apenas **Python** instalando requiriments.txt
 - Apenas Banco de dados usando 🐋 Docker (melhor para debug)
+
+## Settings opções
+
+
+### CORS (Cross-Origin Resource Sharing)
+
+1. **Adicionar o pacote `corsheaders` apenas em ambiente de desenvolvimento:**
+   - No bloco de apps:
+     ```python
+     if DEBUG:
+         THIRD_PARTY_APPS += ['corsheaders']
+     ```
+
+2. **Adicionar o middleware do CORS antes do `CommonMiddleware` apenas em desenvolvimento:**
+   - No bloco de middlewares:
+     ```python
+     if DEBUG:
+         before_common = MIDDLEWARE.index("django.middleware.common.CommonMiddleware")
+         MIDDLEWARE.insert(before_common, "corsheaders.middleware.CorsMiddleware")
+     ```
+
+3. **Configurar as origens permitidas e credenciais para CORS apenas em desenvolvimento:**
+   - No bloco de configurações:
+     ```python
+     if DEBUG:
+         CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=False, cast=bool)
+         CORS_ALLOWED_ORIGINS = config(
+             "CSRF_TRUSTED_ORIGINS",
+             default="http://localhost:3000",
+             cast=Csv(),
+         )
+     ```
+
+---
+
+### LOGGING
+
+1. **Exemplo de configuração de logging customizado:**
+   - Estrutura sugerida para o dicionário `LOGGING`:
+     ```python
+     LOGGING = {
+         'version': 1,
+         'formatters': {
+             'verbose': {
+                 'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+             },
+             'simple': {
+                 'format': '%(levelname)s %(message)s'
+             },
+         },
+         'filters': {
+             'require_debug_false': {
+                 '()': 'django.utils.log.RequireDebugFalse',
+             }
+         },
+         'handlers': {
+             'console': {
+                 'level': 'DEBUG',
+                 'class': 'logging.StreamHandler',
+                 'formatter': 'simple'
+             },
+             'file': {
+                 'level': 'DEBUG',
+                 'class': 'logging.FileHandler',
+                 'filename': os.getenv('DJANGO_LOG_FILE', './jiboia.log'),
+                 'formatter': 'simple'
+             },
+         },
+         'loggers': {
+             '': {
+                 'handlers': ['file'],
+                 'level': 'DEBUG' if DEBUG else 'INFO',
+                 'propagate': True,
+             },
+             'django': {
+                 'handlers': ['file'],
+                 'level': 'DEBUG' if DEBUG else 'INFO',
+                 'propagate': True,
+             },
+         }
+     }
+     ```
+
+2. **Em ambiente de desenvolvimento, faça todos os loggers usarem o console:**
+   ```python
+   if DEBUG:
+       # make all loggers use the console.
+       for logger in LOGGING['loggers']:
+           LOGGING['loggers'][logger]['handlers'] = ['console']
+   ```
+
+---
+
