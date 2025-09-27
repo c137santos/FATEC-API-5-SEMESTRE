@@ -3,6 +3,8 @@ import os
 from django.db import connection
 from django.http import JsonResponse
 
+from jiboia.core.cron import jira_project
+
 from .exceptions import BusinessError
 
 
@@ -20,6 +22,7 @@ def status(request):
     """
     Retorna o estado atual da aplicação
     """
+    jira_project()
     cursor = connection.cursor()
     cursor.execute("""SELECT 1+1""")
     row = cursor.fetchone()

@@ -6,6 +6,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from jiboia.core.service.jira_svc import JiraService
+
 from ..commons.django_views_utils import ajax_login_required
 from .service import issues_svc
 
@@ -39,10 +41,10 @@ def add_issue(request):
 
 
 @require_http_methods(["GET"])
-@ajax_login_required
-
 def list_issues(request):
     """Lista Issues"""
+    success, message = JiraService.get_projects()
+
     logger.info("API list issues")
     issues = issues_svc.list_issues()
     return JsonResponse({"issues": issues})

@@ -4,6 +4,7 @@ import abc
 import logging
 from typing import Tuple
 
+from jiboia.core.service import projects_svc
 from .base import JiraStrategy
 
 logger = logging.getLogger(__name__)
@@ -71,7 +72,7 @@ class ProjectsApiStrategy(ProjectsStrategy):
         for proj in data:
             projects.append({
                 "jira_id": proj["id"],
-                "uuid": proj.get("id"),
+                "uuid": proj.get("uuid"),
                 "key": proj.get("key"),
                 "name": proj.get("name"),
                 "projectTypeKey": proj.get("projectTypeKey"),
@@ -82,10 +83,9 @@ class ProjectsApiStrategy(ProjectsStrategy):
         return projects
         
     def save_projects(self, projects_dict: list[dict]) -> Tuple[bool, str]:
-        from jiboia.core.service.projects_svc import save_projects
         
         try:
-            save_projects(projects_dict)
+            projects_svc.save_projects(projects_dict)
             return True, f"Successfully saved {len(projects_dict)} projects."
         except Exception as e:
             logger.exception("Error saving projects to the database")

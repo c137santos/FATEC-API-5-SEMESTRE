@@ -156,7 +156,7 @@ class Migration(migrations.Migration):
                 (
                     "projectTypeKey",
                     models.CharField(
-                        help_text="Tipo de projeto", max_length=100, unique=True
+                        help_text="Tipo do projeto no Jira", max_length=100
                     ),
                 ),
                 ("name", models.CharField(help_text="Nome do projeto", max_length=255)),
@@ -178,7 +178,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "uuid",
-                    models.IntegerField(
+                    models.TextField(
                         help_text="Identificador único do Jira", unique=True
                     ),
                 ),
@@ -266,7 +266,6 @@ class Migration(migrations.Migration):
                 (
                     "id_issue",
                     models.ForeignKey(
-                        db_column="id_issue",
                         help_text="Referência para a Issue à qual este log de tempo pertence",
                         on_delete=django.db.models.deletion.CASCADE,
                         to="core.issue",
@@ -276,7 +275,6 @@ class Migration(migrations.Migration):
                     "id_user",
                     models.ForeignKey(
                         blank=True,
-                        db_column="id_user",
                         help_text="Usuário que registrou o tempo",
                         null=True,
                         on_delete=django.db.models.deletion.SET_NULL,

@@ -95,3 +95,76 @@ def test_healthcheck_generic_exception(mock_get):
     assert success is False
     assert "Unexpected error" in message
     mock_get.assert_called_once()
+
+
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.save_projects')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.process')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.execute')
+def test_get_projects_success(mock_execute, mock_process, mock_save_projects):
+    mock_execute.return_value = [
+        {"id": "10000", "key": "PROJ1", "name": "Projeto 1"},
+        {"id": "10001", "key": "PROJ2", "name": "Projeto 2"}
+    ]
+    mock_process.return_value = [
+        {"jira_id": "10000", "name": "Projeto 1"},
+        {"jira_id": "10001", "name": "Projeto 2"}
+    ]
+    mock_save_projects.return_value = ["Projeto 1", "Projeto 2"]
+
+    result = JiraService.get_projects()
+
+    assert result == ["Projeto 1", "Projeto 2"]
+    mock_execute.assert_called_once()
+    mock_process.assert_called_once_with(mock_execute.return_value)
+    mock_save_projects.assert_called_once_with(mock_process.return_value)
+
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.save_projects')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.process')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.execute')
+def test_get_projects_empty(mock_execute, mock_process, mock_save_projects):
+    mock_execute.return_value = []
+    mock_process.return_value = []
+    mock_save_projects.return_value = []
+
+    result = JiraService.get_projects()
+
+    assert result == []
+    mock_execute.assert_called_once()
+    mock_process.assert_called_once_with([])
+    mock_save_projects.assert_called_once_with([])
+
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.save_projects')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.process')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.execute')
+def test_get_projects_api_error(mock_execute, mock_process, mock_save_projects):
+    mock_execute.side_effect = Exception("API error")
+
+    try:
+        JiraService.get_projects()
+        assert False, "Exception not raised"
+    except Exception as e:
+        assert "API error" in str(e)
+    mock_execute.assert_called_once()
+    mock_process.assert_not_called()
+    mock_save_projects.assert_not_called()
+
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.save_projects')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.process')
+@patch('jiboia.core.service.strategy.projects.ProjectsApiStrategy.execute')
+def test_get_projects_success(mock_execute, mock_process, mock_save_projects):
+    mock_execute.return_value = [
+        {"id": "10000", "key": "PROJ1", "name": "Projeto 1"},
+        {"id": "10001", "key": "PROJ2", "name": "Projeto 2"}
+    ]
+    mock_process.return_value = [
+        {"jira_id": "10000", "name": "Projeto 1"},
+        {"jira_id": "10001", "name": "Projeto 2"}
+    ]
+    mock_save_projects.return_value = ["Projeto 1", "Projeto 2"]
+
+    result = JiraService.get_projects()
+
+    assert result == ["Projeto 1", "Projeto 2"]
+    mock_execute.assert_called_once()
+    mock_process.assert_called_once_with(mock_execute.return_value)
+    mock_save_projects.assert_called_once_with(mock_process.return_value)
