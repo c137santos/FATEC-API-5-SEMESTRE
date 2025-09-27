@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 from freezegun import freeze_time
 
-from jiboia.core.cron import jira_healthcheck, jira_sync_issues_all_projects, jira_project
+from jiboia.core.cron import jira_healthcheck, jira_project, jira_sync_issues_all_projects
 
 
 @freeze_time("2025-09-19 00:00:01")
