@@ -6,16 +6,6 @@ import pytest
 MOCK_TODAY = date(2025, 9, 24)
 
 @pytest.fixture
-def mock_project_model():
-    """Simulate the class Project."""
-    class MockProject:
-        def __init__(self, id, name, start_date_project):
-            self.id = id
-            self.name = name
-            self.start_date_project = start_date_project
-    return MockProject
-
-@pytest.fixture
 def mock_issue_model():
     """Simulate the class Issue."""
     class MockIssue:
@@ -52,17 +42,6 @@ def mock_managers():
             "issue": mock_issue_manager,
             "timelog": mock_timelog_manager,
         }
-        
-@pytest.fixture
-def projects_and_issues(mock_project_model, mock_issue_model):
-    project_a = mock_project_model(id=1, name="Project Alpha", start_date_project=date(2025, 8, 15))
-    project_b = mock_project_model(id=2, name="Project Beta", start_date_project=date(2025, 9, 1))
-    
-    issue_a1 = mock_issue_model(id=101, project_id=1, created_at=date(2025, 8, 5), status_name="concluded")
-    issue_b1 = mock_issue_model(id=102, project_id=2, created_at=date(2025, 9, 10), status_name="pending")
-    
-    return project_a, project_b, issue_a1, issue_b1, [issue_a1, issue_b1]
-
 
 @pytest.fixture
 def setup_project_order(mock_managers):
