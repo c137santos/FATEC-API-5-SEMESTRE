@@ -242,9 +242,9 @@ const workedHours = computed(() => !dataRef.value ? 0 : dataRef.value.total_work
 
 const activeIssues = computed(() => !dataRef.value ? 0 : (() => {
 	const today = dataRef.value.issues_today
-	return Object.values(today).reduce((total, value) => total + value, 0) - today.done
+	return Object.values(today).reduce((total, value) => total + value, 0) - today['Concluído']
 })())
-const concludedIssues = computed(() => !dataRef.value ? 0 : dataRef.value.issues_today.done)
+const concludedIssues = computed(() => !dataRef.value ? 0 : dataRef.value.issues_today['Concluído'])
 
 const issuesTotal = computed(() => !dataRef.value ? 0 : (() => {
 	const today = dataRef.value.issues_today

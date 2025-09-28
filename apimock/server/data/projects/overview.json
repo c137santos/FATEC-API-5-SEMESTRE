@@ -1,135 +1,104 @@
 {
-	"issues_per_month": [
-		{
-			"date": "02/2020",
-			"pending": 10,
-			"on_going": 4,
-			"mr": 5,
-			"concluded": 22
-		},
-		{
-			"date": "03/2020",
-			"pending": 7,
-			"on_going": 3,
-			"mr": 2,
-			"concluded": 26
-		},
-		{
-			"date": "04/2020",
-			"pending": 15,
-			"on_going": 1,
-			"mr": 4,
-			"concluded": 28
-		},
-		{
-			"date": "05/2020",
-			"pending": 12,
-			"on_going": 6,
-			"mr": 2,
-			"concluded": 33
-		},
-		{
-			"date": "06/2020",
-			"pending": 8,
-			"on_going": 7,
-			"mr": 4,	
-			"concluded": 38
-		},
-		{
-			"date": "07/2020",
-			"pending": 4,
-			"on_going": 9,
-			"mr": 5,
-			"concluded": 46
-		},
-		{
-			"date": "08/2020",
-			"pending": 1,
-			"on_going": 3,
-			"mr": 2,
-			"concluded": 50
-		}
-	],
-	"projects": [
-		{
-			"project_id": 1,
-			"name": "Project Yara",
-			"total_hours": 20,
-			"total_issues": 30,
-			"dev_hours": [
-				{
-					"dev_id": 1,
-					"name": "Maria",
-					"hours": 20
-				},
-				{
-					"dev_id": 2,
-					"name": "Julio",
-					"hours": 30
-				},
-				{
-					"dev_id": 3,
-					"name": "Mario",
-					"hours": 10
-				},
-				{
-					"dev_id": 4,
-					"name": "Luana",
-					"hours": 50
-				},
-
-				{
-					"dev_id": 5,
-					"name": "Lola",
-					"hours": 30
-				}
-			]
-		},
-		{
-			"project_id": 2,
-			"name": "Project Zeus",
-			"total_hours": 50,
-			"total_issues": 140,
-			"dev_hours": [
-				{
-					"dev_id": 1,
-					"name": "Maria",
-					"hours": 5
-				},
-				{
-					"dev_id": 3,
-					"name": "Mario",
-					"hours": 10
-				},
-				{
-					"dev_id": 5,
-					"name": "Lola",
-					"hours": 30
-				}
-			]
-		},
-		{
-			"project_id": 3,
-			"name": "Project Postgres",
-			"total_hours": 60,
-			"total_issues": 40,
-			"dev_hours": [
-				{
-					"dev_id": 1,
-					"name": "Maria",
-					"hours": 15
-				},
-				{
-					"dev_id": 2,
-					"name": "Julio",
-					"hours": 13
-				},
-				{
-					"dev_id": 3,
-					"name": "Mario",
-					"hours": 10
-				}
-			]
-		}
-	]
+  "issues_per_month": [
+    {
+      "date": "2025-04-01",
+      "Tarefas pendentes": 100,
+      "Em andamento": 6,
+      "Concluído": 22,
+      "MR": 2
+    },
+    {
+      "date": "2025-05-01",
+      "Tarefas pendentes": 85,
+      "Em andamento": 4,
+      "Concluído": 48,
+      "MR": 7
+    },
+    {
+      "date": "2025-06-01",
+      "Tarefas pendentes": 70,
+      "Em andamento": 2,
+      "Concluído": 75,
+      "MR": 3
+    },
+    {
+      "date": "2025-07-01",
+      "Tarefas pendentes": 65,
+      "Em andamento": 6,
+      "Concluído": 96,
+      "MR": 2
+    },
+    {
+      "date": "2025-08-01",
+      "Tarefas pendentes": 48,
+      "Em andamento": 5,
+      "Concluído": 110,
+      "MR": 5
+    },
+    {
+      "date": "2025-09-01",
+      "Tarefas pendentes": 22,
+      "Em andamento": 0,
+      "Concluído": 126,
+      "MR": 1
+    }
+  ],
+  "projects": [
+    {
+      "project_id": 2,
+      "name": "SOS Edital",
+      "total_hours": 814.57,
+      "total_issues": 79,
+      "dev_hours": [
+        {
+          "dev_id": 3,
+          "name": "Lucas Paiva",
+          "hours": 45.63
+        },
+        {
+          "dev_id": 5,
+          "name": "Aline Dominique",
+          "hours": 1
+        },
+        {
+          "dev_id": 2,
+          "name": "Felipe Gabriel Barreto Faria",
+          "hours": 38
+        },
+        {
+          "dev_id": 1,
+          "name": "sergio.casas",
+          "hours": 62.98
+        },
+        {
+          "dev_id": 4,
+          "name": "Eric Lourenço Mendes da SIlva",
+          "hours": 666.95
+        }
+      ]
+    },
+    {
+      "project_id": 1,
+      "name": "SOS MNT 2025",
+      "total_hours": 700.1,
+      "total_issues": 82,
+      "dev_hours": [
+        {
+          "dev_id": 3,
+          "name": "Lucas Paiva",
+          "hours": 4
+        },
+        {
+          "dev_id": 2,
+          "name": "Felipe Gabriel Barreto Faria",
+          "hours": 11.5
+        },
+        {
+          "dev_id": 1,
+          "name": "sergio.casas",
+          "hours": 684.6
+        }
+      ]
+    }
+  ]
 }
