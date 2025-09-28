@@ -30,6 +30,10 @@ def save_projects(projects_data):
             }
         )
 
+
+'''O statusIssue nao está sendo preenchido por ausencia de update. Mas reside na função _sync_issue. 
+Como nao era tabela que estava desligada na Issue (herança minha que ficou no código), 
+nao tinha como a _sync_issue saber disso quando as tabelas foram religadas'''
 def calc_start_date(issue_breakdown_months: int) -> date:
     today = date.today()
     return today.replace(day=1) - relativedelta(months=issue_breakdown_months - 1)
