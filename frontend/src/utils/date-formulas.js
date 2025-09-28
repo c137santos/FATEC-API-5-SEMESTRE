@@ -8,3 +8,8 @@ export const dateDiffInDays = (str1, str2) => {
 
 	return diffDays
 }
+
+export const toISODate = (dateStr) => {
+  const [day, month, year] = dateStr.split("/");
+  return new Date(year, month - 1, day).toISOString().split("T")[0];
+}
