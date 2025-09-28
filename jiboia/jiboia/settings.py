@@ -17,11 +17,7 @@ import dj_database_url
 from decouple import Csv, config
 from django.core.management.utils import get_random_secret_key
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY", default=get_random_secret_key())
@@ -41,14 +37,6 @@ CSRF_TRUSTED_ORIGINS = config(
     cast=Csv(),
 )
 
-# CORS
-# if DEBUG:
-#     CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=False, cast=bool)
-#     CORS_ALLOWED_ORIGINS = config(
-#         "CSRF_TRUSTED_ORIGINS",
-#         default="http://localhost:3000",
-#         cast=Csv(),
-#     )
 
 # Application definition
 DJANGO_APPS = [
@@ -64,10 +52,6 @@ THIRD_PARTY_APPS = [
     "django_extensions",
     "django_crontab",
 ]
-
-# CORS
-# if DEBUG:
-#     THIRD_PARTY_APPS += ['corsheaders']
 
 LOCAL_APPS = [
     "jiboia.base",
@@ -88,10 +72,6 @@ MIDDLEWARE = [
     "jiboia.base.middlewares.DjavueApiErrorHandlingMiddleware",
 ]
 
-# CORS
-# if DEBUG:
-#     before_common = MIDDLEWARE.index("django.middleware.common.CommonMiddleware")
-#     MIDDLEWARE.insert(before_common, "corsheaders.middleware.CorsMiddleware")
 
 ROOT_URLCONF = "jiboia.jiboia.urls"
 
@@ -210,64 +190,23 @@ LOGGING = {
     },
 }
 
-# LOGGING = {
-#     'version': 1,
-#     'formatters': {
-#         'verbose': {
-#             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-#         },
-#         'simple': {
-#             'format': '%(levelname)s %(message)s'
-#         },
-#     },
-#     'filters': {
-#         'require_debug_false': {
-#             '()': 'django.utils.log.RequireDebugFalse',
-#         }
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple'
-#         },
-#         'file': {
-#             'level': 'DEBUG',
-#             'class': 'logging.FileHandler',
-#             'filename': os.getenv('DJANGO_LOG_FILE', './jiboia.log'),
-#             'formatter': 'simple'
-#         },
-#     },
-#     'loggers': {
-#         '': {
-#             'handlers': ['file'],
-#             'level': 'DEBUG' if DEBUG else 'INFO',
-#             'propagate': True,
-#         },
-#         'django': {
-#             'handlers': ['file'],
-#             'level': 'DEBUG' if DEBUG else 'INFO',
-#             'propagate': True,
-#         },
-#     }
-# }
-
-# if DEBUG:
-#     # make all loggers use the console.
-#     for logger in LOGGING['loggers']:
-#         LOGGING['loggers'][logger]['handlers'] = ['console']
-
 # Configurações da API do Jira
 JIRA_API_EMAIL = config("JIRA_API_EMAIL", default="")
 JIRA_API_TOKEN = config("JIRA_API_TOKEN", default="")
 JIRA_API_URL = config("JIRA_API_URL", default="https://necto.atlassian.net")
 
 # Configuração do django-crontab
+
+# Cron jobs configuration
 CRONJOBS = [
-    # Formato: ('minuto hora dia_do_mês mês dia_da_semana', 'caminho.para.função', 
-    #           ['argumentos opcionais'], {'kwargs opcionais'}, 'id_único')
+    # Healthcheck at midnight (existing)
     ('0 0 * * *', 'jiboia.core.cron.jira_healthcheck', 
-     '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck')
+     '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck'),
+    # New: Sync issues for all projects at 3 AM (separate flow)
+    ('0 3 * * *', 'jiboia.core.cron.jira_sync_issues_all_projects',
+     '>> /tmp/jira_sync_issues.log 2>&1', {}, 'jira_sync_issues_all_projects'),
+    ('0 1 * * *', 'jiboia.core.cron.jira_project', 
+     '>> /tmp/jira_project.log 2>&1', {}, 'jira_daily_project')
 ]
 
 

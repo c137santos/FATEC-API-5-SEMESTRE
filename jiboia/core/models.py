@@ -51,6 +51,13 @@ class Issue(models.Model):
         null=True,
         help_text="O tipo da issue (ex: História, Tarefa, Bug)"
     )
+
+    status = models.ForeignKey(
+        'StatusType',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        help_text="O status atual da issue"
+    )
     jira_id = models.IntegerField(null=True, help_text="Identificador único da issue no Jira")
 
     class Meta:
@@ -95,10 +102,11 @@ class Project(models.Model):
     key = models.CharField(max_length=50, unique=True, help_text="A sigla identificadora")
     name = models.CharField(max_length=255, help_text="Nome do projeto")
     description = models.TextField(help_text="Descrição detalhada do projeto")
-    start_date_project = models.DateField(help_text="Data de início do projeto")
+    start_date_project = models.DateField(null=True, blank=True, help_text="Data de início do projeto")
     end_date_project = models.DateField(null=True, blank=True, help_text="Data limite de conclusão")
-    uuid = models.IntegerField(unique=True, help_text="Identificador único do Jira")
+    uuid = models.TextField(unique=True, help_text="Identificador único do Jira")
     jira_id = models.IntegerField(unique=True, help_text="Identificador numérico do Jira")
+    projectTypeKey = models.CharField(max_length=100, help_text="Tipo do projeto no Jira")
 
 
     class Meta:
@@ -107,20 +115,18 @@ class Project(models.Model):
         verbose_name_plural = 'Projects'
 
     def __str__(self):
-        return self.name_project
+        return self.name
 
 class TimeLog(models.Model):
     id_issue = models.ForeignKey(
         Issue,
         on_delete=models.CASCADE,
-        db_column='id_issue',
         help_text="Referência para a Issue à qual este log de tempo pertence"
         )
     id_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        db_column='id_user',
         help_text="Usuário que registrou o tempo"
         )
     seconds = models.IntegerField(help_text="Quantidade de tempo registrada, em segundos")
@@ -150,33 +156,4 @@ class StatusType(models.Model):
     def __str__(self):
         return self.name
     
-class StatusLog(models.Model):
-    id_issue = models.ForeignKey(
-        Issue,
-        on_delete=models.CASCADE,
-        db_column="id_issue",
-        help_text="Id conexão tabela Issue"
-        )
-    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação do log")
-    old_status = models.ForeignKey(
-        StatusType,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='old_status_logs',
-        help_text="Id conexão com Status que represente o anterior"
-    )
-    new_status = models.ForeignKey(
-        StatusType,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='new_status_logs',
-        help_text="Id conexão com Status que represente o atual"
-    )
-    class Meta:
-        db_table = 'status_log'
-        verbose_name = 'Status Log'
-        verbose_name_plural = 'Status Logs'
-
-    def __str__(self):
-        return f"Status of issue #{self.id_issue_id} changed from {self.old_status} to {self.new_status}"
     
