@@ -11,5 +11,9 @@ export const dateDiffInDays = (str1, str2) => {
 
 export const toISODate = (dateStr) => {
   const [day, month, year] = dateStr.split("/");
-  return new Date(year, month - 1, day).toISOString().split("T")[0];
+	try {
+		return new Date(year, month - 1, day).toISOString().split("T")[0];
+	} catch {
+		return new Date(dateStr)
+	}
 }

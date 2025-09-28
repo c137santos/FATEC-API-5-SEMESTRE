@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    command: npm run apimock
+    command: npm run apimock:watch
 
     ports:
       - 8000:8000
