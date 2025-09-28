@@ -52,10 +52,7 @@ const populateDataset = (datasets) => {
 
 const statusBreakdownData = computed(() => {
 	const datasets = initiateDataset()
-	console.log(datasets)
 	populateDataset(datasets)
-
-	console.log(datasets)
 	
 	return {
 		labels: issuesList.value.map(issue => issue.date),

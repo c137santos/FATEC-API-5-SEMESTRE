@@ -126,7 +126,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { dateDiffInDays } from '@/utils/date-formulas';
+import { dateDiffInDays, toISODate } from '@/utils/date-formulas';
 import projectsApi from '@/api/projects.api';
 import { Line, Doughnut, Bar } from 'vue-chartjs'
 import DashboardLayout from '@/layouts/default/DashboardLayout.vue';
@@ -151,9 +151,9 @@ const burndownData = computed(() => {
 	const burndown = dataRef.value?.burndown
 	if (!burndown) return emptyDataset
 
-	const daysRange = dateDiffInDays(burndown.end_date, burndown.pending_per_day[0].date)
+	const daysRange = dateDiffInDays(toISODate(burndown.end_date), toISODate(burndown.pending_per_day[0].date))
 
-	const endDateTimestamp = new Date(burndown.end_date).getTime()
+	const endDateTimestamp = new Date(toISODate(burndown.end_date)).getTime()
 	const formatter = new Intl.DateTimeFormat('pt-BR', {
 		year: 'numeric',
 		month: '2-digit',
@@ -242,9 +242,9 @@ const workedHours = computed(() => !dataRef.value ? 0 : dataRef.value.total_work
 
 const activeIssues = computed(() => !dataRef.value ? 0 : (() => {
 	const today = dataRef.value.issues_today
-	return Object.values(today).reduce((total, value) => total + value, 0) - today.concluded
+	return Object.values(today).reduce((total, value) => total + value, 0) - today.done
 })())
-const concludedIssues = computed(() => !dataRef.value ? 0 : dataRef.value.issues_today.concluded)
+const concludedIssues = computed(() => !dataRef.value ? 0 : dataRef.value.issues_today.done)
 
 const issuesTotal = computed(() => !dataRef.value ? 0 : (() => {
 	const today = dataRef.value.issues_today
@@ -253,7 +253,6 @@ const issuesTotal = computed(() => !dataRef.value ? 0 : (() => {
 
 onMounted(async () => {
 	const data = await projectsApi.dashboard(route.params.id)
-	console.log(data)
 	name.value = data.name
 	dataRef.value = data
 	issuesList.value = data.issues_per_month
