@@ -50,7 +50,6 @@ def list_issues(request):
     issues = issues_svc.list_issues()
     return JsonResponse({"issues": issues})
 
-
 @require_http_methods(["GET"])
 def project_overview(request, project_id):
     """
@@ -81,37 +80,7 @@ def project_overview(request, project_id):
     
     return JsonResponse(overview_data)
 
-
-@require_http_methods(["GET"])
-def project_overview(request, project_id):
-    """
-    Get detailed overview of a specific project
-    """
-    logger.info(f"API get project overview for project_id={project_id}")
-    
-    issues_breakdown_months = request.GET.get('issues_breakdown_months', 6)
-    burndown_days = request.GET.get('burdown_days', 5)
-    
-    try:
-        issues_breakdown_months = int(issues_breakdown_months)
-        burndown_days = int(burndown_days)
-    except (ValueError, TypeError):
-        return JsonResponse(
-            {"error": "Invalid parameters: issues_breakdown_months and burndown_days must be integers"},
-            status=400
-        )
-    
-    overview_data = project_overview_svc.get_project_overview(
-        project_id, 
-        issues_breakdown_months=issues_breakdown_months,
-        burndown_days=burndown_days
-    )
-    
-    if overview_data is None:
-        return JsonResponse({"error": f"Project with ID {project_id} not found"}, status=404)
-    
-    return JsonResponse(overview_data)
-
+  
 @require_http_methods(["GET"])
 def list_projects_general(request):
     logger.info("API list projects")
