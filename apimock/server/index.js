@@ -38,8 +38,8 @@ app.get("/api/core/issues/list", core.find);
 app.post("/api/core/issues/add", core.add);
 
 // Projects
-app.get('/api/projects/overview', projects.overview)
-app.get('/api/projects/:id', projects.byProject)
+app.get('/api/core/projects/overview', projects.overview)
+app.get('/api/core/projects/:id', projects.byProject)
 
 app.listen(PORT, () => {
   console.log(

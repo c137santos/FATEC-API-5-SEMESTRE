@@ -6,7 +6,7 @@ export default {
 		return response.data
 	},
 	dashboard: async (i) => {
-		const response = await api.get(`/api/projects/${i}?issues_breakdown_months=${6}&burdown_days=${30}`)
+		const response = await api.get(`/api/core/projects/${i}?issues_breakdown_months=${6}&burdown_days=${30}`)
 		return response.data
 	}
 }
