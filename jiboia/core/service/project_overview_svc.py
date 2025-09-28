@@ -9,6 +9,7 @@ from ..models import Issue, IssueType, Project, StatusType, TimeLog
 
 logger = logging.getLogger(__name__)
 
+
 def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
     """Helper function to get issues per month breakdown"""
     issues_per_month = []
@@ -16,16 +17,18 @@ def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
     
     for i in range(issues_breakdown_months - 1, -1, -1):
         date_month = today - timedelta(days=30 * i)
+        month_start = date_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         month_end_day = monthrange(date_month.year, date_month.month)[1]
         month_end = date_month.replace(day=month_end_day, hour=23, minute=59, second=59, microsecond=999999)
         
         # Dictionary to hold counts for each status
         month_data = {"date": date_month.strftime("%m/%Y")}
         
-        # Count issues for each status type
+        # Count issues created in this month for each status type
         for status in all_status_types:
             count = Issue.objects.filter(
                 project=project,
+                created_at__gte=month_start,
                 created_at__lte=month_end,
                 status=status
             ).count()
@@ -33,8 +36,10 @@ def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
             status_key = status.key.lower().replace(' ', '_').replace('-', '_')
             month_data[status_key] = count
         
+        # Count issues created in this month with no status
         no_status_count = Issue.objects.filter(
             project=project,
+            created_at__gte=month_start,
             created_at__lte=month_end,
             status__isnull=True
         ).count()
@@ -47,11 +52,11 @@ def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
 
 
 def _get_issues_today(project, all_status_types):
-    """Helper function to get today's issues breakdown"""
+    """Helper function to get current issues breakdown"""
     today = timezone.now()
     issues_today = {"date": today.strftime("%m/%Y")}
     
-    # Count issues for each status type
+    # Count current issues for each status type
     for status in all_status_types:
         count = Issue.objects.filter(
             project=project,
@@ -61,7 +66,7 @@ def _get_issues_today(project, all_status_types):
         status_key = status.key.lower().replace(' ', '_').replace('-', '_')
         issues_today[status_key] = count
     
-    # Add count for issues with no status as "no_status" 
+    # Add count for issues with no status
     no_status_count = Issue.objects.filter(
         project=project,
         status__isnull=True
@@ -80,16 +85,36 @@ def _get_burndown_data(project, burndown_days):
         "pending_per_day": []
     }
     
-    pending_issues = Issue.objects.filter(project=project).count()
+    # Get pending status (assuming 'new', 'open', 'pending' keys)
+    pending_statuses = StatusType.objects.filter(
+        key__in=['new', 'open', 'pending', 'todo', 'backlog']
+    )
     
-    for i in range(burndown_days):
-        date = today + timedelta(days=i)
-        expected_pending = max(0, pending_issues - (pending_issues // burndown_days) * i)
-        
-        burndown["pending_per_day"].append({
-            "date": date.strftime("%d/%m/%Y"),
-            "pending": expected_pending
-        })
+    # Get total pending issues count
+    total_pending = Issue.objects.filter(
+        project=project,
+        status__in=pending_statuses
+    ).count()
+    
+    if total_pending == 0:
+        # If no pending issues, create empty burndown
+        for i in range(burndown_days):
+            date = today + timedelta(days=i)
+            burndown["pending_per_day"].append({
+                "date": date.strftime("%d/%m/%Y"),
+                "pending": 0
+            })
+    else:
+        # Calculate ideal burndown
+        for i in range(burndown_days):
+            date = today + timedelta(days=i)
+            # Linear decrease: start with total_pending, end with 0
+            expected_pending = max(0, total_pending - (total_pending * i // burndown_days))
+            
+            burndown["pending_per_day"].append({
+                "date": date.strftime("%d/%m/%Y"),
+                "pending": expected_pending
+            })
     
     return burndown
 
@@ -107,29 +132,51 @@ def _get_issues_by_type(project):
     """Helper function to get issues by type for a project"""
     issues_by_type = {}
     issue_types = IssueType.objects.all()
+    
     for issue_type in issue_types:
-        count = Issue.objects.filter(project=project, type_issue=issue_type).count()
+        count = Issue.objects.filter(
+            project=project, 
+            type_issue=issue_type
+        ).count()
         if count > 0:
             issues_by_type[issue_type.name.lower()] = count
+            
     return issues_by_type
 
 
 def _get_dev_hours(project):
     """Helper function to get developer hours for a project"""
     dev_hours = []
+    
+    # Get time logs grouped by user
     time_logs_by_user = TimeLog.objects.filter(
-        id_issue__project=project
-    ).values('id_user', 'id_user__username').annotate(
+        id_issue__project=project,
+        id_user__isnull=False
+    ).values(
+        'id_user', 
+        'id_user__username',
+        'id_user__first_name',
+        'id_user__last_name'
+    ).annotate(
         total_seconds=Sum('seconds')
-    )
+    ).order_by('-total_seconds')
     
     for entry in time_logs_by_user:
-        if entry['id_user'] and entry['total_seconds']:
+        if entry['total_seconds']:
+            # Try to build a proper name
+            first_name = entry['id_user__first_name'] or ''
+            last_name = entry['id_user__last_name'] or ''
+            full_name = f"{first_name} {last_name}".strip()
+            
+            # Fallback to username if no first/last name
+            display_name = full_name if full_name else (entry['id_user__username'] or f"User {entry['id_user']}")
+            
             dev_hours.append({
                 "dev_id": entry['id_user'],
-                "name": entry['id_user__username'],
+                "name": display_name,
                 "hours": round(entry['total_seconds'] / 3600)
             })
+            
     return dev_hours
 
 
@@ -143,9 +190,9 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
         burndown_days (int): Number of days to include in burndown chart
         
     Returns:
-        dict: Project overview data
+        dict: Project overview data or None if project not found
     """
-    logger.info(f"SERVICE getting overview for project {project_id}")
+    logger.info(f"Getting overview for project {project_id}")
     
     try:
         project = Project.objects.get(pk=project_id)
@@ -156,30 +203,17 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
     # Get all status types from the database
     all_status_types = StatusType.objects.all()
     
-    # Get issues per month breakdown
-    issues_per_month = _get_issues_per_month(project, all_status_types, issues_breakdown_months)
-    
-    # Get today's issues breakdown
-    issues_today = _get_issues_today(project, all_status_types)
-    
-    # Get burndown chart data
-    burndown = _get_burndown_data(project, burndown_days)
-    
-    total_worked_hours = _get_total_worked_hours(project)
-    
-    issues_by_type = _get_issues_by_type(project)
-    
-    dev_hours = _get_dev_hours(project)
-    
+    # Build overview data
     overview = {
         "project_id": project.id,
         "name": project.name,
-        "issues_per_month": issues_per_month,
-        "issues_today": issues_today,
-        "burndown": burndown,
-        "total_worked_hours": total_worked_hours,
-        "issues_status": issues_by_type,
-        "dev_hours": dev_hours
+        "issues_per_month": _get_issues_per_month(project, all_status_types, issues_breakdown_months),
+        "issues_today": _get_issues_today(project, all_status_types),
+        "burndown": _get_burndown_data(project, burndown_days),
+        "total_worked_hours": _get_total_worked_hours(project),
+        "issues_status": _get_issues_by_type(project),
+        "dev_hours": _get_dev_hours(project)
     }
     
+    logger.info(f"Successfully generated overview for project {project_id}")
     return overview
