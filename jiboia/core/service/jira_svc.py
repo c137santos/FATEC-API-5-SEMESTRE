@@ -68,3 +68,4 @@ class JiraService:
         projects_raw = strategy.execute()
         projects_dict = strategy.process(projects_raw)
         return strategy.save_projects(projects_dict)
+    

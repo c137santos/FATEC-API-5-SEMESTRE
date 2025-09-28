@@ -54,7 +54,8 @@ class Issue(models.Model):
     status = models.ForeignKey(
         'StatusType',
         on_delete=models.SET_NULL,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         help_text="O status atual da issue"
     )
     jira_id = models.IntegerField(null=True, help_text="Identificador único da issue no Jira")
@@ -71,7 +72,15 @@ class Issue(models.Model):
         return {
             "id": self.id,
             "description": self.description,
+            "status": {
+                "id": self.status.id,
+                "name": self.status.name
+            } if self.status else None,
+            "created_at": self.created_at.isoformat(),
+            "start_date": self.start_date.isoformat() if self.start_date else None,
+            "end_date": self.end_date.isoformat() if self.end_date else None,
         }
+
 
 #}/rest/api/3/issuetype
 class IssueType(models.Model):

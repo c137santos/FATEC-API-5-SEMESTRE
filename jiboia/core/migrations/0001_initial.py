@@ -302,8 +302,9 @@ class Migration(migrations.Migration):
             model_name="issue",
             name="status",
             field=models.ForeignKey(
-                help_text="O status atual da issue (ex: Pendente, Em andamento, Concluído)",
+                help_text="O status atual da issue",
                 null=True,
+                blank=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 to="core.statustype",
             ),
