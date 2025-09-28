@@ -4,7 +4,7 @@ import requests
 from django.contrib.auth import get_user_model
 from django.db.models import Max, Min
 
-from jiboia.core.models import Issue, IssueType, Project, TimeLog, StatusType
+from jiboia.core.models import Issue, IssueType, Project, StatusType, TimeLog
 from jiboia.core.service.strategy.users import SyncUserStrategy
 
 from .base import JiraStrategy
@@ -101,7 +101,9 @@ class SyncIssuesStrategy(JiraStrategy[int]):
                 break
         
         self.update_project_dates(project)
-        logger.info(f"Issues synchronization for project '{project_key}' finished. Total: {synced_count}/{total_issues}.")
+        logger.info(
+            f"Issues synchronization for project '{project_key}' finished. Total: {synced_count}/{total_issues}."
+        )
         return synced_count
 
     def _sync_issue(self, data: dict, project: Project) -> Issue:
