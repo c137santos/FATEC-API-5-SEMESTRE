@@ -2,7 +2,7 @@ import logging
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from django.db.models import Sum
+from django.db.models import Sum, F
 
 from ..models import Issue, Project, StatusType, TimeLog
 
@@ -58,29 +58,33 @@ def build_issues_per_month(issues_qs, start_date: date, months: int):
     return issues_per_month
 
 def serialize_project(project, project_issues):
-    total_hours = TimeLog.objects.filter(
+    total_seconds = TimeLog.objects.filter(
         id_issue__in=project_issues
     ).aggregate(total=Sum("seconds"))["total"] or 0
+
+    total_hours = total_seconds / 3600 if total_seconds else 0
     
     total_issues = project_issues.count()
     
     dev_hours = (
         TimeLog.objects.filter(id_issue__in=project_issues)
         .values("id_user_id", "id_user__username")
-        .annotate(hours=Sum("seconds"))
+        .annotate(
+            hours=Sum(F("seconds")) / 3600
+        )
     )
     dev_hours_list = [
         {
             "dev_id": d["id_user_id"],
             "name": d["id_user__username"],
-            "hours": d["hours"] or 0,
+            "hours": round(d["hours"], 2) if d["hours"] is not None else 0,
         }
         for d in dev_hours
     ]
     return {
         "project_id": project.id,
         "name": project.name,
-        "total_hours": total_hours,
+        "total_hours": round(total_hours, 2),
         "total_issues": total_issues,
         "dev_hours": dev_hours_list,
     }
