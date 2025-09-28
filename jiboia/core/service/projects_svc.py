@@ -2,7 +2,7 @@ import logging
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from django.db.models import Sum, F
+from django.db.models import F, Sum
 
 from ..models import Issue, Project, StatusType, TimeLog
 
