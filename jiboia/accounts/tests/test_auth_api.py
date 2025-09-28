@@ -5,6 +5,7 @@ import pytest
 from jiboia.accounts.models import User
 
 
+@pytest.mark.django_db
 def test_deve_retornar_usuario_nao_logado(client):
     resp = client.get("/api/accounts/whoami")
 
@@ -12,6 +13,7 @@ def test_deve_retornar_usuario_nao_logado(client):
     assert resp.json() == {"authenticated": False}
 
 
+@pytest.mark.django_db
 def test_deve_retornar_usuario_logado(client, logged_jon):
     resp = client.get("/api/accounts/whoami")
 

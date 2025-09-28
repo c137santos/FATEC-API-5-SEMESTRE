@@ -51,7 +51,6 @@ class Issue(models.Model):
         null=True,
         help_text="O tipo da issue (ex: História, Tarefa, Bug)"
     )
-
     status = models.ForeignKey(
         'StatusType',
         on_delete=models.SET_NULL,
