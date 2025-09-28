@@ -60,7 +60,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
         total_issues = None
         page_count = 0
         
-        while start_at >= 0:  # Condição mais clara que while True
+        while start_at >= 0:
             params = {
                 "jql": f"project = {project_key} ORDER BY updated DESC",
                 "expand": "changelog",
@@ -96,7 +96,6 @@ class SyncIssuesStrategy(JiraStrategy[int]):
             
             start_at += max_results
             
-            # Se pegamos menos issues que o maxResults, chegamos ao fim
             if len(issues_data) < max_results:
                 break
         
