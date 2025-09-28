@@ -202,6 +202,7 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
     
     # Get all status types from the database
     all_status_types = StatusType.objects.all()
+
     
     # Build overview data
     overview = {
