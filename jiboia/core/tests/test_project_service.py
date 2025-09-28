@@ -178,21 +178,21 @@ def test_list_projects_general_success():
     assert alpha_project == {
         "project_id": project_alpha.id,
         "name": "Project Alpha",
-        "total_hours": 10800,
+        "total_hours": 3.0,
         "total_issues": 1,
         "dev_hours": [
-            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 3600},
-            {"dev_id": developer_two.id, "name": developer_two.username, "hours": 7200},
+            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 1.0},
+            {"dev_id": developer_two.id, "name": developer_two.username, "hours": 2.0},
         ],
     }
     
     assert beta_project == {
         "project_id": project_beta.id,
         "name": "Project Beta",
-        "total_hours": 1800,
+        "total_hours": 0.5,
         "total_issues": 1,
         "dev_hours": [
-            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 1800}
+            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 0.5}
         ],
     }
 
