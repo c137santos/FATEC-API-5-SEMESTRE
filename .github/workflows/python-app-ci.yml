@@ -1,0 +1,69 @@
+name: jiboia CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      UV_SYSTEM_PYTHON: 1
+      JIRA_API_URL: ${JIRA_API_URL}
+      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: db_test
+          POSTGRES_PASSWORD: db_test_pwd_ci
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Enable caching
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          
+      - name: Install dependencies
+        run: |
+          uv pip install --no-cache -r requirements-dev.txt
+
+      - name: Run Python Linter (Ruff)
+        run: ruff check .
+
+      - name: Run Tests and Generate Coverage XML
+        env:
+          DATABASE_URL: postgres://postgres:db_test_pwd_ci@localhost:5432/db_test
+        run: |
+          pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.python.coverage.reportPaths=coverage.xml

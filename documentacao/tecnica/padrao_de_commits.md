@@ -35,17 +35,17 @@ tipo (id_da_issue) : descrição
 
 * **Nova funcionalidade:**
     ```
-    feat(#3): Add form to create a new user
+    feat (#3): Add form to create a new user
     ```
 
 * **Correção de bug:**
     ```
-    fix(#5):Fix bug of alignment in the button of home
+    fix (#5):Fix bug of alignment in the button of home
     ```
 
 * **Refatoração:**
     ```
-    refactor(#12): Otimize the query that search products
+    refactor (#12): Otimize the query that search products
     ```
 
 ---

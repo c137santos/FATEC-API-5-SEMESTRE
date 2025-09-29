@@ -60,10 +60,10 @@
             rel="noopener noreferrer"
             size="x-large"
             variant="flat"
-            :to="{ name: 'cards-list' }"
+            :to="{ name: 'issues-list' }"
             class="my-4">
             <v-icon icon="mdi-folder-star-multiple" size="large" start />
-            cards
+            issues
           </v-btn>
         </v-col>
       </v-row>

@@ -3,19 +3,19 @@ import coreApi from "@/api/core.api.js"
 
 export const usecoreStore = defineStore("coreStore", {
   state: () => ({
-    cards: [],
-    cardsLoading: false,
+    issues: [],
+    issuesLoading: false,
   }),
   actions: {
-    async getCards() {
-      this.cardsLoading = true
-      const response = await coreApi.getCards()
-      this.cards = response.cards
-      this.cardsLoading = false
+    async getIssues() {
+      this.issuesLoading = true
+      const response = await coreApi.getIssues()
+      this.issues = response.issues
+      this.issuesLoading = false
     },
-    async addNewCard(tarefa) {
-      const newCard = await coreApi.addNewCard(tarefa.title)
-      return newCard
+    async addNewIssue(tarefa) {
+      const newIssue = await coreApi.addNewIssue(tarefa.title)
+      return newIssue
     },
   },
 })

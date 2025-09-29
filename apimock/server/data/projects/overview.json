@@ -1,0 +1,104 @@
+{
+  "issues_per_month": [
+    {
+      "date": "2025-04-01",
+      "Tarefas pendentes": 100,
+      "Em andamento": 6,
+      "Concluído": 22,
+      "MR": 2
+    },
+    {
+      "date": "2025-05-01",
+      "Tarefas pendentes": 85,
+      "Em andamento": 4,
+      "Concluído": 48,
+      "MR": 7
+    },
+    {
+      "date": "2025-06-01",
+      "Tarefas pendentes": 70,
+      "Em andamento": 2,
+      "Concluído": 75,
+      "MR": 3
+    },
+    {
+      "date": "2025-07-01",
+      "Tarefas pendentes": 65,
+      "Em andamento": 6,
+      "Concluído": 96,
+      "MR": 2
+    },
+    {
+      "date": "2025-08-01",
+      "Tarefas pendentes": 48,
+      "Em andamento": 5,
+      "Concluído": 110,
+      "MR": 5
+    },
+    {
+      "date": "2025-09-01",
+      "Tarefas pendentes": 22,
+      "Em andamento": 0,
+      "Concluído": 126,
+      "MR": 1
+    }
+  ],
+  "projects": [
+    {
+      "project_id": 2,
+      "name": "SOS Edital",
+      "total_hours": 814.57,
+      "total_issues": 79,
+      "dev_hours": [
+        {
+          "dev_id": 3,
+          "name": "Lucas Paiva",
+          "hours": 45.63
+        },
+        {
+          "dev_id": 5,
+          "name": "Aline Dominique",
+          "hours": 1
+        },
+        {
+          "dev_id": 2,
+          "name": "Felipe Gabriel Barreto Faria",
+          "hours": 38
+        },
+        {
+          "dev_id": 1,
+          "name": "sergio.casas",
+          "hours": 62.98
+        },
+        {
+          "dev_id": 4,
+          "name": "Eric Lourenço Mendes da SIlva",
+          "hours": 666.95
+        }
+      ]
+    },
+    {
+      "project_id": 1,
+      "name": "SOS MNT 2025",
+      "total_hours": 700.1,
+      "total_issues": 82,
+      "dev_hours": [
+        {
+          "dev_id": 3,
+          "name": "Lucas Paiva",
+          "hours": 4
+        },
+        {
+          "dev_id": 2,
+          "name": "Felipe Gabriel Barreto Faria",
+          "hours": 11.5
+        },
+        {
+          "dev_id": 1,
+          "name": "sergio.casas",
+          "hours": 684.6
+        }
+      ]
+    }
+  ]
+}

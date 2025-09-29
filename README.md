@@ -60,14 +60,12 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 ---
 
 ## 📅 Cronograma de Sprints <a id="sprint"></a>
-
-| Sprint          |    Período    | Documentação                                     |
-| --------------- | :-----------: | ------------------------------------------------ |
-| 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) |
-| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs]() |
-| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |
-| ⚡️ **feira de soluções** |04/12 | |
-
+| Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
+| --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
+| 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs]() |  |
+| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |  |
+| ⚡️ **feira de soluções** | 04/12 |  |  |
 
 ## 💻 Tecnologias <a id="tecnologias"></a>
 
@@ -97,6 +95,8 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 ## 📖 Manual do usuário  <a id="manual_usuario"></a>
 [Estrutura de branchs](./documentacao/produto/manual_do_usuario.md)
 
+## 📦 Figma Projeto <a id="figma"></a>
+[Figma](https://www.figma.com/design/YBuIsfRpONwxIMrR1xqMyv/API-5%C2%BA-SEM?node-id=0-1&t=ZWqGjJXrsCpHYu7s-1 ) - Atualizado o Figma conforme aprovação da equipe com os ajustes solicitados pelo cliente.
 
 ## 🎓 Equipe <a id="equipe"></a>
 

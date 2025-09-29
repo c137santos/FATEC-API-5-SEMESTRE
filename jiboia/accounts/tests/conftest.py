@@ -11,12 +11,10 @@ def user_jon(db):
         last_name="Snow",
         email="jon@example.com",
         password="snow",
-        bio="bio",
     )
     return jon
 
 
 @pytest.fixture
-def logged_jon(client, user_jon):
-    client.force_login(User.objects.get(username=user_jon.username))
-    return user_jon
+def logged_jon(client, user_jon, db):
+    client.force_login(user_jon)

@@ -12,24 +12,27 @@
   "dependencies": {
     "@mdi/font": "7.0.96",
     "axios": "^1.5.1",
+    "chart.js": "^4.5.0",
     "pinia": "^2.1.7",
     "roboto-fontface": "*",
     "vue": "^3.3.4",
+    "vue-chartjs": "^5.3.2",
     "vue-router": "^4.2.5",
     "vuetify": "^3.7.3",
     "webfontloader": "^1.0.0"
   },
-  "devDependencies": {"@vitejs/plugin-vue": "^4.6.2",
-    "eslint": "^8.57.1",
-    "eslint-plugin-vue": "^9.29.0",
-    "vite": "^4.4.11",
-    "vite-plugin-vuetify": "^1.0.0-alpha.12",
+  "devDependencies": {
     "@rushstack/eslint-patch": "^1.10.4",
+    "@vitejs/plugin-vue": "^4.6.2",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/test-utils": "^2.4.6",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-vue": "^9.29.0",
     "jsdom": "^22.1.0",
     "prettier": "3.0.3",
+    "vite": "^4.4.11",
+    "vite-plugin-vuetify": "^1.0.0-alpha.12",
     "vitest": "^0.34.6"
   }
 }

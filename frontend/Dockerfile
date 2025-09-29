@@ -4,8 +4,8 @@ WORKDIR /frontend
 
 # Install basic SO and Python
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  curl vim wget \
   build-essential \
+  curl vim wget \
   && npm install -g npm@9.3.1 \
   && rm -rf /var/lib/apt/lists/* \
   && npm install -g pm2@5.2.0

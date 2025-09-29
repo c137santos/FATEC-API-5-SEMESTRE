@@ -1,17 +1,30 @@
-// Composables
+
+
 import DefaultLayout from "@/layouts/default/DefaultLayout.vue"
-import CardListView from "@/pages/core/CardListView.vue"
+import IssuesView from "@/pages/core/IssuesView"
+import OverviewView from "@/pages/core/OverviewView"
+import UserView from "@/pages/core/UserView"
 
 export default [
   {
-    path: "/cards",
+    path: "/",
     component: DefaultLayout,
     children: [
       {
-        path: "list",
-        name: "cards-list",
-        component: CardListView,
+        path: "overview",
+        name: "overview",
+        component: OverviewView,
       },
+      {
+        path: "issues",
+        name: "issues",
+        component: IssuesView,
+      },
+      {
+        path: "user",
+        name: "user",
+        component: UserView,
+      }
     ],
-  },
+  }
 ]

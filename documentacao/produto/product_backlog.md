@@ -49,6 +49,8 @@ Para que uma User Story seja considerada concluída, os seguintes critérios dev
 
 [ ]  O código foi revisado por outro membro do time (Code Review) e as sugestões foram incorporadas.
 
+[ ]  A estrutura do código foi 100% aceita pelo SonarQube
+
 ### Qualidade e Testes
 [ ]  Todos os testes de aceitação definidos na User Story foram executados com sucesso.
 

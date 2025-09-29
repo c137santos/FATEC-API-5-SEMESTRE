@@ -1,0 +1,404 @@
+[
+	{
+		"project_id": 2,
+		"name": "SOS Edital",
+		"issues_per_month": [
+			{
+				"date": "05/2025",
+				"Tarefas pendentes": 50,
+				"Em andamento": 4,
+				"Concluído": 7
+			},
+			{
+				"date": "05/2025",
+				"Tarefas pendentes": 50,
+				"Em andamento": 2,
+				"Concluído": 15
+			},
+			{
+				"date": "06/2025",
+				"Tarefas pendentes": 36,
+				"Em andamento": 7,
+				"Concluído": 23
+			},
+			{
+				"date": "07/2025",
+				"Tarefas pendentes": 30,
+				"Em andamento": 3,
+				"Concluído": 35
+			},
+			{
+				"date": "08/2025",
+				"Tarefas pendentes": 26,
+				"Em andamento": 5,
+				"Concluído": 46
+			},
+			{
+				"date": "09/2025",
+				"Tarefas pendentes": 22,
+				"Em andamento": 1,
+				"Concluído": 56
+			}
+		],
+		"issues_today": {
+			"date": "09/2025",
+			"Tarefas pendentes": 22,
+			"Em andamento": 1,
+			"Concluído": 56
+		},
+		"burndown": {
+			"end_date": "28/10/2025",
+			"pending_per_day": [
+				{
+					"date": "28/09/2025",
+					"pending": 22
+				},
+				{
+					"date": "29/09/2025",
+					"pending": 22
+				},
+				{
+					"date": "30/09/2025",
+					"pending": 21
+				},
+				{
+					"date": "01/10/2025",
+					"pending": 20
+				},
+				{
+					"date": "02/10/2025",
+					"pending": 20
+				},
+				{
+					"date": "03/10/2025",
+					"pending": 19
+				},
+				{
+					"date": "04/10/2025",
+					"pending": 18
+				},
+				{
+					"date": "05/10/2025",
+					"pending": 17
+				},
+				{
+					"date": "06/10/2025",
+					"pending": 17
+				},
+				{
+					"date": "07/10/2025",
+					"pending": 16
+				},
+				{
+					"date": "08/10/2025",
+					"pending": 15
+				},
+				{
+					"date": "09/10/2025",
+					"pending": 14
+				},
+				{
+					"date": "10/10/2025",
+					"pending": 14
+				},
+				{
+					"date": "11/10/2025",
+					"pending": 13
+				},
+				{
+					"date": "12/10/2025",
+					"pending": 12
+				},
+				{
+					"date": "13/10/2025",
+					"pending": 11
+				},
+				{
+					"date": "14/10/2025",
+					"pending": 11
+				},
+				{
+					"date": "15/10/2025",
+					"pending": 10
+				},
+				{
+					"date": "16/10/2025",
+					"pending": 9
+				},
+				{
+					"date": "17/10/2025",
+					"pending": 9
+				},
+				{
+					"date": "18/10/2025",
+					"pending": 8
+				},
+				{
+					"date": "19/10/2025",
+					"pending": 7
+				},
+				{
+					"date": "20/10/2025",
+					"pending": 6
+				},
+				{
+					"date": "21/10/2025",
+					"pending": 6
+				},
+				{
+					"date": "22/10/2025",
+					"pending": 5
+				},
+				{
+					"date": "23/10/2025",
+					"pending": 4
+				},
+				{
+					"date": "24/10/2025",
+					"pending": 3
+				},
+				{
+					"date": "25/10/2025",
+					"pending": 3
+				},
+				{
+					"date": "26/10/2025",
+					"pending": 2
+				},
+				{
+					"date": "27/10/2025",
+					"pending": 1
+				}
+			]
+		},
+		"total_worked_hours": 815,
+		"issues_status": {
+			"Erro": 7,
+			"Epic": 9,
+			"Tarefa": 63
+		},
+		"dev_hours": [
+			{
+				"dev_id": 4,
+				"name": "Eric Lourenço Mendes da SIlva",
+				"hours": 667
+			},
+			{
+				"dev_id": 1,
+				"name": "sergio.casas",
+				"hours": 63
+			},
+			{
+				"dev_id": 3,
+				"name": "Lucas Paiva",
+				"hours": 46
+			},
+			{
+				"dev_id": 2,
+				"name": "Felipe Gabriel Barreto Faria",
+				"hours": 38
+			},
+			{
+				"dev_id": 5,
+				"name": "Aline Dominique",
+				"hours": 1
+			}
+		]
+	},
+	{
+		"project_id": 1,
+		"name": "SOS MNT 2025",
+		"issues_per_month": [
+			{
+				"date": "05/2025",
+				"Tarefas pendentes": 22,
+				"Em andamento": 4,
+				"Concluído": 6
+			},
+			{
+				"date": "05/2025",
+				"Tarefas pendentes": 18,
+				"Em andamento": 3,
+				"Concluído": 8
+			},
+			{
+				"date": "06/2025",
+				"Tarefas pendentes": 18,
+				"Em andamento": 6,
+				"Concluído": 10
+			},
+			{
+				"date": "07/2025",
+				"Tarefas pendentes": 12,
+				"Em andamento": 3,
+				"Concluído": 16
+			},
+			{
+				"date": "08/2025",
+				"Tarefas pendentes": 8,
+				"Em andamento": 0,
+				"Concluído": 23
+			},
+			{
+				"date": "09/2025",
+				"Tarefas pendentes": 4,
+				"Em andamento": 1,
+				"Concluído": 30
+			}
+		],
+		"issues_today": {
+			"date": "09/2025",
+			"Tarefas pendente": 1,
+			"Em andamento": 16,
+			"Concluído": 37
+		},
+		"burndown": {
+			"end_date": "28/10/2025",
+			"pending_per_day": [
+				{
+					"date": "28/09/2025",
+					"pending": 12
+				},
+				{
+					"date": "29/09/2025",
+					"pending": 12
+				},
+				{
+					"date": "30/09/2025",
+					"pending": 12
+				},
+				{
+					"date": "01/10/2025",
+					"pending": 11
+				},
+				{
+					"date": "02/10/2025",
+					"pending": 11
+				},
+				{
+					"date": "03/10/2025",
+					"pending": 10
+				},
+				{
+					"date": "04/10/2025",
+					"pending": 10
+				},
+				{
+					"date": "05/10/2025",
+					"pending": 10
+				},
+				{
+					"date": "06/10/2025",
+					"pending": 9
+				},
+				{
+					"date": "07/10/2025",
+					"pending": 9
+				},
+				{
+					"date": "08/10/2025",
+					"pending": 8
+				},
+				{
+					"date": "09/10/2025",
+					"pending": 8
+				},
+				{
+					"date": "10/10/2025",
+					"pending": 8
+				},
+				{
+					"date": "11/10/2025",
+					"pending": 7
+				},
+				{
+					"date": "12/10/2025",
+					"pending": 7
+				},
+				{
+					"date": "13/10/2025",
+					"pending": 6
+				},
+				{
+					"date": "14/10/2025",
+					"pending": 6
+				},
+				{
+					"date": "15/10/2025",
+					"pending": 6
+				},
+				{
+					"date": "16/10/2025",
+					"pending": 5
+				},
+				{
+					"date": "17/10/2025",
+					"pending": 5
+				},
+				{
+					"date": "18/10/2025",
+					"pending": 4
+				},
+				{
+					"date": "19/10/2025",
+					"pending": 4
+				},
+				{
+					"date": "20/10/2025",
+					"pending": 4
+				},
+				{
+					"date": "21/10/2025",
+					"pending": 3
+				},
+				{
+					"date": "22/10/2025",
+					"pending": 3
+				},
+				{
+					"date": "23/10/2025",
+					"pending": 2
+				},
+				{
+					"date": "24/10/2025",
+					"pending": 2
+				},
+				{
+					"date": "25/10/2025",
+					"pending": 2
+				},
+				{
+					"date": "26/10/2025",
+					"pending": 1
+				},
+				{
+					"date": "27/10/2025",
+					"pending": 1
+				}
+			]
+		},
+		"total_worked_hours": 700,
+		"issues_status": {
+			"subtarefa": 1,
+			"epic": 9,
+			"tarefa": 72
+		},
+		"dev_hours": [
+			{
+				"dev_id": 1,
+				"name": "sergio.casas",
+				"hours": 685
+			},
+			{
+				"dev_id": 2,
+				"name": "Felipe Gabriel Barreto Faria",
+				"hours": 12
+			},
+			{
+				"dev_id": 3,
+				"name": "Lucas Paiva",
+				"hours": 4
+			}
+		]
+	}
+]

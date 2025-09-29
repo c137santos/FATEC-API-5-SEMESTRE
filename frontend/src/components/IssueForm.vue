@@ -8,7 +8,7 @@
           required
           outlined
           append-icon="fa-pen"
-          @keyup.enter="addNewCard" />
+          @keyup.enter="addNewIssue" />
       </v-card-text>
     </v-card>
   </div>
@@ -22,15 +22,15 @@ export default {
       default: "",
     },
   },
-  emits: ["newCard"],
+  emits: ["newIssue"],
   data: () => {
     return {
       title: "",
     }
   },
   methods: {
-    addNewCard() {
-      this.$emit("newCard", {
+    addNewIssue() {
+      this.$emit("newIssue", {
         title: this.title,
       })
       this.title = ""

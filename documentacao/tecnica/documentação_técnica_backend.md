@@ -47,7 +47,7 @@ jiboia                   👉 Pasta raiz do projeto
         └── wsgi.py
 ```
 
-O Django tem o conceito de "apps" com a ideia de separar os contextos do seu projeto, ao invés de ter tudo na app principal, podemos ir criando novas apps como por exemplo, dashboard, issue, card,  agrupar funcionalidades da mesma natureza. Cada app segue a estrutura abaixo: 
+O Django tem o conceito de "apps" com a ideia de separar os contextos do seu projeto, ao invés de ter tudo na app principal, podemos ir criando novas apps como por exemplo, dashboard, issue, issue,  agrupar funcionalidades da mesma natureza. Cada app segue a estrutura abaixo: 
 
 ```mermaid
 classDiagram
@@ -74,41 +74,105 @@ classDiagram
 
 ```
 
-### Diagrama de Entidade e Relacionamento
-
-- Inicialmente o projeto tem apenas uma tabela na aplicação principal (core): Card
-- O Django já fornece a tabela de usuários (User), a qual está organizada na app accounts. Note que podemos adicionar campos adicionais na tabela de usuário.
-
-**🌈 NOTA:** Em versões mais antigas do Django, a forma de adicionar campos extras na tabela User era utilizando a tabela `Profile` com um relacionamento 1 para 1 com a User. Na versão mais nova do Django, podemos estender a tabela user diretamente igual está feito na app `accounts.models.User`.
-
-```mermaid
----
-title: Diagrama inicial do Djàvue
----
-classDiagram
-    direction LR
-    AbstractUser <|-- User
-    namespace accounts {
-        class User {
-            bio
-            avatar
-        }
-    }
-    namespace core {
-        class Card {
-            description
-            done
-            to_dict_json()
-        }
-    }
-```
-
 ## Requisitos
 
 - Git
 - 🐍 Python 3.11.x 
 - Um terminal (de preferência um terminal Linux, é para funcionar em um terminal WSL no Windows)
 
-Temos três formas para **Rodar**:
+Temos duas formas para **Rodar**:
 - Sem Docker 📦: Apenas **Python** instalando requiriments.txt
 - Apenas Banco de dados usando 🐋 Docker (melhor para debug)
+
+## Settings opções
+
+
+### CORS (Cross-Origin Resource Sharing)
+
+1. **Adicionar o pacote `corsheaders` apenas em ambiente de desenvolvimento:**
+   - No bloco de apps:
+     ```python
+     if DEBUG:
+         THIRD_PARTY_APPS += ['corsheaders']
+     ```
+
+2. **Adicionar o middleware do CORS antes do `CommonMiddleware` apenas em desenvolvimento:**
+   - No bloco de middlewares:
+     ```python
+     if DEBUG:
+         before_common = MIDDLEWARE.index("django.middleware.common.CommonMiddleware")
+         MIDDLEWARE.insert(before_common, "corsheaders.middleware.CorsMiddleware")
+     ```
+
+3. **Configurar as origens permitidas e credenciais para CORS apenas em desenvolvimento:**
+   - No bloco de configurações:
+     ```python
+     if DEBUG:
+         CORS_ALLOW_CREDENTIALS = config("CORS_ALLOW_CREDENTIALS", default=False, cast=bool)
+         CORS_ALLOWED_ORIGINS = config(
+             "CSRF_TRUSTED_ORIGINS",
+             default="http://localhost:3000",
+             cast=Csv(),
+         )
+     ```
+
+---
+
+### LOGGING
+
+1. **Exemplo de configuração de logging customizado:**
+   - Estrutura sugerida para o dicionário `LOGGING`:
+     ```python
+     LOGGING = {
+         'version': 1,
+         'formatters': {
+             'verbose': {
+                 'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+             },
+             'simple': {
+                 'format': '%(levelname)s %(message)s'
+             },
+         },
+         'filters': {
+             'require_debug_false': {
+                 '()': 'django.utils.log.RequireDebugFalse',
+             }
+         },
+         'handlers': {
+             'console': {
+                 'level': 'DEBUG',
+                 'class': 'logging.StreamHandler',
+                 'formatter': 'simple'
+             },
+             'file': {
+                 'level': 'DEBUG',
+                 'class': 'logging.FileHandler',
+                 'filename': os.getenv('DJANGO_LOG_FILE', './jiboia.log'),
+                 'formatter': 'simple'
+             },
+         },
+         'loggers': {
+             '': {
+                 'handlers': ['file'],
+                 'level': 'DEBUG' if DEBUG else 'INFO',
+                 'propagate': True,
+             },
+             'django': {
+                 'handlers': ['file'],
+                 'level': 'DEBUG' if DEBUG else 'INFO',
+                 'propagate': True,
+             },
+         }
+     }
+     ```
+
+2. **Em ambiente de desenvolvimento, faça todos os loggers usarem o console:**
+   ```python
+   if DEBUG:
+       # make all loggers use the console.
+       for logger in LOGGING['loggers']:
+           LOGGING['loggers'][logger]['handlers'] = ['console']
+   ```
+
+---
+

@@ -96,8 +96,6 @@ class Migration(migrations.Migration):
                         default=django.utils.timezone.now, verbose_name="date joined"
                     ),
                 ),
-                ("bio", models.TextField(blank=True, null=True)),
-                ("avatar", models.URLField(blank=True, max_length=1024, null=True)),
                 (
                     "groups",
                     models.ManyToManyField(

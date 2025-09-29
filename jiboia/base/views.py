@@ -1,15 +1,18 @@
 import os
+
 from django.db import connection
 from django.http import JsonResponse
+
 from .exceptions import BusinessError
 
-def dapau(request, error: str = None):
+
+def dapau(error: str = None):
     """
     Retorna um erro real para ajudar nos testes
     """
     if error and error.upper() == "BUSINESS":
         raise BusinessError("BusinessError")
-    raise Exception("break on purpose")
+    raise ValueError("break on purpose")
 
 
 

@@ -7,11 +7,9 @@ wheels/
 .installed.cfg
 *.egg
 .coverage
-coverage.xml
 htmlcov/
 .tox/
 .coverage
-.coverage.*
 .cache
 nosetests.xml
 coverage.xml
@@ -36,3 +34,4 @@ venv/
 ENV/
 .python-version
 .env
+.scannerwork/

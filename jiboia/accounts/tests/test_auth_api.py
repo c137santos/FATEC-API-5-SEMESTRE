@@ -1,9 +1,11 @@
-import pytest
 from unittest.mock import ANY
+
+import pytest
 
 from jiboia.accounts.models import User
 
 
+@pytest.mark.django_db
 def test_deve_retornar_usuario_nao_logado(client):
     resp = client.get("/api/accounts/whoami")
 
@@ -11,6 +13,7 @@ def test_deve_retornar_usuario_nao_logado(client):
     assert resp.json() == {"authenticated": False}
 
 
+@pytest.mark.django_db
 def test_deve_retornar_usuario_logado(client, logged_jon):
     resp = client.get("/api/accounts/whoami")
 
@@ -24,8 +27,6 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
             "first_name": "Jon",
             "last_name": "Snow",
             "email": "jon@example.com",
-            "avatar": None,
-            "bio": "bio",
             "permissions": {"ADMIN": False, "STAFF": False},
         },
         "authenticated": True,
@@ -34,13 +35,12 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
 
 @pytest.mark.django_db
 def test_deve_fazer_login(client):
-    jon = User.objects.create_user(
+    User.objects.create_user(
         username="jon",
         first_name="Jon",
         last_name="Snow",
         email="jon@example.com",
         password="snow",
-        bio="bio",
     )
 
     resp = client.post(
@@ -64,8 +64,6 @@ def test_deve_fazer_login(client):
             "first_name": "Jon",
             "last_name": "Snow",
             "email": "jon@example.com",
-            "avatar": None,
-            "bio": "bio",
             "permissions": {"ADMIN": False, "STAFF": False},
         },
         "authenticated": True,
