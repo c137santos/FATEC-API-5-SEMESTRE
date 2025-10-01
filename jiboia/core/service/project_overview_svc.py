@@ -9,6 +9,8 @@ from ..models import Issue, IssueType, Project, StatusType, TimeLog
 
 logger = logging.getLogger(__name__)
 
+FORMAT_DATE_MONTH = "%m/%Y"
+FORMAT_DATE_COMPLETE = "%d/%m/%Y"
 
 def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
     """Helper function to get issues per month breakdown"""
@@ -22,7 +24,7 @@ def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
         month_end = date_month.replace(day=month_end_day, hour=23, minute=59, second=59, microsecond=999999)
         
         # Dictionary to hold counts for each status
-        month_data = {"date": date_month.strftime("%m/%Y")}
+        month_data = {"date": date_month.strftime(FORMAT_DATE_MONTH)}
         
         # Count issues created in this month for each status type
         for status in all_status_types:
@@ -54,7 +56,7 @@ def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
 def _get_issues_today(project, all_status_types):
     """Helper function to get current issues breakdown"""
     today = timezone.now()
-    issues_today = {"date": today.strftime("%m/%Y")}
+    issues_today = {"date": today.strftime(FORMAT_DATE_MONTH)}
     
     # Count current issues for each status type
     for status in all_status_types:
@@ -81,7 +83,7 @@ def _get_burndown_data(project, burndown_days):
     """Helper function to get burndown chart data"""
     today = timezone.now()
     burndown = {
-        "end_date": (today + timedelta(days=burndown_days)).strftime("%d/%m/%Y"),
+        "end_date": (today + timedelta(days=burndown_days)).strftime(FORMAT_DATE_COMPLETE),
         "pending_per_day": []
     }
     
@@ -101,7 +103,7 @@ def _get_burndown_data(project, burndown_days):
         for i in range(burndown_days):
             date = today + timedelta(days=i)
             burndown["pending_per_day"].append({
-                "date": date.strftime("%d/%m/%Y"),
+                "date": date.strftime(FORMAT_DATE_COMPLETE),
                 "pending": 0
             })
     else:
@@ -112,7 +114,7 @@ def _get_burndown_data(project, burndown_days):
             expected_pending = max(0, total_pending - (total_pending * i // burndown_days))
             
             burndown["pending_per_day"].append({
-                "date": date.strftime("%d/%m/%Y"),
+                "date": date.strftime(FORMAT_DATE_COMPLETE),
                 "pending": expected_pending
             })
     

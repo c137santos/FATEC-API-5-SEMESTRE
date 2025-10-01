@@ -125,7 +125,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
         
         start_date = fields.get("customfield_10015")
         time_estimate_seconds = fields.get("timeestimate")
-        issue_obj, created = Issue.objects.update_or_create(
+        issue_obj, _created = Issue.objects.update_or_create(
             jira_id=data['id'],
             defaults={
                 "project": project,
