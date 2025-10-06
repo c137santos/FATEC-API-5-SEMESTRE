@@ -49,7 +49,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 | 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
 | 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
 | 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 2 |
-| 6 | Alta | Como gestor, quero que o dashboard de issues exiba informações úteis ao contexto de issues do projeto. | 8| 2 |
+| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto | 8| 2 |
 | 7 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 2 |
 | 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 2 |
 | 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. |5| 3 |
@@ -63,9 +63,14 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 | Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
-| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs]() |  |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) |  |
 | 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |  |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
+
+## 📅 Board de priorização  <a id="sprint"></a>
+[Board no github equipe neurodivertidamente](https://github.com/users/c137santos/projects/10
+)
+
 
 ## 💻 Tecnologias <a id="tecnologias"></a>
 
@@ -90,10 +95,10 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 [Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
 
 ## 📦 Product Backlog -> DOR e DOD  <a id="pb"></a>
-[Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
+[Product backlog](./documentacao/tecnica/estrutura_de_branchs.md)
 
 ## 📖 Manual do usuário  <a id="manual_usuario"></a>
-[Estrutura de branchs](./documentacao/produto/manual_do_usuario.md)
+[Manual do usuário](./documentacao/produto/manual_do_usuario.md)
 
 ## 📦 Figma Projeto <a id="figma"></a>
 [Figma](https://www.figma.com/design/YBuIsfRpONwxIMrR1xqMyv/API-5%C2%BA-SEM?node-id=0-1&t=ZWqGjJXrsCpHYu7s-1 ) - Atualizado o Figma conforme aprovação da equipe com os ajustes solicitados pelo cliente.
@@ -127,7 +132,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
       <td><a href="https://www.linkedin.com/in/matheus-marciano-leite/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
-      <td>Yan Yamin</td>
+      <td>Yan Yamim</td>
       <td>Desenvolvedor</td>
       <td><a href="https://github.com/YanYamim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/yan-yamim-185220278/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
