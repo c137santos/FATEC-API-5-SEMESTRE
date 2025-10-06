@@ -1,6 +1,5 @@
 from django.http import JsonResponse
 from django.utils.deprecation import MiddlewareMixin
-from django.conf import settings
 
 from ..base.exceptions import BusinessError
 
