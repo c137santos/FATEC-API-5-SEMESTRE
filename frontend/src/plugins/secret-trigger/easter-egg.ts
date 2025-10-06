@@ -13,7 +13,7 @@ const INJECT_KEY = `${config.PLUGIN_INJECT_KEY}:${config.EASTER_EGG_INJECT_KEY}`
 type EasterEgg = ReturnType<typeof createEasterEgg>
 
 const triggerNextStep = (event: KeyboardEvent, easterEgg: EasterEgg) => {
-	easterEgg = Object.assign({}, easterEgg)
+	easterEgg = {... easterEgg}
 	const expectedValue = easterEgg.code[easterEgg.nextInputIndex]
 	if (expectedValue !== event.key.toUpperCase()) {
 		easterEgg.nextInputIndex = 0
