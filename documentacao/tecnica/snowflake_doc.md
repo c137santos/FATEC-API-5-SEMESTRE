@@ -3,7 +3,7 @@ Este modelo utiliza o esquema Star (Estrela), otimizado para análises de desemp
 
 1. Tabelas Fato
 
-- **Fato_issue**:	Registro de tempo gasto por Issue (Transacional) com id, IssueID, typeId, StatusId, projetoID, tempoID, userId. Armazena cada transação de tempo registrada. Deve ser imutável (sem updates). A chave id
+- **Fato_issue**:	Registro de tempo gasto por Issue (Transacional) com id, IssueID, typeId, StatusId, projetoID, tempoID, userId. Armazena cada transação de tempo registrada. Deve ser imutável (sem updates). A chave primária é o campo id.
 
 - **Fato_snapshot_projeto**:	Visão do Projeto em um Ponto no Tempo (Snapshot Diário)	id, projetoID, tempoID. Armazena métricas acumuladas e projetadas (dias restantes, custo total, etc.) capturadas diariamente. A chave primária ideal é (projetoID, tempoID).
 
