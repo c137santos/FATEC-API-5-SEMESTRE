@@ -43,7 +43,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
     _ENDPOINT = "/rest/api/3/search/jql"
     _MAX_RESULTS = 100
     
-    def execute(self, project_key: str) -> int:
+    def execute(self, project_key: str = None) -> int:
         logger.info(f"Starting synchronization of issues for project '{project_key}'...")
         synced_count = 0
         try:
@@ -125,7 +125,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
         
         start_date = fields.get("customfield_10015")
         time_estimate_seconds = fields.get("timeestimate")
-        issue_obj, created = Issue.objects.update_or_create(
+        issue_obj, _created = Issue.objects.update_or_create(
             jira_id=data['id'],
             defaults={
                 "project": project,

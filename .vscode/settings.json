@@ -1,8 +1,4 @@
 {
-    "sonarlint.connectedMode.project": {
-        "connectionId": "c137santos",
-        "projectKey": "c137santos_FATEC-API-5-SEMESTRE"
-    },
     "python.testing.pytestArgs": [
         "jiboia"
     ],
