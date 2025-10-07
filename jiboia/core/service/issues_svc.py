@@ -1,5 +1,7 @@
 import logging
 
+from django.core.paginator import Paginator
+
 from jiboia.base.exceptions import BusinessError
 
 from ..models import Issue
@@ -21,7 +23,29 @@ def add_issue(new_issue: str) -> dict:
     return issue.to_dict_json()
 
 
-def list_issues():
+def list_issues(page_number: int = 1):
     logger.info("SERVICE list issues")
-    issues_list = Issue.objects.all()
-    return [item.to_dict_json() for item in issues_list]
+    issues_list = Issue.objects.all().order_by('-id')
+    paginator = Paginator(issues_list, 10)
+
+    try:
+        page = paginator.page(page_number)
+        issues_data = [item.to_dict_json() for item in issues_list]
+        return {
+            'issues': issues_data,
+            'current_page': page_number,
+            'total_pages': paginator.num_pages,
+            'has_next': page.has_next(),
+            'has_previous': page.has_previous(),
+            'total_items': paginator.count,
+        }
+
+    except Exception:
+        return {
+            'issues': [],
+            'current_page': page_number,
+            'total_pages': paginator.num_pages,
+            'has_next': False,
+            'has_previous': page_number > 1,
+            'total_items': paginator.count,
+        }

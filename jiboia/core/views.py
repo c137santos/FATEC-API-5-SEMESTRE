@@ -39,16 +39,21 @@ def add_issue(request):
 
     return JsonResponse(new_issue, status=201)
 
-
-
 @require_http_methods(["GET"])
-def list_issues(request):
-    """Lista Issues"""
-    _success, _message = JiraService.get_projects()
+def list_paginable_issues(request):
+    """List Issues in pages"""
 
     logger.info("API list issues")
-    issues = issues_svc.list_issues()
-    return JsonResponse({"issues": issues})
+    page_number = request.GET.get('page', 1)
+
+    try:
+        page_number = int(page_number)
+
+    except (TypeError, ValueError):
+        page_number = 1
+
+    issues_data = issues_svc.list_issues(page_number)
+    return JsonResponse(issues_data)
 
 @require_http_methods(["GET"])
 def project_overview(request, project_id):
