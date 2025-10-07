@@ -1,5 +1,7 @@
 ## Descrição do Modelo Dimensional de Projetos
-Este modelo utiliza o esquema Star (Estrela), otimizado para análises de desempenho e custos, com foco na imutabilidade dos registros de transação (Fato_issue) e na captura do estado do projeto ao longo do tempo (Fato_snapshot_projeto). O soft delete (active) permite a desativação de entidades sem perda de histórico.
+Este modelo utiliza o esquema Star (Estrela), otimizado para análises de desempenho e custos, com foco na imutabilidade dos registros de transação (Fato_issue) e na captura do estado do projeto ao longo do tempo (Fato_snapshot_projeto).
+
+![alt text](image.png)
 
 1. Tabelas Fato
 
@@ -12,16 +14,15 @@ Este modelo utiliza o esquema Star (Estrela), otimizado para análises de desemp
 2. Tabelas de Dimensão
 As tabelas de dimensão do modelo são responsáveis por armazenar os principais atributos descritivos das entidades do sistema, facilitando a análise e a navegação dos dados. A seguir, estão descritas as principais dimensões:
 
-- **dim_projeto**: Esta tabela armazena informações sobre os projetos, incluindo o identificador único (`projetoID`), nome, data de início, data de término e o campo `active`, utilizado para soft delete. O campo `active` permite desativar projetos sem perder o histórico dos dados.
+- **dim_projeto**: Esta tabela armazena informações sobre os projetos, incluindo o identificador único (`projetoID`), nome, data de início, data de término.
 
-- **dim_dev**: Responsável por descrever os desenvolvedores, possui como chave primária o `devId` e armazena atributos como o valor da hora trabalhada e o campo `active` para soft delete, permitindo manter o histórico mesmo após a desativação de um desenvolvedor.
+- **dim_dev**: Responsável por descrever os desenvolvedores, possui como chave primária o `devId` e armazena atributos como o valor da hora trabalhada.
 
-- **dim_tempo**: Representa a dimensão temporal do modelo, sendo uma dimensão conformada compartilhada por todas as tabelas fato. Possui como chave primária o campo `id` e inclui atributos como tipo de tempo (`type_tempo`), minutos, mês, dias, datas de criação, início, término e o total de tempo.
+- **dim_tempo**: Representa a dimensão temporal do modelo, sendo uma dimensão conformada compartilhada por todas as tabelas fato. Possui como chave primária o campo `id` e inclui atributos como tipo de tempo (`type_tempo`), minutos, mês, dias, datas de criação, início, término e o total de tempo. Ele indica a granulariedade de tempo em que ocorreu a análise para fato_issue e fato_snapshot_projeto
 
-- **dim_type**: Esta dimensão descreve os tipos de issues existentes no sistema, como Task, Bug ou Story. Utiliza o campo `idType` como chave primária e possui os atributos nome e `active`, que permite o soft delete dos tipos de issues.
+- **dim_type**: Esta dimensão descreve os tipos de issues existentes no sistema, como Task, Bug ou Story. Utiliza o campo `idType` como chave primária e possui os atributos nome.
 
-- **dim_status**: Responsável por armazenar os diferentes status das issues, como Pendente ou Concluída. Tem como chave primária o campo `id` e inclui os atributos nome e `active`, também utilizado para soft delete dos status.
-
+- **dim_status**: Responsável por armazenar os diferentes status das issues, como Pendente ou Concluída. Tem como chave primária o campo `id`.
 
 
 1. Quantas horas foram trabalhadas em cada projeto?
@@ -36,8 +37,6 @@ FROM
     Fato_issue AS FI
 JOIN
     dim_projeto AS DP ON FI.projetoID = DP.projetoID 
-WHERE
-    DP.active = TRUE 
 GROUP BY
     DP.nome,
     FI.projetoID
@@ -115,8 +114,6 @@ FROM
     Fato_issue AS FI
 JOIN
     dim_type AS DT ON FI.typeId = DT.idType 
-WHERE
-    DT.active = TRUE 
 GROUP BY
     DT.nome
 ORDER BY
@@ -136,8 +133,6 @@ FROM
     Fato_issue AS FI
 JOIN
     dim_status AS DS ON FI.StatusId = DS.id 
-WHERE
-    DS.active = TRUE 
 GROUP BY
     DS.nome
 ORDER BY
@@ -205,8 +200,6 @@ FROM
     UltimoRegistro AS UR
 JOIN
     dim_dev AS DD ON UR.userId = DD.devId
-WHERE
-    UR.rn = 1 AND DD.active = TRUE
 GROUP BY
     DD.devId,
     DD.valor_da_Hora
