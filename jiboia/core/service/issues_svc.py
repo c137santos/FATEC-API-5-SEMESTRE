@@ -35,6 +35,9 @@ def list_issues(page_number: int = 1):
         for item in page:
             issue_dict = item.to_dict_json()
 
+            issue_dict.pop('start_date', None)
+            issue_dict.pop('end_date', None)
+
             user_name = None
             if item.id_user:
                 user_name = item.id_user.get_full_name()
