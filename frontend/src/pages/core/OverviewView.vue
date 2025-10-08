@@ -7,7 +7,12 @@
 				<template #easter-egg>
 					<img src="@/assets/Group 22.png" alt="Easter Egg" />
 				</template>
-				<template #title> Project Overview </template>
+				<template #title> 
+					<div class="d-flex align-center justify-space-between w-100">
+						<span>Project Overview</span> 
+						<BtnCron/>
+					</div>					
+				</template>
 				<v-container :key="projectList.map(p => p.id).join()">
 					<v-row>
 						<v-col>
@@ -99,6 +104,7 @@ import projectsApi from '@/api/projects.api'
 import { chartColors } from '@/utils/chart-utils'
 import StatusBreakdownGraph from '@/components/StatusBreakdownGraph'
 import DashboardLayout from '@/layouts/default/DashboardLayout.vue'
+import BtnCron from '@/components/BtnCron.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
