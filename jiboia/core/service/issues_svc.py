@@ -30,13 +30,11 @@ def list_issues(page_number: int = 1):
 
     try:
         page = paginator.page(page_number)
-        issues_data = [item.to_dict_json() for item in issues_list]
+        issues_data = [item.to_dict_json() for item in page]
         return {
             'issues': issues_data,
             'current_page': page_number,
             'total_pages': paginator.num_pages,
-            'has_next': page.has_next(),
-            'has_previous': page.has_previous(),
             'total_items': paginator.count,
         }
 
@@ -45,7 +43,4 @@ def list_issues(page_number: int = 1):
             'issues': [],
             'current_page': page_number,
             'total_pages': paginator.num_pages,
-            'has_next': False,
-            'has_previous': page_number > 1,
-            'total_items': paginator.count,
         }
