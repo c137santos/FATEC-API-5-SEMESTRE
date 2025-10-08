@@ -238,18 +238,18 @@ const devHoursData = computed(() => {
 }
 })
 
-const workedHours = computed(() => !dataRef.value ? 0 : dataRef.value.total_worked_hours)
+const workedHours = computed(() => dataRef.value ? dataRef.value.total_worked_hours: 0)
 
-const activeIssues = computed(() => !dataRef.value ? 0 : (() => {
+const activeIssues = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
 	return Object.values(today).reduce((total, value) => total + value, 0) - today['Concluído']
-})())
-const concludedIssues = computed(() => !dataRef.value ? 0 : dataRef.value.issues_today['Concluído'])
+})() : 0)
+const concludedIssues = computed(() => !dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
 
-const issuesTotal = computed(() => !dataRef.value ? 0 : (() => {
+const issuesTotal = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
 	return Object.values(today).reduce((total, value) => total + value, 0)
-})())
+})() : 0)
 
 onMounted(async () => {
 	const data = await projectsApi.dashboard(route.params.id)

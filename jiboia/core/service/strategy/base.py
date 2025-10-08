@@ -19,7 +19,7 @@ class JiraStrategy(Generic[T], abc.ABC):
         self.headers = {"Accept": "application/json"}
     
     @abc.abstractmethod
-    def execute(self) -> T:
+    def execute(self, project_key: str) -> T:
         """
         Execute the API call strategy.
         
