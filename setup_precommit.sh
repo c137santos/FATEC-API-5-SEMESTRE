@@ -54,7 +54,7 @@ fi
 
 # Install the git hooks
 echo "Installing git hooks..."
-pre-commit uninstall || true  # Remover hooks antigos se existirem
+pre-commit uninstall || true
 pre-commit install --install-hooks
 if [ $? -ne 0 ]; then
     echo "Failed to install pre-commit hooks."
@@ -68,7 +68,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Verificar se os hooks foram instalados
+# verify the hooks
 echo "Verifying hooks installation..."
 if [ -f ".git/hooks/pre-commit" ] && [ -f ".git/hooks/commit-msg" ]; then
     echo "Pre-commit hooks installed successfully!"
