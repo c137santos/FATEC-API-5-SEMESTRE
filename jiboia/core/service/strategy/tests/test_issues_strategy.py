@@ -18,29 +18,32 @@ def test_update_project_dates():
     class DummyQuerySet:
         def __init__(self, issues):
             self._issues = issues
-        
+
         def all(self):
             return self
-        
+
         def aggregate(self, agg):
             from django.db.models import Max, Min
+
             if isinstance(agg, Min):
-                return {'start_date__min': min((i.start_date for i in self._issues if i.start_date), default=None)}
+                return {"start_date__min": min((i.start_date for i in self._issues if i.start_date), default=None)}
             if isinstance(agg, Max):
-                return {'end_date__max': max((i.end_date for i in self._issues if i.end_date), default=None)}
+                return {"end_date__max": max((i.end_date for i in self._issues if i.end_date), default=None)}
             return {}
-    
+
     class DummyProject:
         def __init__(self):
             self.start_date_project = None
             self.end_date_project = None
             self.saved = False
-            self.issue_set = DummyQuerySet([
-                DummyIssue(datetime(2023, 1, 1), datetime(2023, 1, 10)),
-                DummyIssue(datetime(2023, 1, 5), datetime(2023, 1, 20)),
-                DummyIssue(None, None),
-            ])
-        
+            self.issue_set = DummyQuerySet(
+                [
+                    DummyIssue(datetime(2023, 1, 1), datetime(2023, 1, 10)),
+                    DummyIssue(datetime(2023, 1, 5), datetime(2023, 1, 20)),
+                    DummyIssue(None, None),
+                ]
+            )
+
         def save(self):
             self.saved = True
 
@@ -52,26 +55,22 @@ def test_update_project_dates():
     assert project.saved
 
 
-def test_execute_issues():
-    with patch('requests.get') as mock_requests_get:
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"issues": [], "total": 0}
-        mock_response.raise_for_status = MagicMock()
-        mock_requests_get.return_value = mock_response
-        
-        with patch('jiboia.core.models.Project.objects.get') as mock_project_get, \
-             patch.object(issues_mod.SyncIssuesStrategy, '_sync_issue') as mock_sync_issue, \
-             patch.object(issues_mod.SyncIssuesStrategy, '_sync_worklogs') as _mock_sync_worklogs:
-
-            dummy_project = MagicMock(spec=Project)
-            mock_project_get.return_value = dummy_project
-            mock_sync_issue.return_value = MagicMock(spec=Issue)
-
-            strategy = issues_mod.SyncIssuesStrategy('email', 'token', 'http://fake-jira')
-            result = strategy.execute('PRJ')
-            
-            assert isinstance(result, int)
-            assert result >= 0
+@pytest.fixture
+def test_execute_issues(monkeypatch, mock_issue_model):
+    strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
+    mock_response = MagicMock()
+    mock_response.json.return_value = {"issues": [], "total": 0}
+    mock_response.raise_for_status = MagicMock()
+    monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
+    dummy_project = MagicMock()
+    issues_mod.Project = MagicMock()
+    issues_mod.Project.objects.get.return_value = dummy_project
+    monkeypatch.setattr(strategy, "_sync_issue", lambda *a, **k: MagicMock())
+    monkeypatch.setattr(strategy, "_sync_worklogs", lambda *a, **k: None)
+    monkeypatch.setattr(requests, "get", lambda *a, **k: mock_response)
+    result = strategy.execute("PRJ")
+    assert isinstance(result, int)
+    assert result >= 0
 
 def test_execute_project_not_found():
     with patch('requests.get') as mock_requests_get:

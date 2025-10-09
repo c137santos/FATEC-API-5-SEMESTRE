@@ -7,6 +7,7 @@ from jiboia.core.models import Issue, IssueType, Project, StatusType
 
 MOCK_TODAY = date(2025, 9, 24)
 
+
 @pytest.fixture
 def setup_issues_data(db):
     """
@@ -38,19 +39,22 @@ def setup_issues_data(db):
 @pytest.fixture
 def mock_issue_model():
     """Simulate the class Issue."""
+
     class MockIssue:
         def __init__(self, id, project_id, created_at, status_name=None):
             self.id = id
             self.project_id = project_id
             self.created_at = created_at
-            self.status = MagicMock(name=status_name) 
-            self.project = MagicMock(id=project_id) 
+            self.status = MagicMock(name=status_name)
+            self.project = MagicMock(id=project_id)
 
     return MockIssue
+
 
 @pytest.fixture
 def mock_timelog_model():
     """Simulate the class TimeLog."""
+
     class MockTimeLog:
         def __init__(self, id, id_issue_id, id_user_id, id_user__username, seconds):
             self.id = id
@@ -58,7 +62,9 @@ def mock_timelog_model():
             self.id_user_id = id_user_id
             self.id_user__username = id_user__username
             self.seconds = seconds
+
     return MockTimeLog
+
 
 @pytest.fixture
 def mock_managers():
@@ -73,10 +79,12 @@ def mock_managers():
             "timelog": mock_timelog_manager,
         }
 
+
 @pytest.fixture
 def setup_project_order(mock_managers):
     def _apply(project_b, project_a):
         mock_managers["project"].filter.return_value.order_by.return_value = [project_b, project_a]
+
     return _apply
 
 def _mock_issues_monthly_side_effect(issue_a1, issue_b1, **kwargs):

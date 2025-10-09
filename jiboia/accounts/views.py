@@ -9,7 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 logger = logging.getLogger(__name__)
 
 
-
 @csrf_exempt
 def login(request):
     """
@@ -22,14 +21,13 @@ def login(request):
     user_authenticaded = auth.authenticate(username=username, password=password)
     user_dict = None
     if user_authenticaded is not None and user_authenticaded.is_active:
-            auth.login(request, user_authenticaded)
-            user_dict = user_authenticaded.to_dict_json()
-            logger.info("API login success")
+        auth.login(request, user_authenticaded)
+        user_dict = user_authenticaded.to_dict_json()
+        logger.info("API login success")
     if not user_dict:
         user_dict = {"message": "Unauthorized"}
         return JsonResponse(user_dict, safe=False, status=401)
     return JsonResponse(user_dict, safe=False, status=201)
-
 
 
 def logout(request):
@@ -41,7 +39,6 @@ def logout(request):
     logger.info(f"API logout: {request.user.username}")
     auth.logout(request)
     return JsonResponse({})
-
 
 
 def whoami(request):
