@@ -1,11 +1,43 @@
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.auth import get_user_model
 
 from jiboia.core.models import Issue, IssueType, Project, StatusType
-from jiboia.core.service.issues_svc import list_issues
+from jiboia.core.service.issues_svc import add_issue, list_issues
 
+
+@pytest.mark.django_db
+def test_add_issue_success():
+    """Testa se a issue foi cadastrada com sucesso"""
+    test_description = "Nova issue de teste"
+    
+    with patch('jiboia.core.service.issues_svc.Issue') as MockIssue:
+        mock_issue_instance = MagicMock()
+        mock_issue_instance.to_dict_json.return_value = {
+            "id": 1,
+            "description": test_description
+        }
+        MockIssue.return_value = mock_issue_instance
+        
+        result = add_issue(test_description)
+        
+        MockIssue.assert_called_once_with(description=test_description)
+        
+        mock_issue_instance.save.assert_called_once()
+        
+        mock_issue_instance.to_dict_json.assert_called_once()
+        
+        assert result['id'] == 1
+        assert result['description'] == test_description
+
+@pytest.mark.django_db
+def test_add_issue_fails_with_empty_description():
+    """Testa que falha o cadastro quando descrição é vazia"""
+    with pytest.raises(Exception) as exc_info:
+        add_issue("")
+    
+    assert "Invalid description" in str(exc_info.value)
 
 @pytest.mark.django_db
 def test_list_paginable_issues_no_user():
