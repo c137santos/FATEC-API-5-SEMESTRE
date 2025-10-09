@@ -17,7 +17,7 @@ export const toISODate = (dateStr) => {
 		return date.toISOString().split("T")[0];
 	} catch {
 		const parsedDate = new Date(dateStr);
-		return isNaN(parsedDate.getTime())
+		return Number.isNaN(parsedDate.getTime())
 			? null
 			: parsedDate.toISOString().split("T")[0]
 	}
