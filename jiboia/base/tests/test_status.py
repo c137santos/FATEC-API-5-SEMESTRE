@@ -1,11 +1,11 @@
 import json
-
 from unittest.mock import ANY, Mock
+
 from django.http import JsonResponse
 from django.test import RequestFactory
-from jiboia.base.middlewares import DjavueApiErrorHandlingMiddleware
+
 from jiboia.base.exceptions import BusinessError
-from jiboia.base.middlewares import CsrfTokenExemptionMiddleware
+from jiboia.base.middlewares import CsrfTokenExemptionMiddleware, DjavueApiErrorHandlingMiddleware
 
 
 def test_obter_status(client, db):
