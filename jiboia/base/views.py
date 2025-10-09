@@ -15,7 +15,6 @@ def dapau(error: str = None):
     raise ValueError("break on purpose")
 
 
-
 def status(request):
     """
     Retorna o estado atual da aplicação

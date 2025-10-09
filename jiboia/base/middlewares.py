@@ -29,13 +29,15 @@ class DjavueApiErrorHandlingMiddleware:
             )
         return response
 
+
 class CsrfTokenExemptionMiddleware(MiddlewareMixin):
     """
     Isenta requisições da verificação CSRF se houver um header de Autorização.
     Isso é seguro, pois a autenticação por token protege contra CSRF.
     """
+
     def process_view(self, request, callback, callback_args, callback_kwargs):
-        if 'HTTP_AUTHORIZATION' in request.META and request.META['HTTP_AUTHORIZATION']:
-            setattr(request, '_dont_enforce_csrf_checks', True)
+        if "HTTP_AUTHORIZATION" in request.META and request.META["HTTP_AUTHORIZATION"]:
+            setattr(request, "_dont_enforce_csrf_checks", True)
 
         return None

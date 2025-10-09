@@ -5,6 +5,7 @@ from django.http.response import HttpResponse
 
 JSON_CONTENT_TYPE = "application/json"
 
+
 def ajax_login_required(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
@@ -12,6 +13,7 @@ def ajax_login_required(view_func):
             return view_func(request, *args, **kwargs)
         resp = json.dumps({"not_authenticated": True})
         return HttpResponse(resp, content_type=JSON_CONTENT_TYPE, status=401)
+
     return wrapper
 
 
@@ -22,6 +24,7 @@ def ajax_superuser_required(view_func):
             return view_func(request, *args, **kwargs)
         resp = json.dumps({"not_authenticated": True})
         return HttpResponse(resp, content_type=JSON_CONTENT_TYPE, status=401)
+
     return wrapper
 
 
@@ -32,4 +35,5 @@ def ajax_staff_required(view_func):
             return view_func(request, *args, **kwargs)
         resp = json.dumps({"not_authenticated": True})
         return HttpResponse(resp, content_type=JSON_CONTENT_TYPE, status=401)
+
     return wrapper

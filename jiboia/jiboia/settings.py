@@ -144,9 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = config(
-    "DJANGO_STATIC_ROOT", default=os.path.join(BASE_DIR.parent, "static")
-)
+STATIC_ROOT = config("DJANGO_STATIC_ROOT", default=os.path.join(BASE_DIR.parent, "static"))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -178,17 +176,13 @@ LOGGING = {
     "formatters": {
         "verbose": DEFAULT_FORMATTER_CONFIG,
         "console": DEFAULT_FORMATTER_CONFIG,
-        "django":DEFAULT_FORMATTER_CONFIG,
+        "django": DEFAULT_FORMATTER_CONFIG,
     },
-
     "handlers": {
         "console": BASE_STREAM_HANDLER,
         "django": BASE_STREAM_HANDLER,
     },
-    "loggers": {
-        "": BASE_LOGGER_CONFIG,
-        "django.server": BASE_LOGGER_CONFIG
-    },
+    "loggers": {"": BASE_LOGGER_CONFIG, "django.server": BASE_LOGGER_CONFIG},
 }
 
 # Configurações da API do Jira
@@ -201,14 +195,23 @@ JIRA_API_URL = config("JIRA_API_URL", default="https://necto.atlassian.net")
 # Cron jobs configuration
 CRONJOBS = [
     # Healthcheck at midnight (existing)
-    ('0 0 * * *', 'jiboia.core.cron.jira_healthcheck', 
-     '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck'),
+    (
+        "0 0 * * *",
+        "jiboia.core.cron.jira_healthcheck",
+        ">> /tmp/jira_healthcheck.log 2>&1",
+        {},
+        "jira_daily_healthcheck",
+    ),
     # New: Sync issues for all projects at 3 AM (separate flow)
-    ('0 3 * * *', 'jiboia.core.cron.jira_sync_issues_all_projects',
-     '>> /tmp/jira_sync_issues.log 2>&1', {}, 'jira_sync_issues_all_projects'),
-    ('0 1 * * *', 'jiboia.core.cron.jira_project', 
-     '>> /tmp/jira_project.log 2>&1', {}, 'jira_daily_project')
+    (
+        "0 3 * * *",
+        "jiboia.core.cron.jira_sync_issues_all_projects",
+        ">> /tmp/jira_sync_issues.log 2>&1",
+        {},
+        "jira_sync_issues_all_projects",
+    ),
+    ("0 1 * * *", "jiboia.core.cron.jira_project", ">> /tmp/jira_project.log 2>&1", {}, "jira_daily_project"),
 ]
 
 
-CRONTAB_COMMAND_PREFIX = 'DJANGO_SETTINGS_MODULE=jiboia.jiboia.settings'
+CRONTAB_COMMAND_PREFIX = "DJANGO_SETTINGS_MODULE=jiboia.jiboia.settings"
