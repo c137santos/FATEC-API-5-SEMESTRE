@@ -20,7 +20,7 @@ def test_save_projects_creates_new_projects():
             "start_date_project": "2024-01-01",
             "end_date_project": "2024-12-31",
             "uuid": "uiahisuah",
-            "projectTypeKey": "software"
+            "projectTypeKey": "software",
         },
         {
             "jira_id": 2,
@@ -30,8 +30,8 @@ def test_save_projects_creates_new_projects():
             "start_date_project": "2024-02-01",
             "end_date_project": "2024-11-30",
             "uuid": "aloualoui",
-            "projectTypeKey": "business"
-        }
+            "projectTypeKey": "business",
+        },
     ]
 
     save_projects(projects_data)
@@ -53,6 +53,7 @@ def test_save_projects_creates_new_projects():
     assert proj2.uuid == "aloualoui"
     assert proj2.projectTypeKey == "business"
 
+
 @pytest.mark.django_db
 def test_save_projects_updates_existing_project():
     Project.objects.create(
@@ -63,7 +64,7 @@ def test_save_projects_updates_existing_project():
         start_date_project="2024-01-01",
         end_date_project="2024-12-31",
         uuid=101,
-        projectTypeKey="software"
+        projectTypeKey="software",
     )
 
     projects_data = [
@@ -75,7 +76,7 @@ def test_save_projects_updates_existing_project():
             "start_date_project": "2024-01-01",
             "end_date_project": "2024-12-31",
             "uuid": "101",
-            "projectTypeKey": "software"
+            "projectTypeKey": "software",
         }
     ]
 
@@ -84,6 +85,7 @@ def test_save_projects_updates_existing_project():
     proj = Project.objects.get(jira_id=1)
     assert proj.name == "Projeto Atualizado"
     assert proj.description
+
 
 @pytest.mark.django_db
 @freeze_time("2025-09-24")
@@ -121,23 +123,11 @@ def test_list_projects_general_success():
         jira_id=2002,
     )
 
-    issue_alpha_1 = Issue.objects.create(
-        description="ia1", 
-        project=project_alpha, 
-        status=concluded_status
-    )
-    issue_beta_1 = Issue.objects.create(
-        description="ib1", 
-        project=project_beta, 
-        status=pending_status 
-    )
+    issue_alpha_1 = Issue.objects.create(description="ia1", project=project_alpha, status=concluded_status)
+    issue_beta_1 = Issue.objects.create(description="ib1", project=project_beta, status=pending_status)
 
-    Issue.objects.filter(pk=issue_alpha_1.id).update(
-        created_at=timezone.make_aware(datetime(2025, 8, 5, 10, 0))
-    )
-    Issue.objects.filter(pk=issue_beta_1.id).update(
-        created_at=timezone.make_aware(datetime(2025, 9, 10, 10, 0))
-    )
+    Issue.objects.filter(pk=issue_alpha_1.id).update(created_at=timezone.make_aware(datetime(2025, 8, 5, 10, 0)))
+    Issue.objects.filter(pk=issue_beta_1.id).update(created_at=timezone.make_aware(datetime(2025, 9, 10, 10, 0)))
 
     TimeLog.objects.create(
         id_issue=issue_alpha_1,
@@ -169,12 +159,12 @@ def test_list_projects_general_success():
     ]
 
     projects_result = result["projects"]
-    
+
     assert len(projects_result) == 2
-    
+
     alpha_project = next(p for p in projects_result if p["project_id"] == project_alpha.id)
     beta_project = next(p for p in projects_result if p["project_id"] == project_beta.id)
-    
+
     assert alpha_project == {
         "project_id": project_alpha.id,
         "name": "Project Alpha",
@@ -185,16 +175,15 @@ def test_list_projects_general_success():
             {"dev_id": developer_two.id, "name": developer_two.username, "hours": 2.0},
         ],
     }
-    
+
     assert beta_project == {
         "project_id": project_beta.id,
         "name": "Project Beta",
         "total_hours": 0.5,
         "total_issues": 1,
-        "dev_hours": [
-            {"dev_id": developer_one.id, "name": developer_one.username, "hours": 0.5}
-        ],
+        "dev_hours": [{"dev_id": developer_one.id, "name": developer_one.username, "hours": 0.5}],
     }
+
 
 @pytest.mark.django_db
 @freeze_time("2025-09-24")

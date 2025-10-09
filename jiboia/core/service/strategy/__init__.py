@@ -4,7 +4,7 @@ from .base import JiraStrategy
 from .healthcheck import HealthCheckStrategy, ProjectsHealthCheckStrategy
 
 __all__ = [
-    'JiraStrategy',
-    'HealthCheckStrategy',
-    'ProjectsHealthCheckStrategy',
+    "JiraStrategy",
+    "HealthCheckStrategy",
+    "ProjectsHealthCheckStrategy",
 ]

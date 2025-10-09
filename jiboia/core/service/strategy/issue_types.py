@@ -6,10 +6,12 @@ from .base import JiraStrategy
 
 logger = logging.getLogger(__name__)
 
+
 class SyncIssueTypesStrategy(JiraStrategy[int]):
     """
     Synchronizes all Jira Issue Types with the local database.
     """
+
     _ENDPOINT = "/rest/api/3/issuetype"
 
     def execute(self) -> int:
