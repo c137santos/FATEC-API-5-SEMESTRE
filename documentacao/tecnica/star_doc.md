@@ -26,7 +26,7 @@ Ele faz parte da camada de **fatos** do modelo dimensional, sendo utilizado para
 | **dias\_faltando\_fim\_projeto** | `IntegerField` | Número de dias restantes até o término planejado do projeto, considerando a data da última issue cadastrada. **→ Indica o quanto o projeto ainda deve durar.** |
 | **projecao\_termino\_dias** | `IntegerField` | Soma dos dias previstos nas issues ainda não concluídas. **→ Mede a projeção de tempo restante, baseada em tarefas abertas.** |
 | **gastos\_acumulados\_reais** | `DecimalField` | Total acumulado de custos até o momento, calculado como a soma das horas trabalhadas pelos desenvolvedores multiplicada pelo valor/hora respectivo. **→ Indica o custo financeiro real do projeto até a data do snapshot.** |
-| **valor\_hora\_media** | `DecimalField` | Média ponderada do valor/hora dos profissionais envolvidos, calculada como: `gastos_acumulados_reais / total_horas_acumuladas`. **→ Permite comparar eficiência de custo entre projetos.** |
+| **valor\_hora\_media** | `DecimalField` | Média ponderada do valor/hora dos profissionais envolvidos, calculada como: `custo_do_projeto_atual_rs / total_horas_acumuladas`. **→ Permite comparar eficiência de custo entre projetos.** |
 | **total\_horas\_acumuladas** | `DecimalField` | Quantidade total de horas já dedicadas ao desenvolvimento do projeto. **→ Base para cálculos de produtividade e custo/hora.** |
 | **total\_issues** | `IntegerField` | Número total de issues (tarefas, tickets) vinculadas ao projeto. **→ Usado para medir carga de trabalho e progresso.** |
 | **tempo\_medio\_conclusao\_issues** | `DecimalField` | Tempo médio (em horas) para concluir uma issue no projeto. **→ Indica eficiência média da equipe de desenvolvimento.** |
@@ -38,9 +38,9 @@ Alguns indicadores derivados podem ser definidos como propriedades calculadas pa
 
 | Propriedade | Fórmula de Cálculo | Significado |
 | :--- | :--- | :--- |
-| **custo\_medio\_por\_issue** | `gastos_acumulados_reais / total_issues` | Valor médio gasto por issue concluída. |
+| **custo\_medio\_por\_issue** | `custo_do_projeto_atual_rs / total_issues` | Valor médio gasto por issue concluída. |
 | **progresso\_percentual** | `total_horas_acumuladas / (total_horas_acumuladas + projecao_termino_dias)` | Percentual estimado de conclusão do projeto. |
-| **dias\_restantes\_estimados** | `dias_faltando_fim_projeto - projecao_termino_dias` | Diferença entre o prazo oficial e a projeção baseada nas tarefas abertas. |
+| **dias\_restantes\_estimados** | `minutos_faltando_fim_projeto - projecao_termino_dias` | Diferença entre o prazo oficial e a projeção baseada nas tarefas abertas. |
 
 ---
 ## ⚖️ Resumo Conceitual
@@ -336,7 +336,7 @@ Retorna o custo acumulado do projeto do último snapshot disponível.
 SQL
 
 SELECT
-    fps.gastos_acumulados_reais AS CustoProjeto
+    fps.custo_do_projeto_atual_rs AS CustoProjeto
 FROM
     fato_projeto_snapshot AS fps
 ORDER BY

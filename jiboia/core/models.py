@@ -301,7 +301,7 @@ class FatoIssue(models.Model):
         help_text="Período do Esforço empregado na Issue",
     )
     id_issue_jiba = models.IntegerField(db_index=True, help_text="ID Original da Issue no jiboia")
-    id_issue_jira = models.CharField(db_index=True, help_text="ID Original da Issue no jira")
+    id_issue_jira = models.IntegerField(db_index=True, help_text="ID Original da Issue no jira")
     created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação no modelo dimensional")
 
     class Meta:
