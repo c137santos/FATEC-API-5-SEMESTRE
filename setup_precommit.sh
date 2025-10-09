@@ -72,7 +72,6 @@ fi
 echo "Verifying hooks installation..."
 if [ -f ".git/hooks/pre-commit" ] && [ -f ".git/hooks/commit-msg" ]; then
     echo "Pre-commit hooks installed successfully!"
-    echo "See PRECOMMIT.md for information on commit message format and linting rules."
 else
     echo "WARNING: Hooks files not found in .git/hooks/"
     echo "Please check your git configuration and try again."
