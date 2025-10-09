@@ -6,6 +6,7 @@ Este documento fornece instruções passo a passo para instalar e executar o sis
 
 - Docker e Docker Compose instalados
 - Git instalado (para clonar o repositório)
+- rodar o comando: ./setup_precommit.sh # Configurar o pré-commit
 
 ## Instalação Padrão com Docker
 

@@ -8,4 +8,4 @@ min-length=10
 regex=^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)\(#[0-9]+\): .+$
 
 [title-max-length]
-line-length=72
+line-length=80
