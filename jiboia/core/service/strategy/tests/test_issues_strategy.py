@@ -12,7 +12,7 @@ from jiboia.core.service.strategy.issues import SyncIssuesStrategy
 
 @pytest.mark.django_db
 def test_update_project_dates():
-    """Testa a atualização das datas do projeto baseado nas issues"""
+    """Tests the update of project dates based on issues"""
     project = Project.objects.create(
         jira_id=12345,
         key="TEST",
@@ -52,7 +52,7 @@ def test_update_project_dates():
 
 @pytest.mark.django_db
 def test_execute_sync_issues_integration():
-    """Versão mais integrada - removendo mocks internos"""
+    """Tests synchronisation of issue with integration"""
     strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
     
     project = Project.objects.create(jira_id=12345, key="PRJ", name="Test Project")
@@ -95,7 +95,7 @@ def test_execute_sync_issues_integration():
 
 @pytest.mark.django_db
 def test_sync_worklogs_creation():
-    """Testa a sincronização de worklogs"""
+    """Tests synchronisation of worklogs"""
     strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
     
     project = Project.objects.create(
@@ -165,7 +165,7 @@ def test_sync_worklogs_creation():
 
 @pytest.mark.django_db
 def test_sync_issue_without_assignee():
-    """Testa a sincronização de issue sem assignee"""
+    """Tests synchronisation of issue without assignee"""
     strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
     
     project = Project.objects.create(
@@ -205,7 +205,7 @@ def test_sync_issue_without_assignee():
 
 @pytest.mark.django_db
 def test_execute_sync_issues_project_not_found():
-    """Testa o comportamento quando o projeto não existe no banco"""
+    """Tests the behavior when the project does not exist in the database"""
     strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
         
     synced_count = strategy.execute("NONEXISTENT")
@@ -214,7 +214,7 @@ def test_execute_sync_issues_project_not_found():
 
 @pytest.mark.django_db
 def test_execute_sync_issues_with_network_error():
-    """Testa o tratamento de erro quando a API do Jira está indisponível"""
+    """Tests error handling when the Jira API is unavailable"""
     strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
     
     project = Project.objects.create(

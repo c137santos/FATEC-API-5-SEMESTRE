@@ -12,21 +12,21 @@ from jiboia.core.views import add_issue
 
 @pytest.fixture
 def authenticated_user():
-    """Cria um usuário autenticado"""
+    """Creates an authenticated user"""
     user = get_user_model()
     return user.objects.create_user('testuser', 'test@example.com', 'testpass')
 
 
 @pytest.fixture
 def authenticated_client(client, authenticated_user):
-    """Cria um cliente com usuário autenticado"""
+    """Creates a client with an authenticated user"""
     client.force_login(authenticated_user)
     return client
 
 
 @pytest.mark.django_db
 def test_add_issue_success_201(authenticated_client):
-    """Testa se o endpoint retorna 201 quando a issue é criada com sucesso"""
+    """Tests if the endpoint returns 201 when the issue is successfully created"""
     url = reverse('add_issue')
     issue_data = {
         "description": "Nova issue de teste válida"
@@ -55,7 +55,7 @@ def test_add_issue_success_201(authenticated_client):
 
 @pytest.mark.django_db
 def test_add_issue_empty_description_400_direct(authenticated_user):
-    """Testa description vazia diretamente na view"""
+    """Tests empty description directly in the view"""
     from jiboia.core.views import add_issue
     
     factory = RequestFactory()
@@ -68,7 +68,6 @@ def test_add_issue_empty_description_400_direct(authenticated_user):
     )
     request.user = authenticated_user
     
-    # Act & Assert
     with pytest.raises(ValueError) as exc_info:
         add_issue(request)
     
@@ -76,7 +75,7 @@ def test_add_issue_empty_description_400_direct(authenticated_user):
 
 @pytest.mark.django_db
 def test_add_issue_invalid_type_description_400_direct(authenticated_user):
-    """Testa tipo inválido diretamente na view"""
+    """Tests invalid type directly in the view"""
     from jiboia.core.views import add_issue
     
     factory = RequestFactory()
@@ -97,7 +96,7 @@ def test_add_issue_invalid_type_description_400_direct(authenticated_user):
 
 @pytest.mark.django_db
 def test_add_issue_unauthorized():
-    """Testa se retorna 401 quando usuário não está autenticado"""
+    """Tests if it returns 401 when the user is not authenticated"""
 
     factory = RequestFactory()
     issue_data = {"description": "Teste"}
@@ -116,7 +115,7 @@ def test_add_issue_unauthorized():
 @pytest.mark.django_db
 def test_list_paginable_issues_success(client):
     """
-    Testa se o endpoint list_paginable_issues retorna 200 com sucesso
+    Tests if the list_paginable_issues endpoint successfully returns 200
     """
     url = reverse('list_paginable_issues')
     response = client.get(url)
@@ -133,7 +132,7 @@ def test_list_paginable_issues_success(client):
 @pytest.mark.django_db
 def test_list_paginable_issues_with_invalid_page_parameter_string(client):
     """
-    Testa se o endpoint trata parâmetro page inválido (string)
+    Tests if the endpoint handles an invalid page parameter (string)
     """
     url = reverse('list_paginable_issues')
     response = client.get(f'{url}?page=abc')
@@ -147,7 +146,7 @@ def test_list_paginable_issues_with_invalid_page_parameter_string(client):
 @pytest.mark.django_db
 def test_list_paginable_issues_empty_database(client):
     """
-    Testa se o endpoint retorna 200 quando não há issues
+    Tests if the endpoint returns 200 when there are no issues
     """
     url = reverse('list_paginable_issues')
     response = client.get(url)
