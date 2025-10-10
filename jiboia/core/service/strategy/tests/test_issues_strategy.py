@@ -1,146 +1,233 @@
 from datetime import date, datetime
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 import requests
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 
-import jiboia.core.service.strategy.issues as issues_mod
+from jiboia.core.models import Issue, IssueType, Project, StatusType, TimeLog
 from jiboia.core.service.strategy.issues import SyncIssuesStrategy
 
 
-def test_update_project_dates(monkeypatch):
-    # Mock Project e issues
-    class DummyIssue:
-        def __init__(self, start, end):
-            self.start_date = start
-            self.end_date = end
-
-    class DummyQuerySet:
-        def __init__(self, issues):
-            self._issues = issues
-
-        def all(self):
-            return self
-
-        def aggregate(self, agg):
-            # agg pode ser Min('start_date') ou Max('end_date')
-            from django.db.models import Max, Min
-
-            if isinstance(agg, Min):
-                return {"start_date__min": min((i.start_date for i in self._issues if i.start_date), default=None)}
-            if isinstance(agg, Max):
-                return {"end_date__max": max((i.end_date for i in self._issues if i.end_date), default=None)}
-            return {}
-
-    class DummyProject:
-        def __init__(self):
-            self.start_date_project = None
-            self.end_date_project = None
-            self.saved = False
-            self.issue_set = DummyQuerySet(
-                [
-                    DummyIssue(datetime(2023, 1, 1), datetime(2023, 1, 10)),
-                    DummyIssue(datetime(2023, 1, 5), datetime(2023, 1, 20)),
-                    DummyIssue(None, None),
-                ]
-            )
-
-        def save(self):
-            self.saved = True
-
-    project = DummyProject()
+@pytest.mark.django_db
+def test_update_project_dates():
+    """Testa a atualização das datas do projeto baseado nas issues"""
+    project = Project.objects.create(
+        jira_id=12345,
+        key="TEST",
+        name="Test Project",
+        start_date_project=None,
+        end_date_project=None
+    )
+    
+    Issue.objects.create(
+        project=project,
+        jira_id=1,
+        description="Issue 1",
+        start_date=timezone.make_aware(datetime(2023, 1, 1)),
+        end_date=timezone.make_aware(datetime(2023, 1, 10))
+    )
+    Issue.objects.create(
+        project=project,
+        jira_id=2, 
+        description="Issue 2",
+        start_date=timezone.make_aware(datetime(2023, 1, 5)),
+        end_date=timezone.make_aware(datetime(2023, 1, 20))
+    )
+    Issue.objects.create(
+        project=project,
+        jira_id=3,
+        description="Issue 3",
+        start_date=None,
+        end_date=None
+    )
+    
     SyncIssuesStrategy.update_project_dates(project)
+    
+    project.refresh_from_db()
+    
     assert project.start_date_project == date(2023, 1, 1)
     assert project.end_date_project == date(2023, 1, 20)
-    assert project.saved
 
-
-@pytest.fixture
-def test_execute_issues(monkeypatch, mock_issue_model):
+@pytest.mark.django_db
+def test_execute_sync_issues_integration():
+    """Versão mais integrada - removendo mocks internos"""
     strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
-    mock_response = MagicMock()
-    mock_response.json.return_value = {"issues": [], "total": 0}
-    mock_response.raise_for_status = MagicMock()
-    monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
-    dummy_project = MagicMock()
-    issues_mod.Project = MagicMock()
-    issues_mod.Project.objects.get.return_value = dummy_project
-    monkeypatch.setattr(strategy, "_sync_issue", lambda *a, **k: MagicMock())
-    monkeypatch.setattr(strategy, "_sync_worklogs", lambda *a, **k: None)
-    monkeypatch.setattr(requests, "get", lambda *a, **k: mock_response)
-    result = strategy.execute("PRJ")
-    assert isinstance(result, int)
-    assert result >= 0
-
-def test_sync_issue_data(sync_issues_strategy_setup, jira_issue_data_page1):
-    """Testa a sincronização de uma única issue e mapeamento de campos."""
-    strategy = sync_issues_strategy_setup
-    project = strategy.Project(key="PRJ") 
     
-    issue_obj = strategy._sync_issue(jira_issue_data_page1["issues"][0], project)
-
-    assert issue_obj is not None
-    assert issue_obj.jira_id == "10001"
-    assert issue_obj.id_user.username == "user123"
-    assert issue_obj.description == "Issue Test"
-    assert issue_obj.details == "Detalhes da Issue"
-
-
-def test_sync_worklogs_data(sync_issues_strategy_setup, jira_issue_data_page1):
-    """Testa a sincronização dos worklogs e o helper de comentário."""
-    strategy = sync_issues_strategy_setup
-    issue = strategy.Issue(jira_id="10001")
+    project = Project.objects.create(jira_id=12345, key="PRJ", name="Test Project")
+    IssueType.objects.create(jira_id=1, name="Bug")
+    StatusType.objects.create(jira_id=1, name="To Do")
     
-    strategy._sync_worklogs(issue, jira_issue_data_page1["issues"][0])
+    mock_response = {
+        "total": 1,
+        "issues": [{
+            "id": "10001",  
+            "fields": {
+                "summary": "Test Issue",
+                "description": None,
+                "assignee": None,
+                "issuetype": {"id": "1"},
+                "status": {"id": "1"},
+                "created": "2023-01-01T00:00:00.000Z",
+                "resolutiondate": None,
+                "customfield_10015": None,
+                "timeestimate": None,
+                "worklog": {"worklogs": []}
+            }
+        }]
+    }
     
-    log_data = jira_issue_data_page1["issues"][0]["fields"]["worklog"]["worklogs"][0]
-    comment = log_data["comment"]
-    assert strategy._get_worklog_comment_text(comment) == "Worklog Test"
-
-
-def test_execute_main_sync(monkeypatch, sync_issues_strategy_setup, jira_issue_data_page1, jira_issue_data_page_empty):
-    """Testa o fluxo principal de sincronização paginada e contagem."""
-    strategy = sync_issues_strategy_setup
+    def mock_requests_get(url, params=None, auth=None, timeout=None):
+        response = MagicMock()
+        response.json.return_value = mock_response
+        return response
     
-    def mock_requests_get(*args, **kwargs):
-        params = kwargs.get('params', {})
-        start_at = params.get('startAt', 0)
+    def mock_sync_user_execute(*args, **kwargs):
+        return None
+    
+    with patch('requests.get', mock_requests_get), \
+         patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', mock_sync_user_execute):
+        synced_count = strategy.execute("PRJ")
         
-        if start_at == 0:
-            response = MagicMock(status_code=200)
-            response.json.return_value = jira_issue_data_page1
-            return response
-        else:
-            response = MagicMock(status_code=200)
-            response.json.return_value = jira_issue_data_page_empty
-            return response
+        assert synced_count == 1
+        assert Issue.objects.filter(project=project).count() == 1
 
-    monkeypatch.setattr(requests, "get", mock_requests_get)
+@pytest.mark.django_db
+def test_sync_worklogs_creation():
+    """Testa a sincronização de worklogs"""
+    strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
     
-    project_instance = strategy.Project(key='PRJ')
-    def mock_project_get(**kwargs):
-        if kwargs.get('key') == 'PRJ':
-            return project_instance
-        raise issues_mod.Project.DoesNotExist
-
-    issues_mod.Project.objects.get = mock_project_get
+    project = Project.objects.create(
+        jira_id=12345,
+        key="PRJ",
+        name="Test Project"
+    )
     
-    synced_issues = 0
-    def mock_sync_issue(issue_data, project):
-        nonlocal synced_issues
-        synced_issues += 1
-        return strategy.Issue(jira_id=issue_data['id'])
+    issue = Issue.objects.create(
+        project=project,
+        jira_id=10001,
+        description="Test Issue"
+    )
+    
+    worklog_data = {
+        "id": "10001",
+        "fields": {
+            "worklog": {
+                "worklogs": [
+                    {
+                        "id": "20001",  
+                        "author": {"accountId": "user123"},
+                        "timeSpentSeconds": 7200,
+                        "started": "2023-01-01T10:00:00.000Z",
+                        "comment": {
+                            "content": [
+                                {
+                                    "content": [
+                                        {"text": "Worklog Test"}
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+    
+    def mock_sync_user_execute(*args, **kwargs):
+        try:
+            if args and hasattr(args[0], 'get') and callable(getattr(args[0], 'get')):
+                user_data = args[0]
+                account_id = user_data.get("accountId", "user123")
+            elif kwargs and 'user_data' in kwargs:
+                user_data = kwargs['user_data']
+                account_id = user_data.get("accountId", "user123")
+            else:
+                account_id = "user123"
+        except (AttributeError, IndexError, TypeError):
+            account_id = "user123"
         
-    def mock_sync_worklogs(issue_obj, issue_data):
-        # Função intencionalmente vazia (mock) para ser usada em testes.
-        # Evita a sincronização real durante a execução dos testes.
-        pass
-
-    monkeypatch.setattr(strategy, "_sync_issue", mock_sync_issue)
-    monkeypatch.setattr(strategy, "_sync_worklogs", mock_sync_worklogs)
-
-    synced_count = strategy.execute("PRJ")
+        user = get_user_model()
+        new_user, _ = user.objects.get_or_create(
+            username=account_id,
+            defaults={"email": f"{account_id}@test.com"}
+        )
+        return new_user
     
-    assert synced_count == 1
-    assert synced_issues == 1
-    assert project_instance.saved is True
+    with patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', mock_sync_user_execute):
+        strategy._sync_worklogs(issue, worklog_data)
+        
+        worklog = TimeLog.objects.get(jira_id=20001)
+        assert worklog.id_issue == issue
+        assert worklog.seconds == 7200
+        assert worklog.description_log == "Worklog Test"
+
+@pytest.mark.django_db
+def test_sync_issue_without_assignee():
+    """Testa a sincronização de issue sem assignee"""
+    strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
+    
+    project = Project.objects.create(
+        jira_id=12345,
+        key="PRJ", 
+        name="Test Project"
+    )
+    IssueType.objects.create(jira_id=1, name="Bug")
+    StatusType.objects.create(jira_id=1, name="To Do")
+    
+    issue_data = {
+        "id": "10003",  
+        "fields": {
+            "summary": "Issue Without Assignee",
+            "description": None,
+            "assignee": None, 
+            "issuetype": {"id": "1"},
+            "status": {"id": "1"},
+            "created": "2023-01-01T00:00:00.000Z",
+            "resolutiondate": None,
+            "customfield_10015": None,
+            "timeestimate": None
+        }
+    }
+    
+    mock_sync_user_execute = MagicMock()
+    
+    with patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', mock_sync_user_execute):
+        issue_obj = strategy._sync_issue(issue_data, project)
+        
+        mock_sync_user_execute.assert_not_called()
+        
+        assert issue_obj is not None
+        assert int(issue_obj.jira_id) == 10003
+        assert issue_obj.description == "Issue Without Assignee"
+        assert issue_obj.id_user is None
+
+@pytest.mark.django_db
+def test_execute_sync_issues_project_not_found():
+    """Testa o comportamento quando o projeto não existe no banco"""
+    strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
+        
+    synced_count = strategy.execute("NONEXISTENT")
+    
+    assert synced_count == 0
+
+@pytest.mark.django_db
+def test_execute_sync_issues_with_network_error():
+    """Testa o tratamento de erro quando a API do Jira está indisponível"""
+    strategy = SyncIssuesStrategy("email", "token", "http://fake-jira")
+    
+    project = Project.objects.create(
+        jira_id=12345,
+        key="PRJ",
+        name="Test Project"
+    )
+    
+    def mock_requests_get(url, params=None, auth=None, timeout=None):
+        raise requests.exceptions.ConnectionError("Cannot connect to Jira API")
+    
+    with patch('requests.get', mock_requests_get):
+        with pytest.raises(requests.exceptions.ConnectionError):
+            strategy.execute("PRJ")
+        
+        assert Issue.objects.filter(project=project).count() == 0
