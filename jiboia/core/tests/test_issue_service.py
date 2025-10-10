@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 from django.contrib.auth import get_user_model
@@ -9,27 +9,18 @@ from jiboia.core.service.issues_svc import add_issue, list_issues
 
 @pytest.mark.django_db
 def test_add_issue_success():
-    """Testa se a issue foi cadastrada com sucesso"""
+    """Testa se a issue foi cadastrada com sucesso - SEM MOCK"""
     test_description = "Nova issue de teste"
     
-    with patch('jiboia.core.service.issues_svc.Issue') as MockIssue:
-        mock_issue_instance = MagicMock()
-        mock_issue_instance.to_dict_json.return_value = {
-            "id": 1,
-            "description": test_description
-        }
-        MockIssue.return_value = mock_issue_instance
-        
-        result = add_issue(test_description)
-        
-        MockIssue.assert_called_once_with(description=test_description)
-        
-        mock_issue_instance.save.assert_called_once()
-        
-        mock_issue_instance.to_dict_json.assert_called_once()
-        
-        assert result['id'] == 1
-        assert result['description'] == test_description
+    IssueType.objects.create(name="Tarefa", jira_id=1)
+    StatusType.objects.create(name="Aberto", jira_id=1)
+    Project.objects.create(name="Projeto Teste", jira_id=1)
+    
+    result = add_issue(test_description)
+    
+    issue = Issue.objects.get(description=test_description)
+    assert issue.description == test_description
+    assert result['id'] == issue.id
 
 @pytest.mark.django_db
 def test_add_issue_fails_with_empty_description():
