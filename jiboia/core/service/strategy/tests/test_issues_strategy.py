@@ -78,20 +78,18 @@ def test_execute_sync_issues_integration():
         }]
     }
     
-    def mock_requests_get(url, params=None, auth=None, timeout=None):
-        response = MagicMock()
-        response.json.return_value = mock_response
-        return response
-    
-    def mock_sync_user_execute(*args, **kwargs):
-        return None
-    
-    with patch('requests.get', mock_requests_get), \
-         patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', mock_sync_user_execute):
+    with patch('requests.get') as mock_get, \
+         patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', return_value=None):
+        
+        mock_get.return_value.json.return_value = mock_response
+        
         synced_count = strategy.execute("PRJ")
         
         assert synced_count == 1
-        assert Issue.objects.filter(project=project).count() == 1
+        
+        issue = Issue.objects.get(project=project)
+        assert issue.jira_id == 10001
+        assert issue.description == "Test Issue"
 
 @pytest.mark.django_db
 def test_sync_worklogs_creation():
