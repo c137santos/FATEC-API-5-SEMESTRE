@@ -59,7 +59,7 @@ def test_execute_sync_issues_integration():
     IssueType.objects.create(jira_id=1, name="Bug")
     StatusType.objects.create(jira_id=1, name="To Do")
     
-    mock_response = {
+    mock_data = {
         "total": 1,
         "issues": [{
             "id": "10001",  
@@ -78,13 +78,15 @@ def test_execute_sync_issues_integration():
         }]
     }
     
-    with patch('requests.get') as mock_get, \
+    mock_response_object = MagicMock()
+    mock_response_object.json.return_value = mock_data
+    mock_response_object.status_code = 200
+    
+    with patch('requests.get', return_value=mock_response_object), \
          patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', return_value=None):
-        
-        mock_get.return_value.json.return_value = mock_response
-        
+            
         synced_count = strategy.execute("PRJ")
-        
+
         assert synced_count == 1
         
         issue = Issue.objects.get(project=project)
