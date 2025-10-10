@@ -78,16 +78,18 @@ def test_execute_sync_issues_integration():
         }]
     }
     
-    def mock_requests_get(url, params=None, auth=None, timeout=None):
-        response = MagicMock()
-        response.json.return_value = mock_response
-        return response
+    mock_data = {
+        "status": "success",
+        "users_found": 5
+    }
+    mock_response_object = MagicMock()
+    mock_response_object.json.return_value = mock_data
+    mock_response_object.status_code = 200
     
-    def mock_sync_user_execute(*args, **kwargs):
-        return None
-    
-    with patch('requests.get', mock_requests_get), \
-         patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', mock_sync_user_execute):
+    with patch('requests.get', return_value=mock_response_object) as mock_get, \
+         patch('jiboia.core.service.strategy.users.SyncUserStrategy.execute', return_value=None) as mock_sync:
+            
+        synced_count = strategy.execute("PRJ")
         synced_count = strategy.execute("PRJ")
         
         assert synced_count == 1
