@@ -3,8 +3,38 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from jiboia.core.models import Issue, IssueType, Project, StatusType
+
 MOCK_TODAY = date(2025, 9, 24)
 
+
+@pytest.fixture
+def setup_issues_data(db):
+    """
+    Configura dados de teste básicos para os testes da view de list_paginable_issues
+    """
+    project = Project.objects.create(
+        key='TEST',
+        name='Projeto de Teste',
+        description='Projeto para testes',
+        jira_id=502,
+        uuid='test-uuid',
+        projectTypeKey='software'
+    )
+    
+    status = StatusType.objects.create(key='pending', name='Pendente', jira_id=601)
+    issue_type = IssueType.objects.create(name='Task', description='Tarefa', jira_id=701)
+    
+    for i in range(5):
+        Issue.objects.create(
+            description=f'Issue de teste {i+1}',
+            project=project,
+            status=status,
+            type_issue=issue_type,
+            jira_id=1000 + i
+        )
+    
+    return project
 
 @pytest.fixture
 def mock_issue_model():
@@ -57,14 +87,12 @@ def setup_project_order(mock_managers):
 
     return _apply
 
-
 def _mock_issues_monthly_side_effect(issue_a1, issue_b1, **kwargs):
     if kwargs.get("created_at__month") == 8:
         return [issue_a1]
     if kwargs.get("created_at__month") == 9:
         return [issue_b1]
     return []
-
 
 def _mock_issues_project_side_effect(project_a, project_b, issue_a1, issue_b1, **kwargs):
     project = kwargs.get("project")
@@ -78,7 +106,6 @@ def _mock_issues_project_side_effect(project_a, project_b, issue_a1, issue_b1, *
     mock_qs.__iter__.side_effect = lambda: iter(result)
     mock_qs.count.return_value = len(result)
     return mock_qs
-
 
 @pytest.fixture
 def setup_issue_queryset(mock_managers):
@@ -95,5 +122,25 @@ def setup_issue_queryset(mock_managers):
             return MagicMock(count=lambda: 0)
 
         mock_issues_start_date.filter.side_effect = issues_filter_side_effect
-
     return _apply
+
+@pytest.fixture
+def setup_issue_data(db):
+    """Configura dados básicos para testes de issues"""
+    project = Project.objects.create(
+        key='TEST',
+        name='Projeto Teste',
+        description='Descrição',
+        jira_id=502,
+        uuid='test-uuid',
+        projectTypeKey='software'
+    )
+    
+    status = StatusType.objects.create(key='pending', name='Pendente', jira_id=601)
+    issue_type = IssueType.objects.create(name='Task', description='Tarefa', jira_id=701)
+    
+    return {
+        'project': project,
+        'status': status,
+        'issue_type': issue_type
+    }

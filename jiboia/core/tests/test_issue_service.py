@@ -4,8 +4,31 @@ import pytest
 from django.contrib.auth import get_user_model
 
 from jiboia.core.models import Issue, IssueType, Project, StatusType
-from jiboia.core.service.issues_svc import list_issues
+from jiboia.core.service.issues_svc import add_issue, list_issues
 
+
+@pytest.mark.django_db
+def test_add_issue_success():
+    """Testa se a issue foi cadastrada com sucesso - SEM MOCK"""
+    test_description = "Nova issue de teste"
+    
+    IssueType.objects.create(name="Tarefa", jira_id=1)
+    StatusType.objects.create(name="Aberto", jira_id=1)
+    Project.objects.create(name="Projeto Teste", jira_id=1)
+    
+    result = add_issue(test_description)
+    
+    issue = Issue.objects.get(description=test_description)
+    assert issue.description == test_description
+    assert result['id'] == issue.id
+
+@pytest.mark.django_db
+def test_add_issue_fails_with_empty_description():
+    """Testa que falha o cadastro quando descrição é vazia"""
+    with pytest.raises(Exception) as exc_info:
+        add_issue("")
+    
+    assert "Invalid description" in str(exc_info.value)
 
 @pytest.mark.django_db
 def test_list_paginable_issues_no_user():
