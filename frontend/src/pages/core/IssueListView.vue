@@ -1,20 +1,6 @@
 <template>
   <v-container class="fill-height">
-    <v-row justify="center" align="center">
-      <v-col cols="12">
-        <v-card>
-          <v-card-title class="headline"> Issues </v-card-title>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12">
-        <issue-form :form-label="'New Issue'" @new-issue="addNewIssue" />
-      </v-col>
-
-      <v-col v-for="item in issues" :key="item.id" cols="12">
-        <issue :issue="item" />
-      </v-col>
-    </v-row>
+    <ListagemIssues />
   </v-container>
 </template>
 
@@ -24,10 +10,11 @@ import { useBaseStore } from "@/stores/baseStore"
 import { usecoreStore } from "@/stores/coreStore"
 import Issue from "@/components/Issue.vue"
 import IssueForm from "@/components/IssueForm.vue"
+import ListagemIssues from "@/components/ListagemIssues.vue"
 
 export default {
   name: "IssuesList",
-  components: { Issue, IssueForm },
+  components: { Issue, IssueForm, ListagemIssues },
   setup() {
     const baseStore = useBaseStore()
     const coreStore = usecoreStore()

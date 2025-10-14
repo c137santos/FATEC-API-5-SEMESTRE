@@ -8,7 +8,6 @@
       :items="issues"
       :items-length="totalIssues"
       :loading="loading"
-      :server-items-lenght="totalItems"
       item-value="id"
       @update:options="loadIssues"
       class="rounded-lg elevation-5 bg-deep-purple-lighten-5"
@@ -35,8 +34,8 @@ import axios from "axios";
 
 const headers = ref([
   { title: "Issue ID", key: "jira_id", align: "start" },
-  { title: "Issue Summary", key: "summary", align: "start" },
-  { title: "Author", key: "author", align: "start" },
+  { title: "Issue Summary", key: "description", align: "start" },
+  { title: "Author", key: "author", align: "start" }, 
   { title: "Time Created", key: "timeCreated", align: "start" },
 ]);
 
@@ -45,20 +44,21 @@ const itemsPerPage = ref(10);
 const totalIssues = ref(0);
 const loading = ref(true);
 
-async function searchIssues() {
+const searchIssues = async (page = 1) => {
   loading.value = true;
 
   try {
     const response = await axios.get(
-      `http://localhost:8000/api/core/issues?page=${page}`
+      `/api/core/issues?page=${page}`
     );
 
     const data = response.data;
     issues.value = data.issues || [];
-    totalItems.value = data.total_items || 0;
+    totalIssues.value = data.total_items || 0; 
   } catch (error) {
     console.error("Erro ao buscar issues:", error);
     issues.value = [];
+    totalIssues.value = 0;
   } finally {
     loading.value = false;
   }
