@@ -14,7 +14,7 @@
     >
 
       <template v-slot:item.author="{ item }">
-          {{ item.user_related?.user_name || 'N/A' }}
+          {{ item.user_related?.user_name || 'Não foi encontrado ou não existe autor para essa issue' }}
       </template>
 
       <template v-slot:item.timeCreated="{ item }">
@@ -33,11 +33,44 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 
 const headers = ref([
-  { title: "Issue ID", key: "jira_id", align: "start" },
-  { title: "Issue Summary", key: "description", align: "start" },
-  { title: "Author", key: "author", align: "start" }, 
-  { title: "Time Created", key: "timeCreated", align: "start" },
+  { title: "Id da Issue", key: "jira_id", align: "start" },
+  { title: "Sumário issue ", key: "description", align: "start" },
+  { title: "Autor", key: "author", align: "start" }, 
+  { title: "Data de criação", key: "timeCreated", align: "start" },
 ]);
+
+const mockIssues = [
+  {
+    "id": 1,
+    "description": "Estudar Vuetify",
+    "done": false,
+    "userId": 1
+  },
+  {
+    "id": 2,
+    "description": "Estudar Vuex",
+    "done": false,
+    "userId": 1
+  },
+  {
+    "id": 3,
+    "description": "Estudar Djavue",
+    "done": false,
+    "userId": 1
+  },
+  {
+    "id": 4,
+    "description": "Pagar Volei",
+    "done": false,
+    "userId": 1
+  },
+  {
+    "id": 5,
+    "description": "Voltar estudar Django",
+    "done": false,
+    "userId": 2
+  }
+]
 
 const issues = ref([]);
 const itemsPerPage = ref(10);
@@ -51,10 +84,11 @@ const searchIssues = async (page = 1) => {
     const response = await axios.get(
       `/api/core/issues?page=${page}`
     );
-
     const data = response.data;
-    issues.value = data.issues || [];
-    totalIssues.value = data.total_items || 0; 
+
+    const realIssues = data.issues || [];
+    issues.value = [...realIssues, ...mockIssues];
+    totalIssues.value = realIssues.length + mockIssues.length; 
   } catch (error) {
     console.error("Erro ao buscar issues:", error);
     issues.value = [];
