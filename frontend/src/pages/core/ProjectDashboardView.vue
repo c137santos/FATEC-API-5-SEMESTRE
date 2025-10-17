@@ -4,16 +4,6 @@
     <v-container>
 			<v-row>
 				<v-col>
-					<v-text-field
-						v-model.number="hourValue"
-						style="max-width: 10rem;"
-						label="Valor Hora"
-						type="number"
-					></v-text-field>
-				</v-col>
-			</v-row>
-			<v-row>
-				<v-col>
 					<span class="w-100 d-flex justify-center"> Movimentação de issues (por mês) </span>
 					<StatusBreakdownGraph v-model="issuesList"></StatusBreakdownGraph>
 				</v-col>
@@ -72,6 +62,32 @@
 								></Doughnut>
 							</div>
 						</div>
+				</v-col>
+			</v-row>
+			<v-row>
+				<v-col>
+					<v-card class="pa-4">
+						<h3 class="mb-4 text-center">Valor x hora Desenvolvedores</h3>
+						<v-data-table
+							:headers="developersTableHeaders"
+							:items="developersTableData"
+							item-key="id"
+							:items-per-page="5"
+							class="elevation-1"
+						>
+							<template v-slot:item.actions="{ item }">
+								<v-btn
+									icon="mdi-pencil"
+									size="small"
+									variant="text"
+									@click="editDeveloper(item)"
+								></v-btn>
+							</template>
+							<template v-slot:item.valorHora="{ item }">
+								{{ formatCurrency(item.valorHora) }}
+							</template>
+						</v-data-table>
+					</v-card>
 				</v-col>
 			</v-row>
 			<v-row>
@@ -139,8 +155,16 @@ const route = useRoute()
 const issuesList = ref([])
 const dataRef = ref()
 const name = ref('')
+const developersTableData = ref([])
 
 const hourValue = ref(0)
+
+const developersTableHeaders = [
+	{ title: 'Desenvolvedor', key: 'nome', align: 'start' },
+	{ title: 'Horas trabalhadas', key: 'horasTrabalhadas', align: 'center' },
+	{ title: 'Valor da Hora', key: 'valorHora', align: 'center' },
+	{ title: 'Editar', key: 'actions', align: 'center', sortable: false }
+]
 
 const emptyDataset = {
 	labels: [],
@@ -163,7 +187,7 @@ const burndownData = computed(() => {
 	const daysLabelList = []
 
 	for(let i = 0; i < daysRange; i ++) {
-		const date = new Date(endDateTimestamp - (i * 24 * 360 * 10000))
+		const date = new Date(endDateTimestamp - (i * 24 * 60 * 60 * 1000))
 		const dateString = formatter.format(date)
 		daysLabelList.unshift(dateString)
 	}
@@ -171,7 +195,7 @@ const burndownData = computed(() => {
 	const burndownMax = burndown.pending_per_day[0].pending
 	const step = burndownMax / daysLabelList.length
 
-	return {	
+	return {
 		labels: [...daysLabelList, ''],
 		datasets: [
 			{
@@ -235,7 +259,7 @@ const devHoursData = computed(() => {
 				backgroundColor: chartColors[6],
 			},
 		]
-}
+	}
 })
 
 const workedHours = computed(() => dataRef.value ? dataRef.value.total_worked_hours: 0)
@@ -244,18 +268,46 @@ const activeIssues = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
 	return Object.values(today).reduce((total, value) => total + value, 0) - today['Concluído']
 })() : 0)
-const concludedIssues = computed(() => !dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
+const concludedIssues = computed(() => dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
 
 const issuesTotal = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
 	return Object.values(today).reduce((total, value) => total + value, 0)
 })() : 0)
 
+const formatCurrency = (value) => {
+	return new Intl.NumberFormat('pt-BR', {
+		style: 'currency',
+		currency: 'BRL'
+	}).format(value || 0)
+}
+
+const editDeveloper = (item) => {
+	console.log('Editar desenvolvedor:', item)
+	// TODO: quando clicar no botão de editar, deve-se redirecionar para a página de usuários filtrado pelo desenvolvedor
+}
+
+const loadDevelopers = async () => {
+	try {
+		const res = await projectsApi.getDevelopers(route.params.id)
+		const developers = res.developers || []
+		developersTableData.value = developers
+
+		dataRef.value = dataRef.value || {}
+		dataRef.value.dev_hours = developers.map(d => ({ name: d.nome, hours: d.horasTrabalhadas }))
+		dataRef.value.total_worked_hours = res.total_worked_hours || 0
+		hourValue.value = res.hourValue || 0
+	} catch (error) {
+		console.error('Erro ao carregar desenvolvedores:', error)
+	}
+}
+
 onMounted(async () => {
 	const data = await projectsApi.dashboard(route.params.id)
 	name.value = data.name
 	dataRef.value = data
 	issuesList.value = data.issues_per_month
+	await loadDevelopers()
 })
 
 </script>

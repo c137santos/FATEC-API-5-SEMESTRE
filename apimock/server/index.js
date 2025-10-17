@@ -40,6 +40,7 @@ app.post("/api/core/issues/add", core.add);
 // Projects
 app.get('/api/core/projects/overview', projects.overview)
 app.get('/api/core/projects/:id', projects.byProject)
+app.get('/api/core/projects/:id/desenvolvedores', projects.developers)
 
 app.listen(PORT, () => {
   console.log(
