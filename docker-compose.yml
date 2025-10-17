@@ -24,6 +24,28 @@ services:
       postgres:
         condition: service_healthy
 
+  locus:
+    image: back-jiboia
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      JIRA_API_URL: ${JIRA_API_URL}
+      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
+    env_file:
+      - .env
+    command: bash -c "uv venv --python $(which python3) && source .venv/bin/activate && locust"
+    ports:
+      - 8089:8089
+    expose:
+      - "8089"
+    volumes:
+      - ./:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: "postgres:15-alpine"
     ports:
