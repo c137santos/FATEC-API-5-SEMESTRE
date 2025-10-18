@@ -13,8 +13,6 @@ module.exports = {
 		res.status(200).send(project).end()
 	},
 	developers: (req, res) => {
-		const projectId = req.params.id
-
 		const developers = [
 			{
 				id: 1,
