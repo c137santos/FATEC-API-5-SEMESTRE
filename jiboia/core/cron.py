@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 
 from jiboia.core.models import Project
+from jiboia.core.service.dimensional_svc import DimenssionalService, TipoGranularidade
 
 from .service.jira_svc import JiraService
 
@@ -68,3 +69,25 @@ def jira_project():
         logger.error(f"[CRON] Jira API healthcheck failed after {duration:.2f}s: {message}")
 
     return success
+
+
+def dimensional_load():
+    """
+    Função executada por cron para carregar dados dimensionais.
+    Esta função é chamada pelo django-crontab de acordo com a programação configurada
+    em settings.py. Ela registra o resultado e pode ser expandida para enviar alertas em caso de falha.
+    """
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    success = DimenssionalService.load_fato_projeto_snapshot(TipoGranularidade.DIA)
+    if not success:
+        logger.error("[CRON] Carga dimensional falhou")
+        return
+    success = DimenssionalService.load_fact_issue(TipoGranularidade.DIA)
+    try:
+        logger.info("[CRON] Carga dimensional concluída com sucesso.")
+        return True
+    except Exception as e:
+        logger.error(f"[CRON] Carga dimensional falhou: {e}")
+        return False

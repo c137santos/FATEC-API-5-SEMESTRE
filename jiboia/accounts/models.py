@@ -3,6 +3,8 @@ from django.db import models  # noqa: F401
 
 
 class User(AbstractUser):
+    valor_hora = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
     def __str__(self):
         return str(self.username)
 

@@ -194,7 +194,6 @@ JIRA_API_URL = config("JIRA_API_URL", default="https://necto.atlassian.net")
 
 # Cron jobs configuration
 CRONJOBS = [
-    # Healthcheck at midnight (existing)
     (
         "0 0 * * *",
         "jiboia.core.cron.jira_healthcheck",
@@ -202,7 +201,6 @@ CRONJOBS = [
         {},
         "jira_daily_healthcheck",
     ),
-    # New: Sync issues for all projects at 3 AM (separate flow)
     (
         "0 3 * * *",
         "jiboia.core.cron.jira_sync_issues_all_projects",
@@ -211,6 +209,13 @@ CRONJOBS = [
         "jira_sync_issues_all_projects",
     ),
     ("0 1 * * *", "jiboia.core.cron.jira_project", ">> /tmp/jira_project.log 2>&1", {}, "jira_daily_project"),
+    (
+        "0 3 * * *",
+        "jiboia.core.cron.load_dimenssional",
+        ">> /tmp/load_dimenssional.log 2>&1",
+        {},
+        "load_dimenssional_daily",
+    ),
 ]
 
 

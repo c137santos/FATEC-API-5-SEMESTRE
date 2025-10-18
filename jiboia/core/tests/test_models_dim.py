@@ -202,7 +202,7 @@ def test_fato_projeto_snapshot_creation_and_properties():
     assert snapshot.projeto == projeto
     assert snapshot.total_issues == 15
     assert snapshot.custo_do_projeto_atual_rs == 25000
-    assert snapshot.total_horas_acumuladas == 12000
+    assert snapshot.tota_minutos_acumulados == 12000
 
     assert snapshot.minutos_faltando_fim_projeto > 70
 

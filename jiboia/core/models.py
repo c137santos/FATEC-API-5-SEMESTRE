@@ -134,8 +134,7 @@ class DimProjeto(models.Model):
     id_projeto_jiba = models.IntegerField(unique=True, db_index=True, help_text="ID Projeto no jiboia")
     id_projeto_jira = models.IntegerField(unique=True, db_index=True, help_text="ID Projeto no jira")
     nome_projeto = models.CharField(max_length=255)
-    data_inicio = models.DateField()
-    data_fim = models.DateField()
+    data_inicio = models.DateField(help_text="Data do inicio do projeto")
 
     class Meta:
         db_table = "dim_projeto"
@@ -150,7 +149,9 @@ class DimDev(models.Model):
     nome_dev = models.CharField(max_length=255)
     id_dev_jiba = models.IntegerField(db_index=True, help_text="ID do Desenvolvedor no jiboia")
     id_dev_jira = models.IntegerField(db_index=True, help_text="ID do Desenvolvedor no jira")
-    valor_hora = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_hora = models.DecimalField(
+        max_digits=10, decimal_places=2, help_text="Valor da hora do desenvolvedor", null=True, blank=True
+    )
 
     class Meta:
         db_table = "dim_dev"
@@ -217,6 +218,37 @@ class DimIntervaloTemporal(models.Model):
         return 0
 
 
+class FatoIssue(models.Model):
+    id = models.AutoField(primary_key=True)
+    projeto = models.ForeignKey(
+        DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto", help_text="Projeto ao qual a Issue pertence"
+    )
+    status = models.ForeignKey(
+        DimStatus, on_delete=models.PROTECT, verbose_name="Status da Issue", help_text="Status atual da Issue"
+    )
+    tipo_issue = models.ForeignKey(
+        DimTipoIssue,
+        on_delete=models.PROTECT,
+        verbose_name="Tipo da Issue",
+        help_text="Tipo da Issue (História, Tarefa, Bug, etc.)",
+    )
+    intervalo_trabalho = models.ForeignKey(
+        DimIntervaloTemporal,
+        on_delete=models.PROTECT,
+        related_name="esforco_issue",
+        help_text="Período do Esforço empregado na Issue",
+    )
+    total_issue = models.IntegerField(help_text="Total de Issues dos filtros")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação no modelo dimensional")
+
+    class Meta:
+        db_table = "fato_issue"
+        verbose_name = "Fato Issue"
+        indexes = [
+            models.Index(fields=["projeto", "intervalo_trabalho"]),
+        ]
+
+
 class FatoProjetoSnapshot(models.Model):
     projeto = models.ForeignKey(DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto")
     intervalo_snapshot = models.ForeignKey(
@@ -225,17 +257,16 @@ class FatoProjetoSnapshot(models.Model):
         related_name="snapshots_projeto",
         help_text="Período do Snapshot",
     )
-    versao_carga = models.DateTimeField(help_text="Data de criação do snapshot")
+    custo_projeto_atual_rs = models.DecimalField(
+        max_digits=15, decimal_places=2, help_text="Somatória das horas dos devs trabalhadas * valor hora respectivo"
+    )
+    total_minutos_acumulados = models.DecimalField(
+        max_digits=10, decimal_places=2, help_text="Total de minutos já gastas em desenvolvimento"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação do snapshot")
     projecao_termino_dias = models.IntegerField(
         help_text="Somatória dos dias previsto em todas as issues não finalizadas"
     )
-    custo_do_projeto_atual_rs = models.DecimalField(
-        max_digits=15, decimal_places=2, help_text="Somatória das horas dos devs trabalhadas * valor hora respectivo"
-    )
-    total_horas_acumuladas = models.DecimalField(
-        max_digits=10, decimal_places=2, help_text="Total de horas já gastas em desenvolvimento"
-    )
-    total_issues = models.IntegerField(help_text="Total de issues no projeto")
 
     class Meta:
         db_table = "fato_projeto_snapshot"
@@ -247,8 +278,8 @@ class FatoProjetoSnapshot(models.Model):
         """
         help: Valor médio da hora trabalhada (gastos_acumulados_reais / total_horas_acumuladas)
         """
-        if self.total_horas_acumuladas > 0:
-            return self.custo_do_projeto_atual_rs / self.total_horas_acumuladas
+        if self.tota_minutos_acumulados > 0:
+            return self.custo_projeto_atual_rs / (self.tota_minutos_acumulados / 60)
         return 0
 
     @property
@@ -265,51 +296,29 @@ class FatoProjetoSnapshot(models.Model):
         delta = data_fim_projeto - agora
         return max(int(delta.total_seconds() / 60), 0)
 
-    @property
-    def tempo_medio_conclusao_issues(self):
-        """
-        help: Tempo médio de conclusão da issue
-        """
-        if self.total_issues > 0:
-            return self.total_horas_acumuladas / self.total_issues
-        return 0
+
+class DimIssue(models.Model):
+    id = models.AutoField(primary_key=True, help_text="ID Natural")
+    id_issue_jiba = models.IntegerField(db_index=True, help_text="ID Original da Issue no jiboia")
+    id_issue_jira = models.IntegerField(db_index=True, help_text="ID Original da Issue no jira")
+    projeto = models.ForeignKey(DimProjeto, on_delete=models.PROTECT, help_text="Projeto da Issue")
+    tipo_issue = models.ForeignKey(DimTipoIssue, on_delete=models.PROTECT, help_text="Tipo da Issue")
+    data_criacao = models.DateTimeField(help_text="Data de criação da Issue")
+    data_inicio = models.DateTimeField(null=True, blank=True, help_text="Data de início da Issue")
 
 
-class FatoIssue(models.Model):
-    id = models.AutoField(primary_key=True)
-    projeto = models.ForeignKey(
-        DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto", help_text="Projeto ao qual a Issue pertence"
-    )
-    dev = models.ForeignKey(
-        DimDev, on_delete=models.PROTECT, verbose_name="Desenvolvedor", help_text="Desenvolvedor que trabalhou na Issue"
-    )
-    status = models.ForeignKey(
-        DimStatus, on_delete=models.PROTECT, verbose_name="Status da Issue", help_text="Status atual da Issue"
-    )
-    tipo_issue = models.ForeignKey(
-        DimTipoIssue,
-        on_delete=models.PROTECT,
-        verbose_name="Tipo da Issue",
-        help_text="Tipo da Issue (História, Tarefa, Bug, etc.)",
-    )
-
-    data_criacao = models.DateTimeField(help_text="Data de Criação da Issue")
+class FatoEsforco(models.Model):
+    id = models.AutoField(primary_key=True, help_text="ID Natural do Esforço")
+    dev = models.ForeignKey(DimDev, on_delete=models.PROTECT, help_text="Desenvolvedor que realizou o esforço")
+    issue = models.ForeignKey(DimIssue, on_delete=models.PROTECT, help_text="Issue na qual o esforço foi realizado")
+    status = models.ForeignKey(DimStatus, on_delete=models.PROTECT, help_text="Status atual da Issue")
     intervalo_trabalho = models.ForeignKey(
         DimIntervaloTemporal,
         on_delete=models.PROTECT,
-        related_name="esforco_issue",
-        help_text="Período do Esforço empregado na Issue",
+        help_text="Granularidade qual foi realizado e total de minutos (dia, semana, mês, etc.)",
     )
-    id_issue_jiba = models.IntegerField(db_index=True, help_text="ID Original da Issue no jiboia")
-    id_issue_jira = models.IntegerField(db_index=True, help_text="ID Original da Issue no jira")
-    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação no modelo dimensional")
-
-    class Meta:
-        db_table = "fato_issue"
-        verbose_name = "Fato Issue"
-        indexes = [
-            models.Index(fields=["projeto", "dev", "data_criacao", "intervalo_trabalho"]),
-        ]
+    custo_acumulado = models.DecimalField(max_digits=15, decimal_places=2, help_text="Custo total acumulado")
+    created_at = models.DateTimeField(help_text="Data do Fato Esforço foi criado")
 
     @property
     def minutos_gastos(self):
@@ -318,4 +327,13 @@ class FatoIssue(models.Model):
         """
         if self.intervalo_trabalho:
             return self.intervalo_trabalho.duracao_total_minutos
+        return 0
+
+    @property
+    def custo_total_issue(self):
+        """
+        Calcula o custo total da issue (horas * valor hora do dev)
+        """
+        if self.dev and self.dev.valor_hora:
+            return self.minutos_gastos * float(self.dev.valor_hora)
         return 0

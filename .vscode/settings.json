@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "jiboia"
+        "."
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true
