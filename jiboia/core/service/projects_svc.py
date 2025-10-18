@@ -89,6 +89,69 @@ def serialize_project(project, project_issues):
     }
 
 
+def get_project_developers(project_id):
+    from django.contrib.auth import get_user_model
+
+    User = get_user_model()
+
+    dev_time_data = (
+        Issue.objects.filter(project__id=project_id, id_user__isnull=False)
+        .values("id_user")
+        .annotate(total_seconds=Sum(F("time_estimate_seconds")))
+    )
+
+    if not dev_time_data:
+        return []
+
+    developers = []
+
+    for data in dev_time_data:
+        user_id = data["id_user"]
+        total_seconds = data["total_seconds"] or 0
+
+        hours_worked = round(total_seconds / 3600) if total_seconds else 0
+
+        developer_info = _get_developer_info(User, user_id, hours_worked)
+
+        if developer_info:
+            developers.append(developer_info)
+
+    developers.sort(key=lambda dev: dev["horasTrabalhadas"], reverse=True)
+
+    return developers
+
+
+def _get_developer_info(User, user_id, hours_worked):
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        logger.warning(f"User ID {user_id} not found when building developer list")
+        return None
+
+    nome = user.get_full_name().strip() if user.get_full_name() else user.username
+
+    valor_hora = _get_user_valor_hora(user)
+
+    return {
+        "id": user_id,
+        "nome": nome,
+        "horasTrabalhadas": hours_worked,
+        "valorHora": valor_hora,
+    }
+
+
+def _get_user_valor_hora(user):
+    if not hasattr(user, "valor_hora"):
+        return None
+
+    try:
+        raw_value = user.valor_hora
+        return float(raw_value) if raw_value is not None else None
+    except (ValueError, TypeError) as e:
+        logger.warning(f"Could not convert valor_hora for user {user.id}: {e}")
+        return None
+
+
 def list_projects_general(issue_breakdown_months: int):
     logger.info("Service list projects")
     start_date = calc_start_date(issue_breakdown_months)

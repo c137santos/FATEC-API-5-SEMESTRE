@@ -88,3 +88,14 @@ def list_projects_general(request):
     projects = projects_svc.list_projects_general(issue_breakdown_months)
 
     return JsonResponse(projects)
+
+
+@require_http_methods(["GET"])
+def project_developers(request, project_id):
+    """Return list of developers for a given project id."""
+    logger.info(f"API get developers for project_id={project_id}")
+
+    developers = projects_svc.get_project_developers(project_id)
+
+    # If project does not exist or no time logs, return empty list (frontend expects array)
+    return JsonResponse(developers, safe=False)
