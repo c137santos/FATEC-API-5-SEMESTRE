@@ -14,7 +14,7 @@ class SyncIssueTypesStrategy(JiraStrategy[int]):
 
     _ENDPOINT = "/rest/api/3/issuetype"
 
-    def execute(self) -> int:
+    def execute(self, project_key: str) -> int:
         """
         Executes the synchronization process for issue types.
         """

@@ -23,6 +23,9 @@ class JiraStrategy(Generic[T], abc.ABC):
         """
         Execute the API call strategy.
 
+        Args:
+            project_key: The Jira project key identifier
+
         Returns:
             T: The result of the strategy execution, type depends on the specific strategy
         """
