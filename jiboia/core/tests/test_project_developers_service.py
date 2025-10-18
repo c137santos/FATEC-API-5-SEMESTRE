@@ -9,9 +9,6 @@ User = get_user_model()
 
 @pytest.mark.django_db
 def test_get_project_developers_returns_empty_list_when_no_issues():
-    """
-    Testa se retorna lista vazia quando o projeto não tem issues
-    """
     project = Project.objects.create(
         key="EMPTY",
         name="Projeto Vazio",
@@ -28,9 +25,6 @@ def test_get_project_developers_returns_empty_list_when_no_issues():
 
 @pytest.mark.django_db
 def test_get_project_developers_returns_empty_list_when_no_assigned_users():
-    """
-    Testa se retorna lista vazia quando issues não têm usuário responsável
-    """
     project = Project.objects.create(
         key="NOUSER",
         name="Projeto Sem User",
@@ -54,9 +48,6 @@ def test_get_project_developers_returns_empty_list_when_no_assigned_users():
 
 @pytest.mark.django_db
 def test_get_project_developers_single_developer():
-    """
-    Testa se retorna corretamente um único desenvolvedor
-    """
     user = User.objects.create_user(
         username="dev1",
         password="password123",
@@ -105,9 +96,6 @@ def test_get_project_developers_single_developer():
 
 @pytest.mark.django_db
 def test_get_project_developers_multiple_developers_sorted():
-    """
-    Testa se retorna múltiplos desenvolvedores ordenados por horas trabalhadas (desc)
-    """
     user1 = User.objects.create_user(
         username="dev1",
         password="pass",
@@ -127,7 +115,6 @@ def test_get_project_developers_multiple_developers_sorted():
         last_name="Costa",
     )
 
-    # Adiciona valor_hora se o campo existir
     if hasattr(user1, "valor_hora"):
         user1.valor_hora = 100.0
         user1.save()
@@ -147,7 +134,6 @@ def test_get_project_developers_multiple_developers_sorted():
         projectTypeKey="software",
     )
 
-    # user1: 2 horas
     Issue.objects.create(
         description="Issue user1",
         project=project,
@@ -156,7 +142,6 @@ def test_get_project_developers_multiple_developers_sorted():
         jira_id=2004,
     )
 
-    # user2: 5 horas (maior)
     Issue.objects.create(
         description="Issue user2",
         project=project,
@@ -165,7 +150,6 @@ def test_get_project_developers_multiple_developers_sorted():
         jira_id=2005,
     )
 
-    # user3: 1 hora
     Issue.objects.create(
         description="Issue user3",
         project=project,
@@ -178,7 +162,6 @@ def test_get_project_developers_multiple_developers_sorted():
 
     assert len(result) == 3
 
-    # Deve estar ordenado por horas desc: user2 (5h), user1 (2h), user3 (1h)
     assert result[0]["id"] == user2.id
     assert result[0]["nome"] == "Pedro Oliveira"
     assert result[0]["horasTrabalhadas"] == 5
@@ -194,9 +177,6 @@ def test_get_project_developers_multiple_developers_sorted():
 
 @pytest.mark.django_db
 def test_get_project_developers_with_null_time_estimate():
-    """
-    Testa se trata corretamente issues com time_estimate_seconds nulo
-    """
     user = User.objects.create_user(
         username="dev1",
         password="pass",
@@ -213,7 +193,6 @@ def test_get_project_developers_with_null_time_estimate():
         projectTypeKey="software",
     )
 
-    # Issue com tempo válido
     Issue.objects.create(
         description="Issue com tempo",
         project=project,
@@ -222,7 +201,6 @@ def test_get_project_developers_with_null_time_estimate():
         jira_id=2007,
     )
 
-    # Issue com tempo nulo
     Issue.objects.create(
         description="Issue sem tempo",
         project=project,
@@ -235,15 +213,11 @@ def test_get_project_developers_with_null_time_estimate():
 
     assert len(result) == 1
     assert result[0]["id"] == user.id
-    # Deve somar apenas a issue com tempo válido (3600s = 1h)
     assert result[0]["horasTrabalhadas"] == 1
 
 
 @pytest.mark.django_db
 def test_get_project_developers_uses_username_when_no_full_name():
-    """
-    Testa se usa username quando first_name/last_name estão vazios
-    """
     user = User.objects.create_user(
         username="devuser",
         password="pass",
@@ -276,9 +250,6 @@ def test_get_project_developers_uses_username_when_no_full_name():
 
 @pytest.mark.django_db
 def test_get_project_developers_valor_hora_from_user():
-    """
-    Testa se retorna valor_hora do usuário quando campo existe
-    """
     user = User.objects.create_user(
         username="dev_valor",
         password="pass",
@@ -286,7 +257,6 @@ def test_get_project_developers_valor_hora_from_user():
         last_name="Martins",
     )
 
-    # Adiciona valor_hora se o campo existir no modelo
     if hasattr(user, "valor_hora"):
         user.valor_hora = 125.50
         user.save()
@@ -319,9 +289,6 @@ def test_get_project_developers_valor_hora_from_user():
 
 @pytest.mark.django_db
 def test_get_project_developers_rounding_hours():
-    """
-    Testa se arredonda corretamente as horas
-    """
     user = User.objects.create_user(username="dev_round", password="pass")
 
     project = Project.objects.create(
@@ -333,7 +300,6 @@ def test_get_project_developers_rounding_hours():
         projectTypeKey="software",
     )
 
-    # 5400 segundos = 1.5 horas, deve arredondar para 2
     Issue.objects.create(
         description="Issue round",
         project=project,
@@ -350,9 +316,6 @@ def test_get_project_developers_rounding_hours():
 
 @pytest.mark.django_db
 def test_get_project_developers_aggregates_multiple_issues_same_user():
-    """
-    Testa se agrega corretamente múltiplas issues do mesmo usuário
-    """
     user = User.objects.create_user(
         username="dev_agg",
         password="pass",
@@ -369,7 +332,6 @@ def test_get_project_developers_aggregates_multiple_issues_same_user():
         projectTypeKey="software",
     )
 
-    # Cria 5 issues de 1 hora cada = 5 horas total
     for i in range(5):
         Issue.objects.create(
             description=f"Issue {i}",
@@ -388,9 +350,6 @@ def test_get_project_developers_aggregates_multiple_issues_same_user():
 
 @pytest.mark.django_db
 def test_get_project_developers_different_projects_isolated():
-    """
-    Testa se não mistura dados de projetos diferentes
-    """
     user1 = User.objects.create_user(username="dev1", password="pass")
     user2 = User.objects.create_user(username="dev2", password="pass")
 
@@ -412,7 +371,6 @@ def test_get_project_developers_different_projects_isolated():
         projectTypeKey="software",
     )
 
-    # user1 trabalha no projeto A
     Issue.objects.create(
         description="Issue A",
         project=project_a,
@@ -421,7 +379,6 @@ def test_get_project_developers_different_projects_isolated():
         jira_id=4001,
     )
 
-    # user2 trabalha no projeto B
     Issue.objects.create(
         description="Issue B",
         project=project_b,
@@ -433,10 +390,8 @@ def test_get_project_developers_different_projects_isolated():
     result_a = get_project_developers(project_a.id)
     result_b = get_project_developers(project_b.id)
 
-    # Projeto A só deve ter user1
     assert len(result_a) == 1
     assert result_a[0]["id"] == user1.id
 
-    # Projeto B só deve ter user2
     assert len(result_b) == 1
     assert result_b[0]["id"] == user2.id
