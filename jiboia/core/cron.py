@@ -80,11 +80,15 @@ def dimensional_load():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
 
-    success = DimenssionalService.load_fato_projeto_snapshot(TipoGranularidade.DIA)
+    success = DimenssionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
     if not success:
         logger.error("[CRON] Carga dimensional falhou")
         return
-    success = DimenssionalService.load_fact_issue(TipoGranularidade.DIA)
+    success = DimenssionalService.generate_fact_issue(TipoGranularidade.DIA)
+    if not success:
+        logger.error("[CRON] Carga dimensional falhou")
+        return
+    success = DimenssionalService.load_fact_worklog(TipoGranularidade.DIA)
     try:
         logger.info("[CRON] Carga dimensional concluída com sucesso.")
         return True

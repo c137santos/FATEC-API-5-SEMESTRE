@@ -303,7 +303,7 @@ class DimIssue(models.Model):
     id_issue_jira = models.IntegerField(db_index=True, help_text="ID Original da Issue no jira")
     projeto = models.ForeignKey(DimProjeto, on_delete=models.PROTECT, help_text="Projeto da Issue")
     tipo_issue = models.ForeignKey(DimTipoIssue, on_delete=models.PROTECT, help_text="Tipo da Issue")
-    data_criacao = models.DateTimeField(help_text="Data de criação da Issue")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação da Issue")
     data_inicio = models.DateTimeField(null=True, blank=True, help_text="Data de início da Issue")
 
 
@@ -318,16 +318,8 @@ class FatoEsforco(models.Model):
         help_text="Granularidade qual foi realizado e total de minutos (dia, semana, mês, etc.)",
     )
     custo_acumulado = models.DecimalField(max_digits=15, decimal_places=2, help_text="Custo total acumulado")
+    minutos_acumulados = models.IntegerField(help_text="Total de minutos acumulados no período")
     created_at = models.DateTimeField(help_text="Data do Fato Esforço foi criado")
-
-    @property
-    def minutos_gastos(self):
-        """
-        Calcula as horas gastas baseado no intervalo_trabalho
-        """
-        if self.intervalo_trabalho:
-            return self.intervalo_trabalho.duracao_total_minutos
-        return 0
 
     @property
     def custo_total_issue(self):
