@@ -21,15 +21,4 @@ module.exports = {
 
     res.send(response);
   },
-  add: (req, res) => {
-    const { description } = req.body;
-    const id = getMaxId(data.issues) + 1;
-    const newIssue = {
-      id,
-      description,
-      userId: loggedUser.id,
-    };
-    data.issues.push(newIssue);
-    res.send(newIssue);
-  },
 };
