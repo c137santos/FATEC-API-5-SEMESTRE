@@ -1,8 +1,9 @@
 import datetime
+from datetime import timedelta
 from enum import Enum
 
-from django.db import models
 from django.db.models import F, FloatField, Sum
+from django.utils import timezone
 
 from jiboia.accounts import services
 from jiboia.core.models import (
@@ -33,6 +34,12 @@ class TipoGranularidade(Enum):
 
 class DimenssionalService:
     @classmethod
+    def generate_project_snapshot_data(cls, tipo_granularidade: TipoGranularidade):
+        intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
+        projects_filter = DimProjetoService()
+        return cls.save_fact_project_snapshot(projects_filter, intervalo_tempo)
+
+    @classmethod
     def generate_fact_issue(cls, tipo_granularidade):
         intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
         projetos = DimProjetoService()
@@ -41,19 +48,10 @@ class DimenssionalService:
         return cls.save_fact_issue(projetos, issue_types, status_types, intervalo_tempo)
 
     @classmethod
-    def generate_project_snapshot_data(cls, tipo_granularidade: TipoGranularidade):
-        intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
-        projects_filter = DimProjetoService()
-        cls.save_fact_project_snapshot(projects_filter, intervalo_tempo)
-        return True
-
-    @classmethod
     def generate_fact_worklog(cls, tipo_granularidade):
         intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
-        status = DimStatusTypeService()
-        issues = DimIssueService()
-        devs = DimDevService()
-        cls.save_fact_worklog(intervalo_tempo, issues, status, devs)
+        dim_issues = DimIssueService()
+        return cls.save_fact_worklog(intervalo_tempo, dim_issues)
 
     @classmethod
     def save_fact_project_snapshot(cls, project_filter, dimtemporal):
@@ -66,6 +64,7 @@ class DimenssionalService:
                 projecao_termino_dias=proj["projecao_termino_dias"],
             )
             print(proj_instace)
+        return True
 
     @classmethod
     def save_fact_issue(cls, projetos, issue_types, status_types, intervalo_tempo):
@@ -88,18 +87,19 @@ class DimenssionalService:
         return True
 
     @classmethod
-    def save_fact_worklog(intervalo_tempo, issues, status, devs):
-        for dev in devs.devs:
-            for issue in issues.issues:
-                for status in status.status_types:
-                    FatoEsforco.objects.create(
-                        dev=dev["dev"],
-                        issue=issue["issue"],
-                        status=status["dimstatus"],
-                        intervalo_trabalho=intervalo_tempo.dimtemporal,
-                        minutos_acumulados=issue["total_minutos_hoje"],
-                        custo_acumulado=(dev["valor_hora"] / 60) * issue["total_minutos_hoje"],
-                    )
+    def save_fact_worklog(cls, intervalo_tempo, issues):
+        for issue in issues.issues:
+            dim_dev = DimDev.objects.get(id_dev_jiba=issue["dev"].id)
+            dim_issue = DimIssue.objects.get(id_issue_jiba=issue["issue"].id)
+            dim_status = DimStatus.objects.get(id_status_jiba=issue["status"].id)
+            FatoEsforco.objects.create(
+                dev=dim_dev,
+                issue=dim_issue,
+                status=dim_status,
+                intervalo_trabalho=intervalo_tempo.dimtemporal,
+                minutos_acumulados=issue["total_minutos_hoje"],
+                custo_acumulado=(float(issue["dev"].valor_hora) / 60) * issue["total_minutos_hoje"],
+            )
         return True
 
 
@@ -116,10 +116,10 @@ class DimDevService:
 
             filtro = {
                 "dev": dim_dev,
-                "id_dev_jiba": dev["dev_id"],
-                "id_dev_jira": dev["jira_id"],
-                "nome_dev": dev["name"],
-                "valor_hora": dev["valor_hora"],
+                "id_dev_jiba": dim_dev.id_dev_jiba,
+                "id_dev_jira": dim_dev.id_dev_jira,
+                "nome_dev": dim_dev.nome_dev,
+                "valor_hora": dim_dev.valor_hora,
             }
             filtros.append(filtro)
 
@@ -181,7 +181,7 @@ class DimProjetoService:
 
     @classmethod
     def total_minutos_acumulados(cls, projeto_id=None):
-        total_minutos = TimeLog.objects.filter(issue__project_id=projeto_id).aggregate(
+        total_minutos = TimeLog.objects.filter(id_issue__project_id=projeto_id).aggregate(
             minutos=Sum(F("seconds") / 60.0, output_field=FloatField())
         )
         return total_minutos.get("minutos") or 0
@@ -341,46 +341,69 @@ class DimStatusTypeService:
 
         return dim_issue_type
 
+    @classmethod
+    def get_all_dim_status():
+        filtros = []
+        varias_dims = DimStatus.objects.all()
+        for dim_status_type in varias_dims:
+            filtro = {
+                "dimstatus": dim_status_type,
+                "id": dim_status_type.id,
+                "id_status_jiba": dim_status_type.id_status_jiba,
+                "id_status_jira": dim_status_type.id_status_jira,
+                "nome_status": dim_status_type.nome_status,
+            }
+            filtros.append(filtro)
+        return filtros
+
 
 class DimIssueService:
     def __init__(self):
         self.issues = self._create_issues()
 
     def _create_issues(self):
-        hoje = datetime.timezone.now().date()
-        issues = (
-            Issue.objects.annotate(
-                total_minutos_hoje=Sum(F("timelog__seconds") / 60.0, filter=models.Q(timelog__log_date__date=hoje))
-            )
-            .filter(timelog__log_date__date=hoje)
-            .distinct()
+        agora = timezone.now()
+        start = agora.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = start + timedelta(days=1)
+
+        issues_com_soma = (
+            TimeLog.objects.filter(log_date__gte=start, log_date__lt=end)
+            .select_related("id_issue", "id_issue__project", "id_issue__type_issue", "id_user")
+            .annotate(total_seconds=Sum("seconds"))
         )
         filtros = []
+        for issue in issues_com_soma:
+            total_seconds = issue.total_seconds or 0
+            total_minutos_hoje = total_seconds / 60.0
 
-        for issue in issues:
             dim_issue = self._get_or_create_issue(issue)
-            filtro = {
-                "issue": dim_issue,
-                "id_issue_jiba": dim_issue.id_issue_jiba,
-                "id_issue_jira": dim_issue.id_issue_jira,
-                "projeto_id": issue.project.id,
-                "start_date": issue.start_date,
-                "end_date": issue.end_date,
-                "time_estimate_seconds": issue.time_estimate_seconds,
-                "total_minutos_hoje": issue.total_minutos_hoje or 0,
-            }
-            filtros.append(filtro)
+
+            filtros.append(
+                {
+                    "dev": issue.id_user,
+                    "valor_hora": issue.id_user.valor_hora,
+                    "issue": dim_issue,
+                    "status": issue.id_issue.status,
+                    "id_issue_jiba": dim_issue.id_issue_jiba,
+                    "id_issue_jira": dim_issue.id_issue_jira,
+                    "projeto_id": issue.id_issue.project.id,
+                    "start_date": issue.id_issue.start_date,
+                    "end_date": issue.id_issue.end_date,
+                    "time_estimate_seconds": issue.id_issue.time_estimate_seconds,
+                    "total_minutos_hoje": total_minutos_hoje,
+                }
+            )
 
         return filtros
 
     def _get_or_create_issue(self, issue):
-        dim_issue = DimIssue.objects.filter(id=issue["id_issue_jiba"]).first()
+        dim_issue = DimIssue.objects.filter(id=issue.id).first()
         if not dim_issue:
             dim_issue = DimIssue.objects.create(
-                id_issue_jiba=issue["id_issue_jiba"],
-                id_issue_jira=issue["id_issue_jira"],
-                projeto=DimProjeto.objects.get(id_projeto_jiba=issue["project"].id),
-                tipo_issue=DimTipoIssue.objects.get(id_tipo_jiba=issue["type_issue"].id),
-                data_inicio=issue["start_date"],
+                id_issue_jiba=issue.id,
+                id_issue_jira=issue.jira_id,
+                projeto=DimProjeto.objects.get(id_projeto_jiba=issue.id_issue.project.id),
+                tipo_issue=DimTipoIssue.objects.get(id_tipo_jiba=issue.id_issue.type_issue.id),
+                data_inicio=issue.id_issue.start_date,
             )
         return dim_issue

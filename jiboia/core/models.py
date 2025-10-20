@@ -319,7 +319,7 @@ class FatoEsforco(models.Model):
     )
     custo_acumulado = models.DecimalField(max_digits=15, decimal_places=2, help_text="Custo total acumulado")
     minutos_acumulados = models.IntegerField(help_text="Total de minutos acumulados no período")
-    created_at = models.DateTimeField(help_text="Data do Fato Esforço foi criado")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data do Fato Esforço foi criado")
 
     @property
     def custo_total_issue(self):
@@ -327,5 +327,5 @@ class FatoEsforco(models.Model):
         Calcula o custo total da issue (horas * valor hora do dev)
         """
         if self.dev and self.dev.valor_hora:
-            return self.minutos_gastos * float(self.dev.valor_hora)
+            return self.minutos_acumulados * float(self.dev.valor_hora)
         return 0
