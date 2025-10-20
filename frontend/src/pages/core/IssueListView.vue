@@ -8,13 +8,11 @@
 import { mapState } from "pinia"
 import { useBaseStore } from "@/stores/baseStore"
 import { usecoreStore } from "@/stores/coreStore"
-import Issue from "@/components/Issue.vue"
-import IssueForm from "@/components/IssueForm.vue"
 import ListagemIssues from "@/components/ListagemIssues.vue"
 
 export default {
   name: "IssuesList",
-  components: { Issue, IssueForm, ListagemIssues },
+  components: { ListagemIssues },
   setup() {
     const baseStore = useBaseStore()
     const coreStore = usecoreStore()

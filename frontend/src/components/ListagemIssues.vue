@@ -33,24 +33,24 @@ import coreApi from '@/api/core.api.js'
 const headers = ref([
   { title: "Id da Issue", key: "jira_id", align: "start" },
   { title: "Sumário issue ", key: "description", align: "start" },
-  { title: "Autor", key: "author", align: "start" }, 
+  { title: "Autor", key: "author", align: "start" },
   { title: "Data de criação", key: "timeCreated", align: "start" },
 ]);
- 
+
 const issues = ref([]);
 const itemsPerPage = ref(10);
 const totalIssues = ref(0);
 const loading = ref(true);
 
-const searchIssues = async () => {
+const searchIssues = async (page = 1) => {
   loading.value = true;
 
   try {
-    const response = await coreApi.getIssues();
-    
+    const response = await coreApi.getIssues(page);
+
     issues.value = response.issues || [];
     totalIssues.value = response.total_items || 0;
-  
+
   } catch (error) {
     console.error("Erro ao buscar issues:", error);
     issues.value = [];
@@ -67,7 +67,7 @@ const loadIssues = (options) => {
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
-  
+
   try {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR');
