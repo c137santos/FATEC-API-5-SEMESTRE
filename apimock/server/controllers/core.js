@@ -11,19 +11,21 @@ module.exports = {
     if (!loggedUser) {
       return;
     }
-    const { id } = req.params;
-    if (id != undefined) {
-      const issue = data.issues.find((t) => t.id == id);
-      if (!issue || issue.userId != loggedUser.id) {
-        res.status(404).end();
-        return;
+
+    const mappedIssues = data.issues.map(issue => ({
+      jira_id: issue.key,
+      description: issue.fields.summary,
+      created_at: issue.fields.created,
+      user_related: {
+        user_name: issue.fields.assignee.displayName
       }
-      res.send(issue);
-      return;
-    }
+    }));
+
     const response = {
-      issues: data.issues.filter((t) => t.userId == loggedUser.id),
+      issues: mappedIssues,
+      total_items: mappedIssues.length
     };
+
     res.send(response);
   },
   add: (req, res) => {

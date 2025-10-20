@@ -34,7 +34,7 @@ app.post("/api/accounts/logout", accounts.logout);
 app.get("/api/accounts/whoami", accounts.whoami);
 
 // Issues
-app.get("/api/core/issues/list", core.find);
+app.get("/api/core/issues", core.find);
 app.post("/api/core/issues/add", core.add);
 
 // Projects

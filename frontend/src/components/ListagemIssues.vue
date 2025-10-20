@@ -8,9 +8,7 @@
       :items="issues"
       :items-length="totalIssues"
       :loading="loading"
-      item-value="id"
       @update:options="loadIssues"
-      class="rounded-lg elevation-5 bg-deep-purple-lighten-5"
     >
 
       <template v-slot:item.author="{ item }">
@@ -30,7 +28,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import coreApi from '@/api/core.api.js'
 
 const headers = ref([
   { title: "Id da Issue", key: "jira_id", align: "start" },
@@ -38,57 +36,21 @@ const headers = ref([
   { title: "Autor", key: "author", align: "start" }, 
   { title: "Data de criação", key: "timeCreated", align: "start" },
 ]);
-
-const mockIssues = [
-  {
-    "id": 1,
-    "description": "Estudar Vuetify",
-    "done": false,
-    "userId": 1
-  },
-  {
-    "id": 2,
-    "description": "Estudar Vuex",
-    "done": false,
-    "userId": 1
-  },
-  {
-    "id": 3,
-    "description": "Estudar Djavue",
-    "done": false,
-    "userId": 1
-  },
-  {
-    "id": 4,
-    "description": "Pagar Volei",
-    "done": false,
-    "userId": 1
-  },
-  {
-    "id": 5,
-    "description": "Voltar estudar Django",
-    "done": false,
-    "userId": 2
-  }
-]
-
+ 
 const issues = ref([]);
 const itemsPerPage = ref(10);
 const totalIssues = ref(0);
 const loading = ref(true);
 
-const searchIssues = async (page = 1) => {
+const searchIssues = async () => {
   loading.value = true;
 
   try {
-    const response = await axios.get(
-      `/api/core/issues?page=${page}`
-    );
-    const data = response.data;
-
-    const realIssues = data.issues || [];
-    issues.value = [...realIssues, ...mockIssues];
-    totalIssues.value = realIssues.length + mockIssues.length; 
+    const response = await coreApi.getIssues();
+    
+    issues.value = response.issues || [];
+    totalIssues.value = response.total_items || 0;
+  
   } catch (error) {
     console.error("Erro ao buscar issues:", error);
     issues.value = [];
@@ -114,7 +76,7 @@ const formatDate = (dateString) => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   searchIssues(1);
 });
 </script>

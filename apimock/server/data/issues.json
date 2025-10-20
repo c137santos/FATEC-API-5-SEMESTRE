@@ -1,32 +1,92 @@
 [
   {
-    "id": 1,
-    "description": "Estudar Vuetify",
-    "done": false,
-    "userId": 1
+    "key": "SM2-93",
+    "fields": {
+      "summary": "Incluir a Assinatura digital Relatório - TCRA",
+      "status": {
+        "name": "Concluído",
+        "statusCategory": {"name": "Itens concluídos"}
+      },
+      "assignee": {
+        "displayName": "sergio.casas",
+        "emailAddress": "sergio@necto.com"
+      },
+      "created": "2025-10-16T11:52:41.803-0300",
+      "timespent": 2700,
+      "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
   },
   {
-    "id": 2,
-    "description": "Estudar Vuex",
-    "done": false,
-    "userId": 1
+    "key": "SM2-92",
+    "fields": {
+      "summary": "Atualizar layout do Relatório de Atividades - Setembro",
+      "status": {
+        "name": "Concluído",
+        "statusCategory": {"name": "Itens concluídos"}
+      },
+      "assignee": {
+        "displayName": "felipe.faria",
+        "emailAddress": "felipe@necto.com"
+      },
+      "created": "2025-10-10T09:25:41.123-0300",
+      "timespent": 3600,
+      "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
   },
   {
-    "id": 3,
-    "description": "Estudar Djavue",
-    "done": false,
-    "userId": 1
+    "key": "SM2-90",
+    "fields": {
+      "summary": "Corrigir cálculo de total de horas nas atividades",
+      "status": {
+        "name": "Em andamento",
+        "statusCategory": {"name": "Itens em andamento"}
+      },
+      "assignee": {
+        "displayName": "marcelo.oliveira",
+        "emailAddress": "marcelo@necto.com"
+      },
+      "created": "2025-10-15T14:22:33.512-0300",
+      "timespent": 1200,
+      "issuetype": {"name": "Bug"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
   },
   {
-    "id": 4,
-    "description": "Pagar Volei",
-    "done": false,
-    "userId": 1
+    "key": "SM2-88",
+    "fields": {
+      "summary": "Revisar descrições das categorias no módulo Gestão",
+      "status": {
+        "name": "Tarefas pendentes",
+        "statusCategory": {"name": "Itens Pendentes"}
+      },
+      "assignee": {
+        "displayName": "sergio.casas",
+        "emailAddress": "sergio@necto.com"
+      },
+      "created": "2025-09-30T10:11:50.221-0300",
+      "timespent": 0,
+      "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-81", "summary": "Setembro"}
+    }
   },
   {
-    "id": 5,
-    "description": "Voltar estudar Django",
-    "done": false,
-    "userId": 2
+    "key": "SM2-82",
+    "fields": {
+      "summary": "Editar a Descrição Categoria - Gestão",
+      "status": {
+        "name": "Tarefas pendentes",
+        "statusCategory": {"name": "Itens Pendentes"}
+      },
+      "assignee": {
+        "displayName": "sergio.casas",
+        "emailAddress": "sergio@necto.com"
+      },
+      "created": "2025-09-10T08:43:54.329-0300",
+      "timespent": 0,
+      "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-81", "summary": "Setembro"}
+    }
   }
 ]
