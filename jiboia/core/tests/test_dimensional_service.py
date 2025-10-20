@@ -18,7 +18,11 @@ from jiboia.core.models import (
     StatusType,
     TimeLog,
 )
-from jiboia.core.service.dimensional_svc import DimensionalService, TipoGranularidade
+from jiboia.core.service.dimensional_svc import (
+    DimensionalService,
+    DimIntervaloTemporalService,
+    TipoGranularidade,
+)
 
 
 @pytest.mark.django_db
@@ -305,3 +309,58 @@ def test_generate_fact_worlog():
     assert fato_dev1[0].accumulated_cost == 60
     assert fato_dev1[1].accumulated_minutes == 0
     assert fato_dev1[1].accumulated_cost == 0
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "granularity, refer, expected_start, expected_end",
+    [
+        (
+            TipoGranularidade.DIA,
+            datetime(2024, 10, 20, 12, 0),
+            datetime(2024, 10, 20, 0, 0),
+            datetime(2024, 10, 21, 0, 0),
+        ),
+        (
+            TipoGranularidade.SEMANA,
+            datetime(2024, 10, 17, 15, 0),  # quinta
+            datetime(2024, 10, 14, 0, 0),  # segunda
+            datetime(2024, 10, 21, 0, 0),
+        ),
+        (
+            TipoGranularidade.MES,
+            datetime(2024, 12, 10, 10, 0),
+            datetime(2024, 12, 1, 0, 0),
+            datetime(2025, 1, 1, 0, 0),
+        ),
+        (
+            TipoGranularidade.TRIMESTRE,
+            datetime(2024, 11, 5, 12, 0),
+            datetime(2024, 10, 1, 0, 0),
+            datetime(2025, 1, 1, 0, 0),
+        ),
+        (
+            TipoGranularidade.SEMESTRE,
+            datetime(2024, 8, 20, 10, 0),
+            datetime(2024, 7, 1, 0, 0),
+            datetime(2025, 1, 1, 0, 0),
+        ),
+        (
+            TipoGranularidade.ANO,
+            datetime(2024, 6, 15, 14, 0),
+            datetime(2024, 1, 1, 0, 0),
+            datetime(2025, 1, 1, 0, 0),
+        ),
+    ],
+)
+def test_dim_intervalo_temporal_service(granularity, refer, expected_start, expected_end):
+    service = DimIntervaloTemporalService(granularity)
+    start, end = service.create_interval(granularity, refer)
+
+    assert start == expected_start
+    assert end == expected_end
+
+    dim = service.dimtemporal
+    assert dim.granularity_type == service.granularity_type.value
+    assert dim.start_date == service.start_date
+    assert dim.end_date == service.end_date
