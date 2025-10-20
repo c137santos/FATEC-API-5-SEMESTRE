@@ -29,6 +29,8 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
             "email": "jon@example.com",
             "valor_hora": 0.00,
             "permissions": {"ADMIN": False, "STAFF": False},
+            "valor_hora": "0.00",
+            "jira_id": None,
         },
         "authenticated": True,
     }
@@ -67,6 +69,8 @@ def test_deve_fazer_login(client):
             "email": "jon@example.com",
             "valor_hora": 0.00,
             "permissions": {"ADMIN": False, "STAFF": False},
+            "valor_hora": "0.00",
+            "jira_id": None,
         },
         "authenticated": True,
     }

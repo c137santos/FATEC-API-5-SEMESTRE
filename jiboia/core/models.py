@@ -114,7 +114,6 @@ class TimeLog(models.Model):
         return f"Time log for issue #{self.id_issue_id}"
 
 
-# }/rest/api/3/status
 class StatusType(models.Model):
     key = models.CharField(max_length=255, help_text="Chave para categoria")
     name = models.TextField(help_text="Nome do status")
@@ -131,26 +130,28 @@ class StatusType(models.Model):
 
 class DimProjeto(models.Model):
     id = models.AutoField(primary_key=True)
-    id_projeto_jiba = models.IntegerField(unique=True, db_index=True, help_text="ID Projeto no jiboia")
-    id_projeto_jira = models.IntegerField(unique=True, db_index=True, help_text="ID Projeto no jira")
-    nome_projeto = models.CharField(max_length=255)
-    data_inicio = models.DateField()
-    data_fim = models.DateField()
+    id_project_jiba = models.IntegerField(unique=True, db_index=True, help_text="ID Projeto no jiboia")
+    id_project_jira = models.IntegerField(unique=True, db_index=True, help_text="ID Projeto no jira")
+    project_name = models.CharField(max_length=255)
+    start_date = models.DateField(help_text="Data do inicio do projeto")
+    end_date = models.DateField(null=True, blank=True, help_text="Data do fim do projeto")
 
     class Meta:
         db_table = "dim_projeto"
         verbose_name = "Dimensão Projeto"
 
     def __str__(self):
-        return self.nome_projeto
+        return self.project_name
 
 
 class DimDev(models.Model):
     id = models.AutoField(primary_key=True, help_text="ID Natural do Desenvolvedor")
-    nome_dev = models.CharField(max_length=255)
+    dev_name = models.CharField(max_length=255)
     id_dev_jiba = models.IntegerField(db_index=True, help_text="ID do Desenvolvedor no jiboia")
     id_dev_jira = models.IntegerField(db_index=True, help_text="ID do Desenvolvedor no jira")
-    valor_hora = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_hora = models.DecimalField(
+        max_digits=10, decimal_places=2, help_text="Valor da hora do desenvolvedor", null=True, blank=True
+    )
 
     class Meta:
         db_table = "dim_dev"
@@ -164,28 +165,28 @@ class DimStatus(models.Model):
     id = models.AutoField(primary_key=True, help_text="ID Natural do Status")
     id_status_jira = models.IntegerField(db_index=True, help_text="ID do Status no jira")
     id_status_jiba = models.IntegerField(db_index=True, help_text="ID do Status no jiboia")
-    nome_status = models.CharField(max_length=100)
+    status_name = models.CharField(max_length=100)
 
     class Meta:
         db_table = "dim_status"
         verbose_name = "Dimensão Status"
 
     def __str__(self):
-        return self.nome_status
+        return self.status_name
 
 
 class DimTipoIssue(models.Model):
     id = models.AutoField(primary_key=True, help_text="ID Natural do Tipo de Issue")
-    id_tipo_jira = models.IntegerField(help_text="ID do Tipo de Issue no jira")
-    id_tipo_jiba = models.IntegerField(help_text="ID do Tipo de Issue no jiboia")
-    nome_tipo = models.CharField(max_length=100)
+    id_type_jira = models.IntegerField(help_text="ID do Tipo de Issue no jira")
+    id_type_jiba = models.IntegerField(help_text="ID do Tipo de Issue no jiboia")
+    name_type = models.CharField(max_length=100)
 
     class Meta:
-        db_table = "dim_tipo_issue"
+        db_table = "dim_issue_type"
         verbose_name = "Dimensão Tipo de Issue"
 
     def __str__(self):
-        return self.nome_tipo
+        return self.name_type
 
 
 class DimIntervaloTemporal(models.Model):
@@ -198,11 +199,11 @@ class DimIntervaloTemporal(models.Model):
         ANO = "ANO", "Ano"
 
     id = models.AutoField(primary_key=True, help_text="ID Natural do Intervalo Temporal")
-    tipo_granularidade = models.CharField(
+    granularity_type = models.CharField(
         max_length=50, choices=TipoGranularidade.choices, help_text="Tipo de Período (Dia, Mês, etc.)"
     )
-    data_inicio = models.DateTimeField(null=True, blank=True, help_text="Data de inicio em dias, horas e segundos")
-    data_fim = models.DateTimeField(null=True, blank=True, help_text="Data de fim em dias, horas e segundos")
+    start_date = models.DateTimeField(null=True, blank=True, help_text="Data de inicio em dias, horas e segundos")
+    end_date = models.DateTimeField(null=True, blank=True, help_text="Data de fim em dias, horas e segundos")
 
     class Meta:
         db_table = "dim_intervalo_temporal"
@@ -211,111 +212,112 @@ class DimIntervaloTemporal(models.Model):
     @property
     def duracao_total_minutos(self):
         """Retorna a duração total em minutos"""
-        if self.data_fim and self.data_inicio:
-            delta = self.data_fim - self.data_inicio
+        if self.end_date and self.start_date:
+            delta = self.end_date - self.start_date
             return int(delta.total_seconds() / 60)
         return 0
 
 
-class FatoProjetoSnapshot(models.Model):
-    projeto = models.ForeignKey(DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto")
-    intervalo_snapshot = models.ForeignKey(
-        DimIntervaloTemporal,
-        on_delete=models.PROTECT,
-        related_name="snapshots_projeto",
-        help_text="Período do Snapshot",
-    )
-    versao_carga = models.DateTimeField(help_text="Data de criação do snapshot")
-    projecao_termino_dias = models.IntegerField(
-        help_text="Somatória dos dias previsto em todas as issues não finalizadas"
-    )
-    custo_do_projeto_atual_rs = models.DecimalField(
-        max_digits=15, decimal_places=2, help_text="Somatória das horas dos devs trabalhadas * valor hora respectivo"
-    )
-    total_horas_acumuladas = models.DecimalField(
-        max_digits=10, decimal_places=2, help_text="Total de horas já gastas em desenvolvimento"
-    )
-    total_issues = models.IntegerField(help_text="Total de issues no projeto")
-
-    class Meta:
-        db_table = "fato_projeto_snapshot"
-        verbose_name = "Fato Projeto Snapshot"
-        unique_together = (("projeto", "intervalo_snapshot"),)
-
-    @property
-    def valor_hora_media(self):
-        """
-        help: Valor médio da hora trabalhada (gastos_acumulados_reais / total_horas_acumuladas)
-        """
-        if self.total_horas_acumuladas > 0:
-            return self.custo_do_projeto_atual_rs / self.total_horas_acumuladas
-        return 0
-
-    @property
-    def minutos_faltando_fim_projeto(self):
-        """
-        help: Quantidade de minutos faltando para o fim do projeto (baseado na data atual e data_fim do projeto)
-        """
-        if not self.projeto.data_fim:
-            return None
-
-        agora = timezone.now()
-        data_fim_projeto = timezone.make_aware(datetime.combine(self.projeto.data_fim, datetime.min.time()))
-
-        delta = data_fim_projeto - agora
-        return max(int(delta.total_seconds() / 60), 0)
-
-    @property
-    def tempo_medio_conclusao_issues(self):
-        """
-        help: Tempo médio de conclusão da issue
-        """
-        if self.total_issues > 0:
-            return self.total_horas_acumuladas / self.total_issues
-        return 0
-
-
-class FatoIssue(models.Model):
+class FactIssue(models.Model):
     id = models.AutoField(primary_key=True)
-    projeto = models.ForeignKey(
+    project = models.ForeignKey(
         DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto", help_text="Projeto ao qual a Issue pertence"
-    )
-    dev = models.ForeignKey(
-        DimDev, on_delete=models.PROTECT, verbose_name="Desenvolvedor", help_text="Desenvolvedor que trabalhou na Issue"
     )
     status = models.ForeignKey(
         DimStatus, on_delete=models.PROTECT, verbose_name="Status da Issue", help_text="Status atual da Issue"
     )
-    tipo_issue = models.ForeignKey(
+    issue_type = models.ForeignKey(
         DimTipoIssue,
         on_delete=models.PROTECT,
         verbose_name="Tipo da Issue",
         help_text="Tipo da Issue (História, Tarefa, Bug, etc.)",
     )
-
-    data_criacao = models.DateTimeField(help_text="Data de Criação da Issue")
-    intervalo_trabalho = models.ForeignKey(
+    worklog_interval = models.ForeignKey(
         DimIntervaloTemporal,
         on_delete=models.PROTECT,
         related_name="esforco_issue",
-        help_text="Período do Esforço empregado na Issue",
+        help_text="Granulariedade qual foi realizado o trabalho",
     )
-    id_issue_jiba = models.IntegerField(db_index=True, help_text="ID Original da Issue no jiboia")
-    id_issue_jira = models.IntegerField(db_index=True, help_text="ID Original da Issue no jira")
+    total_issue = models.IntegerField(help_text="Total de Issues dos filtros")
     created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação no modelo dimensional")
 
     class Meta:
         db_table = "fato_issue"
         verbose_name = "Fato Issue"
         indexes = [
-            models.Index(fields=["projeto", "dev", "data_criacao", "intervalo_trabalho"]),
+            models.Index(fields=["project", "worklog_interval"]),
         ]
 
+
+class FactProjectSnapshot(models.Model):
+    project = models.ForeignKey(DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto")
+    snapshot_interval = models.ForeignKey(
+        DimIntervaloTemporal,
+        on_delete=models.PROTECT,
+        related_name="snapshots_projeto",
+        help_text="Período do Snapshot",
+    )
+    current_project_cost_rs = models.DecimalField(
+        max_digits=15, decimal_places=2, help_text="Somatória das horas dos devs trabalhadas * valor hora respectivo"
+    )
+    total_accumulated_minutes = models.DecimalField(
+        max_digits=10, decimal_places=2, help_text="Total de minutos já gastas em desenvolvimento"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação do snapshot")
+    projection_end_days = models.IntegerField(
+        help_text="Somatória dos dias previsto em todas as issues não finalizadas"
+    )
+
+    class Meta:
+        db_table = "fato_projeto_snapshot"
+        verbose_name = "Fato Projeto Snapshot"
+        unique_together = (("project", "snapshot_interval"),)
+
     @property
-    def minutos_gastos(self):
+    def average_hour_value(self):
         """
-        Calcula as horas gastas baseado no intervalo_trabalho
+        help: Valor médio da hora trabalhada (gastos_acumulados_reais / total_horas_acumuladas)
         """
-        if self.intervalo_trabalho:
-            return self.intervalo_trabalho.duracao_total_minutos
+        if self.total_accumulated_minutes > 0:
+            return self.current_project_cost_rs / (self.total_accumulated_minutes / 60)
         return 0
+
+    @property
+    def minutes_left_end_project(self):
+        """
+        help: Quantidade de minutos faltando para o fim do projeto (baseado na data atual e end_date do projeto)
+        """
+        if not self.project.end_date:
+            return None
+
+        now = timezone.now()
+        end_date_projeto = timezone.make_aware(datetime.combine(self.project.end_date, datetime.min.time()))
+
+        delta = end_date_projeto - now
+        return max(int(delta.total_seconds() / 60), 0)
+
+
+class DimIssue(models.Model):
+    id = models.AutoField(primary_key=True, help_text="ID Natural")
+    id_issue_jiba = models.IntegerField(db_index=True, help_text="ID Original da Issue no jiboia")
+    id_issue_jira = models.IntegerField(db_index=True, help_text="ID Original da Issue no jira")
+    project = models.ForeignKey(DimProjeto, on_delete=models.PROTECT, help_text="Projeto da Issue")
+    issue_type = models.ForeignKey(DimTipoIssue, on_delete=models.PROTECT, help_text="Tipo da Issue")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação da Issue")
+    start_date = models.DateTimeField(null=True, blank=True, help_text="Data de início da Issue")
+
+
+class FactEsforco(models.Model):
+    id = models.AutoField(primary_key=True, help_text="ID Natural do Esforço")
+    dev = models.ForeignKey(DimDev, on_delete=models.PROTECT, help_text="Desenvolvedor que realizou o esforço")
+    worklog_interval = models.ForeignKey(
+        DimIntervaloTemporal,
+        on_delete=models.PROTECT,
+        help_text="Granularidade qual foi realizado e total de minutos (dia, semana, mês, etc.)",
+    )
+    accumulated_cost = models.DecimalField(max_digits=15, decimal_places=2, help_text="Custo total acumulado")
+    accumulated_minutes = models.IntegerField(help_text="Total de minutos acumulados no período")
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Data do Fato Esforço foi criado")
+    project = models.ForeignKey(
+        DimProjeto, on_delete=models.PROTECT, verbose_name="Projeto", help_text="Projeto ao qual a Esforco pertence"
+    )

@@ -148,3 +148,23 @@ def list_projects_general(issue_breakdown_months: int):
         projects_list.append(serialize_project(project, project_issues))
 
     return {"issues_per_month": issues_per_month, "projects": projects_list}
+
+
+def list_all_projects():
+    projects = Project.objects.all()
+    projects_list = []
+    for project in projects:
+        projects_list.append(
+            {
+                "project_id": project.id,
+                "key": project.key,
+                "name": project.name,
+                "description": project.description,
+                "start_date_project": project.start_date_project,
+                "end_date_project": project.end_date_project,
+                "uuid": project.uuid,
+                "jira_id": project.jira_id,
+                "projectTypeKey": project.projectTypeKey,
+            }
+        )
+    return projects_list
