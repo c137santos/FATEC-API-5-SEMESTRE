@@ -236,7 +236,7 @@ class FactIssue(models.Model):
         DimIntervaloTemporal,
         on_delete=models.PROTECT,
         related_name="esforco_issue",
-        help_text="Granulariedade qual foi realizado o trabalho",
+        help_text="Granularidade qual foi realizado o trabalho",
     )
     total_issue = models.IntegerField(help_text="Total de Issues dos filtros")
     created_at = models.DateTimeField(auto_now_add=True, help_text="Data de criação no modelo dimensional")

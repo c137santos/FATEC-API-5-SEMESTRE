@@ -18,7 +18,7 @@ from jiboia.core.models import (
     StatusType,
     TimeLog,
 )
-from jiboia.core.service.dimensional_svc import DimenssionalService, TipoGranularidade
+from jiboia.core.service.dimensional_svc import DimensionalService, TipoGranularidade
 
 
 @pytest.mark.django_db
@@ -38,7 +38,7 @@ def test_generate_project_snapshot_data_creates_snapshots():
     )
     TimeLog.objects.create(id_issue=issue, seconds=1800, log_date=timezone.now(), jira_id=issue.id)
 
-    DimenssionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
+    DimensionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
 
     assert FactProjectSnapshot.objects.count() == 1
     snap = FactProjectSnapshot.objects.first()
@@ -73,14 +73,14 @@ def test_generate_project_snapshot_data_multiple_projects():
     Issue.objects.create(description="Issue 1", created_at=timezone.now(), project=projeto1, time_estimate_seconds=3600)
     Issue.objects.create(description="Issue 2", created_at=timezone.now(), project=projeto2, time_estimate_seconds=7200)
 
-    DimenssionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
+    DimensionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
     assert FactProjectSnapshot.objects.count() == 2
     nomes = set(FactProjectSnapshot.objects.values_list("project__project_name", flat=True))
     assert "Projeto 1" in nomes
     assert "Projeto 2" in nomes
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db(reset_sequences=True)
 def test_load_fato_issue():
     issue_type_bug = IssueType.objects.create(name="Bug", description="Bug Issue", subtask=False, jira_id=101)
     issue_type_history = IssueType.objects.create(
@@ -90,21 +90,21 @@ def test_load_fato_issue():
     status_type_done = StatusType.objects.create(name="Done", key="dn", jira_id=200)
     projeto = Project.objects.create(
         key="yyy",
-        name="Projeto Teste",
+        name="Um projeto qualquer",
         description="Desc",
         start_date_project=timezone.now().date(),
         end_date_project=timezone.now().date(),
-        uuid="uuid1",
+        uuid="uid",
         jira_id=141414,
         projectTypeKey="software",
     )
     Project.objects.create(
         key="PPP",
-        name="Projeto Teste",
+        name="Outro projeto qualquer",
         description="Desc",
         start_date_project=timezone.now().date(),
         end_date_project=timezone.now().date(),
-        uuid="uuid2",
+        uuid="uuid22",
         jira_id=151515,
         projectTypeKey="software",
     )
@@ -149,29 +149,27 @@ def test_load_fato_issue():
         status=status_type_done,
     )
 
-    DimenssionalService.generate_fact_issue(TipoGranularidade.DIA)
+    DimensionalService.generate_fact_issue(TipoGranularidade.DIA)
     assert FactIssue.objects.count() == 8
     fato_bug_open = FactIssue.objects.filter(
         issue_type__name_type="Bug", status__status_name="Open", project__id=projeto.id
-    ).all()
-    assert fato_bug_open.count() == 1
-    assert fato_bug_open[0].total_issue == 1
-
+    )
     fato_bug_done = FactIssue.objects.filter(
         issue_type__name_type="Bug", status__status_name="Done", project__id=projeto.id
-    ).all()
-    assert fato_bug_done.count() == 1
-    assert fato_bug_done[0].total_issue == 1
-
+    )
     fato_history_open = FactIssue.objects.filter(
         issue_type__name_type="History", status__status_name="Open", project__id=projeto.id
-    ).all()
-    assert fato_history_open.count() == 1
-    assert fato_history_open[0].total_issue == 2
-
+    )
     fato_history_done = FactIssue.objects.filter(
         issue_type__name_type="History", status__status_name="Done", project__id=projeto.id
-    ).all()
+    )
+
+    assert fato_bug_open.count() == 1
+    assert fato_bug_open[0].total_issue == 1
+    assert fato_bug_done.count() == 1
+    assert fato_bug_done[0].total_issue == 1
+    assert fato_history_open.count() == 1
+    assert fato_history_open[0].total_issue == 2
     assert fato_history_done.count() == 1
     assert fato_history_done[0].total_issue == 1
 
@@ -293,7 +291,7 @@ def test_generate_fact_worlog():
     a = TimeLog.objects.create(id_user=dev2, id_issue=issue1, seconds=10000, log_date=log_date_ontem, jira_id=666)
     a.log_date = log_date_ontem
     a.save()
-    success = DimenssionalService.generate_fact_worklog(TipoGranularidade.DIA)
+    success = DimensionalService.generate_fact_worklog(TipoGranularidade.DIA)
 
     assert success is True
 

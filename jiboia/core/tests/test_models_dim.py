@@ -31,7 +31,6 @@ def test_dim_projeto_creation():
     assert projeto.id_project_jira == 2001
     assert projeto.project_name == "Projeto Alpha"
     assert projeto.start_date == date(2025, 1, 15)
-    assert projeto.start_date == date(2025, 1, 15)
     assert projeto.end_date == date(2026, 1, 15)
 
 

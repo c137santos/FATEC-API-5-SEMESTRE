@@ -32,7 +32,7 @@ class TipoGranularidade(Enum):
     ANO = "Ano"
 
 
-class DimenssionalService:
+class DimensionalService:
     @classmethod
     def generate_project_snapshot_data(cls, granularity_type: TipoGranularidade):
         intervalo_tempo = DimIntervaloTemporalService(granularity_type)

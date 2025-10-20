@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                 ('issue_type', models.ForeignKey(help_text='Tipo da Issue (História, Tarefa, Bug, etc.)', on_delete=django.db.models.deletion.PROTECT, to='core.dimtipoissue', verbose_name='Tipo da Issue')),
                 ('project', models.ForeignKey(help_text='Projeto ao qual a Issue pertence', on_delete=django.db.models.deletion.PROTECT, to='core.dimprojeto', verbose_name='Projeto')),
                 ('status', models.ForeignKey(help_text='Status atual da Issue', on_delete=django.db.models.deletion.PROTECT, to='core.dimstatus', verbose_name='Status da Issue')),
-                ('worklog_interval', models.ForeignKey(help_text='Granulariedade qual foi realizado o trabalho', on_delete=django.db.models.deletion.PROTECT, related_name='esforco_issue', to='core.dimintervalotemporal')),
+                ('worklog_interval', models.ForeignKey(help_text='Granularidade qual foi realizado o trabalho', on_delete=django.db.models.deletion.PROTECT, related_name='esforco_issue', to='core.dimintervalotemporal')),
             ],
             options={
                 'verbose_name': 'Fato Issue',
