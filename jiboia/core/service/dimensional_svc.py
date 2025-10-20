@@ -140,29 +140,6 @@ class DimDevService:
             )
         return dim_dev
 
-    def all_cost_minutes_per_project(cls):
-        agora = timezone.now()
-        start = agora.replace(hour=0, minute=0, second=0, microsecond=0)
-        end = start + timedelta(days=1)
-
-        tempo_por_issue = (
-            TimeLog.objects.values(
-                "id_issue__id",  # ID da Issue
-                "id_issue__id_user__id",  # ID do Usuário (através do ForeignKey na Issue)
-                "id_issue__project__id",  # ID do Projeto (através do ForeignKey na Issue)
-                # Campos de exibição (opcional, mas útil para identificar)
-                "id_issue__project__name",  # Nome do Projeto
-                "id_issue__id_user__username",  # Nome do Usuário
-            )
-            .annotate(
-                all_time=Sum("seconds"),
-                all_cost=(Sum("seconds") / 120) * F("id_issue__id_user__valor_hora"),
-            )
-            .filter(log_date__gte=start, log_date__lt=end)
-            .order_by("id_issue__project__id", "id_issue__id_user__id", "id_issue__id")
-        )
-        return tempo_por_issue
-
 
 class DimProjetoService:
     def __init__(self):
