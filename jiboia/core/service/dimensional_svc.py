@@ -13,9 +13,9 @@ from jiboia.core.models import (
     DimProjeto,
     DimStatus,
     DimTipoIssue,
-    FatoEsforco,
-    FatoIssue,
-    FatoProjetoSnapshot,
+    FactEsforco,
+    FactIssue,
+    FactProjectSnapshot,
     Issue,
     Project,
     TimeLog,
@@ -34,34 +34,35 @@ class TipoGranularidade(Enum):
 
 class DimenssionalService:
     @classmethod
-    def generate_project_snapshot_data(cls, tipo_granularidade: TipoGranularidade):
-        intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
+    def generate_project_snapshot_data(cls, granularity_type: TipoGranularidade):
+        intervalo_tempo = DimIntervaloTemporalService(granularity_type)
         projects_filter = DimProjetoService()
         return cls.save_fact_project_snapshot(projects_filter, intervalo_tempo)
 
     @classmethod
-    def generate_fact_issue(cls, tipo_granularidade):
-        intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
+    def generate_fact_issue(cls, granularity_type):
+        intervalo_tempo = DimIntervaloTemporalService(granularity_type)
         projetos = DimProjetoService()
         issue_types = DimIssueTypesService()
         status_types = DimStatusTypeService()
         return cls.save_fact_issue(projetos, issue_types, status_types, intervalo_tempo)
 
     @classmethod
-    def generate_fact_worklog(cls, tipo_granularidade):
-        intervalo_tempo = DimIntervaloTemporalService(tipo_granularidade)
-        dim_issues = DimIssueService()
-        return cls.save_fact_worklog(intervalo_tempo, dim_issues)
+    def generate_fact_worklog(cls, granularity_type):
+        devs = DimDevService()
+        projects_filter = DimProjetoService()
+        worklog_interval = DimIntervaloTemporalService(granularity_type)
+        return cls.save_fact_worklog(worklog_interval, projects_filter, devs)
 
     @classmethod
     def save_fact_project_snapshot(cls, project_filter, dimtemporal):
         for proj in project_filter.projetos_filtros:
-            proj_instace = FatoProjetoSnapshot.objects.create(
-                projeto=proj["project"],
-                intervalo_snapshot=dimtemporal.dimtemporal,
-                custo_projeto_atual_rs=proj["custo_projeto_atual_rs"],
-                total_minutos_acumulados=proj["total_minutos_acumulados"],
-                projecao_termino_dias=proj["projecao_termino_dias"],
+            proj_instace = FactProjectSnapshot.objects.create(
+                project=proj["project"],
+                snapshot_interval=dimtemporal.dimtemporal,
+                current_project_cost_rs=proj["current_project_cost_rs"],
+                total_accumulated_minutes=proj["total_accumulated_minutes"],
+                projection_end_days=proj["projection_end_days"],
             )
             print(proj_instace)
         return True
@@ -72,34 +73,37 @@ class DimenssionalService:
             for issue_type in issue_types.issues_types:
                 for status in status_types.status_types:
                     total_issue = Issue.objects.filter(
-                        project__jira_id=projeto["id_projeto_jira"],
-                        type_issue__jira_id=issue_type["id_tipo_jira"],
+                        project__jira_id=projeto["id_project_jira"],
+                        type_issue__jira_id=issue_type["id_type_jira"],
                         status__jira_id=status["id_status_jira"],
                     ).count()
 
-                    FatoIssue.objects.create(
-                        projeto=projeto["project"],
-                        tipo_issue=issue_type["issue_type"],
+                    FactIssue.objects.create(
+                        project=projeto["project"],
+                        issue_type=issue_type["issue_type"],
                         status=status["dimstatus"],
                         total_issue=total_issue if total_issue else 0,
-                        intervalo_trabalho=intervalo_tempo.dimtemporal,
+                        worklog_interval=intervalo_tempo.dimtemporal,
                     )
         return True
 
     @classmethod
-    def save_fact_worklog(cls, intervalo_tempo, issues):
-        for issue in issues.issues:
-            dim_dev = DimDev.objects.get(id_dev_jiba=issue["dev"].id)
-            dim_issue = DimIssue.objects.get(id_issue_jiba=issue["issue"].id)
-            dim_status = DimStatus.objects.get(id_status_jiba=issue["status"].id)
-            FatoEsforco.objects.create(
-                dev=dim_dev,
-                issue=dim_issue,
-                status=dim_status,
-                intervalo_trabalho=intervalo_tempo.dimtemporal,
-                minutos_acumulados=issue["total_minutos_hoje"],
-                custo_acumulado=(float(issue["dev"].valor_hora) / 60) * issue["total_minutos_hoje"],
-            )
+    def save_fact_worklog(cls, worklog_interval, projects_filter, todos_devs):
+        esforcos_agrupados = projects_filter.worklog_group()
+        mapa = {(item["id_user"], item["id_issue__project_id"]): item["total_seconds"] for item in esforcos_agrupados}
+        for dev in todos_devs.devs:
+            for projeto in projects_filter.projetos_filtros:
+                total_seconds = mapa.get((dev["id_dev_jiba"], projeto["id_project_jiba"]), 0)
+                total_minutes = total_seconds // 60
+                valor_hora = dev["valor_hora"] or 0
+                accumulated_cost = (total_minutes / 60) * float(valor_hora)
+                FactEsforco.objects.create(
+                    dev=dev["dev"],
+                    project=projeto["project"],
+                    worklog_interval=worklog_interval.dimtemporal,
+                    accumulated_minutes=total_minutes,
+                    accumulated_cost=accumulated_cost,
+                )
         return True
 
 
@@ -118,7 +122,7 @@ class DimDevService:
                 "dev": dim_dev,
                 "id_dev_jiba": dim_dev.id_dev_jiba,
                 "id_dev_jira": dim_dev.id_dev_jira,
-                "nome_dev": dim_dev.nome_dev,
+                "dev_name": dim_dev.dev_name,
                 "valor_hora": dim_dev.valor_hora,
             }
             filtros.append(filtro)
@@ -131,17 +135,40 @@ class DimDevService:
             dim_dev = DimDev.objects.create(
                 id_dev_jiba=dev["id"],
                 id_dev_jira=dev["jira_id"],
-                nome_dev=dev["username"],
+                dev_name=dev["username"],
                 valor_hora=dev["valor_hora"],
             )
         return dim_dev
 
+    def all_cost_minutes_per_project(cls):
+        agora = timezone.now()
+        start = agora.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = start + timedelta(days=1)
+
+        tempo_por_issue = (
+            TimeLog.objects.values(
+                "id_issue__id",  # ID da Issue
+                "id_issue__id_user__id",  # ID do Usuário (através do ForeignKey na Issue)
+                "id_issue__project__id",  # ID do Projeto (através do ForeignKey na Issue)
+                # Campos de exibição (opcional, mas útil para identificar)
+                "id_issue__project__name",  # Nome do Projeto
+                "id_issue__id_user__username",  # Nome do Usuário
+            )
+            .annotate(
+                all_time=Sum("seconds"),
+                all_cost=(Sum("seconds") / 120) * F("id_issue__id_user__valor_hora"),
+            )
+            .filter(log_date__gte=start, log_date__lt=end)
+            .order_by("id_issue__project__id", "id_issue__id_user__id", "id_issue__id")
+        )
+        return tempo_por_issue
+
 
 class DimProjetoService:
     def __init__(self):
-        self.projetos_filtros = self.projetos_filtrados()
+        self.projetos_filtros = self.filters_projects()
 
-    def projetos_filtrados(self):
+    def filters_projects(self):
         projects = projects_svc.list_all_projects()
         filtros = []
 
@@ -151,20 +178,20 @@ class DimProjetoService:
             projeto_id = project["project_id"]
             filtro = {
                 "project": dim_project,
-                "id_projeto_jiba": projeto_id,
-                "id_projeto_jira": project["jira_id"],
-                "nome_projeto": project["name"],
-                "data_inicio": project["start_date_project"],
-                "data_fim": project["end_date_project"],
-                "custo_projeto_atual_rs": self.custo_projeto_atual_rs(projeto_id=projeto_id),
-                "total_minutos_acumulados": self.total_minutos_acumulados(projeto_id=projeto_id),
-                "projecao_termino_dias": self.projecao_termino_dias(projeto_id=projeto_id),
+                "id_project_jiba": projeto_id,
+                "id_project_jira": project["jira_id"],
+                "project_name": project["name"],
+                "start_date": project["start_date_project"],
+                "end_date": project["end_date_project"],
+                "current_project_cost_rs": self.current_project_cost_rs(projeto_id=projeto_id),
+                "total_accumulated_minutes": self.total_accumulated_minutes(projeto_id=projeto_id),
+                "projection_end_days": self.projection_end_days(projeto_id=projeto_id),
             }
             filtros.append(filtro)
         return filtros
 
     @classmethod
-    def custo_projeto_atual_rs(cls, projeto_id=None):
+    def current_project_cost_rs(cls, projeto_id=None):
         result = (
             Project.objects.filter(id=projeto_id)
             .annotate(
@@ -180,14 +207,14 @@ class DimProjetoService:
         return result.get("project_cost_rs") or 0.0
 
     @classmethod
-    def total_minutos_acumulados(cls, projeto_id=None):
+    def total_accumulated_minutes(cls, projeto_id=None):
         total_minutos = TimeLog.objects.filter(id_issue__project_id=projeto_id).aggregate(
             minutos=Sum(F("seconds") / 60.0, output_field=FloatField())
         )
         return total_minutos.get("minutos") or 0
 
     @classmethod
-    def projecao_termino_dias(cls, projeto_id: int):
+    def projection_end_days(cls, projeto_id: int):
         total_seconds_agg = Issue.objects.filter(project_id=projeto_id).aggregate(
             total_seconds=Sum("time_estimate_seconds", output_field=FloatField())
         )
@@ -202,74 +229,87 @@ class DimProjetoService:
 
     @classmethod
     def save_or_create_dim_projeto(cls, project):
-        dim_project = DimProjeto.objects.filter(id_projeto_jiba=project["project_id"]).first()
+        dim_project = DimProjeto.objects.filter(id_project_jiba=project["project_id"]).first()
         if not dim_project:
             dim_project = DimProjeto.objects.create(
-                id_projeto_jiba=project["project_id"],
-                id_projeto_jira=project["jira_id"],
-                data_inicio=project["start_date_project"],
-                nome_projeto=project["name"],
+                id_project_jiba=project["project_id"],
+                id_project_jira=project["jira_id"],
+                start_date=project["start_date_project"],
+                project_name=project["name"],
             )
         return dim_project
 
+    @classmethod
+    def worklog_group(cls):
+        agora = timezone.now()
+        start = agora.replace(hour=0, minute=0, second=0, microsecond=0)
+        end = start + timedelta(days=1)
+
+        esforcos_agrupados = (
+            TimeLog.objects.filter(log_date__gte=start, log_date__lt=end)
+            .values("id_user", "id_issue__project_id")
+            .annotate(total_seconds=Sum("seconds"))
+        )
+        return esforcos_agrupados
+
 
 class DimIntervaloTemporalService:
-    def __init__(self, tipo_granularidade: TipoGranularidade):
-        self.tipo_granularidade = tipo_granularidade
-        self.data_inicio, self.data_fim = self.criar_intervalo(tipo_granularidade)
+    def __init__(self, granularity_type: TipoGranularidade):
+        self.granularity_type = granularity_type
+        self.start_date, self.end_date = self.create_interval(granularity_type)
         self.dimtemporal = self.save_dimtemporal()
 
-    def criar_intervalo(self, tipo: TipoGranularidade, referencia: datetime.datetime = None):  # noqa C901
-        if referencia is None:
-            referencia = datetime.datetime.now()
+    def create_interval(self, tipo: TipoGranularidade, refer: datetime.datetime = None):  # noqa C901
+        if refer is None:
+            refer = datetime.datetime.now()
 
         if tipo == TipoGranularidade.DIA:
-            data_inicio = referencia.replace(hour=0, minute=0, second=0, microsecond=0)
-            data_fim = data_inicio + datetime.timedelta(days=1)
+            start_date = refer.replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date = start_date + datetime.timedelta(days=1)
 
         elif tipo == TipoGranularidade.SEMANA:
             # início na segunda-feira
-            data_inicio = referencia - datetime.timedelta(days=referencia.weekday())
-            data_inicio = data_inicio.replace(hour=0, minute=0, second=0, microsecond=0)
-            data_fim = data_inicio + datetime.timedelta(weeks=1)
+            start_date = refer - datetime.timedelta(days=refer.weekday())
+            start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date = start_date + datetime.timedelta(weeks=1)
 
         elif tipo == TipoGranularidade.MES:
-            data_inicio = referencia.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            if referencia.month == 12:
-                data_fim = data_inicio.replace(year=referencia.year + 1, month=1)
+            start_date = refer.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            if refer.month == 12:
+                end_date = start_date.replace(year=refer.year + 1, month=1)
             else:
-                data_fim = data_inicio.replace(month=referencia.month + 1)
+                end_date = start_date.replace(month=refer.month + 1)
 
         elif tipo == TipoGranularidade.TRIMESTRE:
-            mes_base = ((referencia.month - 1) // 3) * 3 + 1
-            data_inicio = referencia.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
+            mes_base = ((refer.month - 1) // 3) * 3 + 1
+            start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
             if mes_base == 10:
-                data_fim = data_inicio.replace(year=referencia.year + 1, month=1)
+                end_date = start_date.replace(year=refer.year + 1, month=1)
             else:
-                data_fim = data_inicio.replace(month=mes_base + 3)
+                end_date = start_date.replace(month=mes_base + 3)
 
         elif tipo == TipoGranularidade.SEMESTRE:
-            mes_base = 1 if referencia.month <= 6 else 7
-            data_inicio = referencia.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
+            mes_base = 1 if refer.month <= 6 else 7
+            start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
             if mes_base == 7:
-                data_fim = data_inicio.replace(year=referencia.year + 1, month=1)
+                end_date = start_date.replace(year=refer.year + 1, month=1)
             else:
-                data_fim = data_inicio.replace(month=7)
+                end_date = start_date.replace(month=7)
 
         elif tipo == TipoGranularidade.ANO:
-            data_inicio = referencia.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
-            data_fim = data_inicio.replace(year=referencia.year + 1)
+            start_date = refer.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+            end_date = start_date.replace(year=refer.year + 1)
 
         else:
             raise ValueError("Tipo de granularidade inválido")
 
-        return data_inicio, data_fim
+        return start_date, end_date
 
     def save_dimtemporal(self):
         self.dimtemporal = DimIntervaloTemporal.objects.create(
-            tipo_granularidade=self.tipo_granularidade.value,
-            data_inicio=self.data_inicio,
-            data_fim=self.data_fim,
+            granularity_type=self.granularity_type.value,
+            start_date=self.start_date,
+            end_date=self.end_date,
         )
         return self.dimtemporal
 
@@ -287,21 +327,21 @@ class DimIssueTypesService:
 
             filtro = {
                 "issue_type": dim_issuetype,
-                "id_tipo_jira": issue["jira_id"],
-                "id_tipo_jiba": issue["issuetype_id"],
-                "nome_tipo": issue["name"],
+                "id_type_jira": issue["jira_id"],
+                "id_type_jiba": issue["issuetype_id"],
+                "name_type": issue["name"],
             }
             filtros.append(filtro)
 
         return filtros
 
     def _get_or_create_issue_type(self, issue_type):
-        dim_issue_type = DimTipoIssue.objects.filter(id_tipo_jiba=issue_type["issuetype_id"]).first()
+        dim_issue_type = DimTipoIssue.objects.filter(id_type_jiba=issue_type["issuetype_id"]).first()
         if not dim_issue_type:
             dim_issue_type = DimTipoIssue.objects.create(
-                id_tipo_jira=issue_type["jira_id"],
-                id_tipo_jiba=issue_type["issuetype_id"],
-                nome_tipo=issue_type["name"],
+                id_type_jira=issue_type["jira_id"],
+                id_type_jiba=issue_type["issuetype_id"],
+                name_type=issue_type["name"],
             )
         return dim_issue_type
 
@@ -322,7 +362,7 @@ class DimStatusTypeService:
                 "id": dim_status_type.id,
                 "id_status_jiba": dim_status_type.id_status_jiba,
                 "id_status_jira": dim_status_type.id_status_jira,
-                "nome_status": dim_status_type.nome_status,
+                "status_name": dim_status_type.status_name,
             }
             filtros.append(filtro)
 
@@ -336,7 +376,7 @@ class DimStatusTypeService:
             dim_issue_type = DimStatus.objects.create(
                 id_status_jira=status["jira_id"],
                 id_status_jiba=status["statustype_id"],
-                nome_status=status["name"],
+                status_name=status["name"],
             )
 
         return dim_issue_type
@@ -351,7 +391,7 @@ class DimStatusTypeService:
                 "id": dim_status_type.id,
                 "id_status_jiba": dim_status_type.id_status_jiba,
                 "id_status_jira": dim_status_type.id_status_jira,
-                "nome_status": dim_status_type.nome_status,
+                "status_name": dim_status_type.status_name,
             }
             filtros.append(filtro)
         return filtros
@@ -402,8 +442,8 @@ class DimIssueService:
             dim_issue = DimIssue.objects.create(
                 id_issue_jiba=issue.id,
                 id_issue_jira=issue.jira_id,
-                projeto=DimProjeto.objects.get(id_projeto_jiba=issue.id_issue.project.id),
-                tipo_issue=DimTipoIssue.objects.get(id_tipo_jiba=issue.id_issue.type_issue.id),
-                data_inicio=issue.id_issue.start_date,
+                projeto=DimProjeto.objects.get(id_project_jiba=issue.id_issue.project.id),
+                issue_type=DimTipoIssue.objects.get(id_type_jiba=issue.id_issue.type_issue.id),
+                start_date=issue.id_issue.start_date,
             )
         return dim_issue

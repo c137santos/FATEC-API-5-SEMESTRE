@@ -71,7 +71,7 @@ def jira_project():
     return success
 
 
-def dimensional_load():
+def dimensional_load_daily():
     """
     Função executada por cron para carregar dados dimensionais.
     Esta função é chamada pelo django-crontab de acordo com a programação configurada
@@ -88,7 +88,7 @@ def dimensional_load():
     if not success:
         logger.error("[CRON] Carga dimensional falhou")
         return
-    success = DimenssionalService.load_fact_worklog(TipoGranularidade.DIA)
+    success = DimenssionalService.generate_fact_worklog(TipoGranularidade.DIA)
     try:
         logger.info("[CRON] Carga dimensional concluída com sucesso.")
         return True
