@@ -24,10 +24,12 @@ class JiraService:
         """
         email, token, base_url = cls._get_credentials()
         results = {}
+
+        results["issue_types"] = SyncIssueTypesStrategy(email, token, base_url).execute(project_key)
+        results["status_types"] = SyncStatusTypesStrategy(email, token, base_url).execute(project_key)
         if project_key:
-            results["issue_types"] = SyncIssueTypesStrategy(email, token, base_url).execute(project_key)
-            results["status_types"] = SyncStatusTypesStrategy(email, token, base_url).execute(project_key)
             results["issues"] = SyncIssuesStrategy(email, token, base_url).execute(project_key)
+
         return results
 
     @classmethod

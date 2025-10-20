@@ -24,7 +24,7 @@ class User(AbstractUser):
             "first_name": self.first_name,
             "last_name": self.last_name,
             "email": self.email,
-            "valor_hora": str(self.valor_hora),
+            "valor_hora": float(self.valor_hora),
             "permissions": {
                 "ADMIN": self.is_superuser,
                 "STAFF": self.is_staff,

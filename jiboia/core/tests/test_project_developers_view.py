@@ -4,7 +4,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
-from jiboia.core.models import Issue, Project
+from jiboia.core.models import Issue, Project, TimeLog
 
 User = get_user_model()
 
@@ -49,28 +49,49 @@ def setup_developers_data():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue1 = Issue.objects.create(
         description="Issue Marília",
         project=project,
         id_user=user1,
         time_estimate_seconds=572400,
         jira_id=6001,
     )
+    TimeLog.objects.create(
+        id_issue=issue1,
+        id_user=user1,
+        seconds=572400,
+        description_log="Trabalho da Marília",
+        jira_id=7001,
+    )
 
-    Issue.objects.create(
+    issue2 = Issue.objects.create(
         description="Issue Matheus",
         project=project,
         id_user=user2,
         time_estimate_seconds=853200,
         jira_id=6002,
     )
+    TimeLog.objects.create(
+        id_issue=issue2,
+        id_user=user2,
+        seconds=853200,
+        description_log="Trabalho do Matheus",
+        jira_id=7002,
+    )
 
-    Issue.objects.create(
+    issue3 = Issue.objects.create(
         description="Issue Clara",
         project=project,
         id_user=user3,
         time_estimate_seconds=943200,
         jira_id=6003,
+    )
+    TimeLog.objects.create(
+        id_issue=issue3,
+        id_user=user3,
+        seconds=943200,
+        description_log="Trabalho da Clara",
+        jira_id=7003,
     )
 
     return project
@@ -183,11 +204,20 @@ def test_project_developers_project_without_assigned_users(client):
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue = Issue.objects.create(
         description="Issue sem user",
         project=project,
         time_estimate_seconds=3600,
         jira_id=6004,
+    )
+
+    # TimeLog sem usuário - não deve aparecer no resultado
+    TimeLog.objects.create(
+        id_issue=issue,
+        id_user=None,
+        seconds=3600,
+        description_log="Trabalho sem usuário atribuído",
+        jira_id=7004,
     )
 
     url = reverse("project_developers", kwargs={"project_id": project.id})

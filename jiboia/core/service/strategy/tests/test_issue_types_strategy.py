@@ -20,6 +20,6 @@ def test_execute_issue_types(monkeypatch, mock_issue_type_model):
     mock_response.json.return_value = [{"id": "1", "name": "Bug"}]
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
-    result = strategy.execute()
+    result = strategy.execute(project_key="TEST")
     assert isinstance(result, int)
     assert result >= 0

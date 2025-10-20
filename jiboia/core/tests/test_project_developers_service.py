@@ -1,7 +1,7 @@
 import pytest
 from django.contrib.auth import get_user_model
 
-from jiboia.core.models import Issue, Project
+from jiboia.core.models import Issue, Project, TimeLog
 from jiboia.core.service.projects_svc import get_project_developers
 
 User = get_user_model()
@@ -34,11 +34,20 @@ def test_get_project_developers_returns_empty_list_when_no_assigned_users():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue = Issue.objects.create(
         description="Issue sem responsável",
         project=project,
         time_estimate_seconds=3600,
         jira_id=2001,
+    )
+
+    # TimeLog sem usuário
+    TimeLog.objects.create(
+        id_issue=issue,
+        id_user=None,
+        seconds=3600,
+        description_log="Trabalho sem usuário",
+        jira_id=5001,
     )
 
     result = get_project_developers(project.id)
@@ -54,7 +63,6 @@ def test_get_project_developers_single_developer():
         first_name="João",
         last_name="Silva",
     )
-    # Adiciona valor_hora se o campo existir
     if hasattr(user, "valor_hora"):
         user.valor_hora = 50.0
         user.save()
@@ -68,22 +76,36 @@ def test_get_project_developers_single_developer():
         projectTypeKey="software",
     )
 
-    # Issue com 3600 segundos = 1 hora
-    Issue.objects.create(
+    # Issue 1 com TimeLog de 3600 segundos = 1 hora
+    issue1 = Issue.objects.create(
         description="Issue 1",
         project=project,
         id_user=user,
         time_estimate_seconds=3600,
         jira_id=2002,
     )
+    TimeLog.objects.create(
+        id_issue=issue1,
+        id_user=user,
+        seconds=3600,
+        description_log="Trabalho na issue 1",
+        jira_id=5002,
+    )
 
-    # Issue com 7200 segundos = 2 horas
-    Issue.objects.create(
+    # Issue 2 com TimeLog de 7200 segundos = 2 horas
+    issue2 = Issue.objects.create(
         description="Issue 2",
         project=project,
         id_user=user,
         time_estimate_seconds=7200,
         jira_id=2003,
+    )
+    TimeLog.objects.create(
+        id_issue=issue2,
+        id_user=user,
+        seconds=7200,
+        description_log="Trabalho na issue 2",
+        jira_id=5003,
     )
 
     result = get_project_developers(project.id)
@@ -134,28 +156,49 @@ def test_get_project_developers_multiple_developers_sorted():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue1 = Issue.objects.create(
         description="Issue user1",
         project=project,
         id_user=user1,
         time_estimate_seconds=7200,
         jira_id=2004,
     )
+    TimeLog.objects.create(
+        id_issue=issue1,
+        id_user=user1,
+        seconds=7200,
+        description_log="Trabalho user1",
+        jira_id=5004,
+    )
 
-    Issue.objects.create(
+    issue2 = Issue.objects.create(
         description="Issue user2",
         project=project,
         id_user=user2,
         time_estimate_seconds=18000,
         jira_id=2005,
     )
+    TimeLog.objects.create(
+        id_issue=issue2,
+        id_user=user2,
+        seconds=18000,
+        description_log="Trabalho user2",
+        jira_id=5005,
+    )
 
-    Issue.objects.create(
+    issue3 = Issue.objects.create(
         description="Issue user3",
         project=project,
         id_user=user3,
         time_estimate_seconds=3600,
         jira_id=2006,
+    )
+    TimeLog.objects.create(
+        id_issue=issue3,
+        id_user=user3,
+        seconds=3600,
+        description_log="Trabalho user3",
+        jira_id=5006,
     )
 
     result = get_project_developers(project.id)
@@ -193,12 +236,19 @@ def test_get_project_developers_with_null_time_estimate():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue1 = Issue.objects.create(
         description="Issue com tempo",
         project=project,
         id_user=user,
         time_estimate_seconds=3600,
         jira_id=2007,
+    )
+    TimeLog.objects.create(
+        id_issue=issue1,
+        id_user=user,
+        seconds=3600,
+        description_log="Trabalho na issue 1",
+        jira_id=5007,
     )
 
     Issue.objects.create(
@@ -234,12 +284,19 @@ def test_get_project_developers_uses_username_when_no_full_name():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue = Issue.objects.create(
         description="Issue test",
         project=project,
         id_user=user,
         time_estimate_seconds=3600,
         jira_id=2009,
+    )
+    TimeLog.objects.create(
+        id_issue=issue,
+        id_user=user,
+        seconds=3600,
+        description_log="Trabalho na issue",
+        jira_id=5008,
     )
 
     result = get_project_developers(project.id)
@@ -270,12 +327,19 @@ def test_get_project_developers_valor_hora_from_user():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue = Issue.objects.create(
         description="Issue valor",
         project=project,
         id_user=user,
         time_estimate_seconds=3600,
         jira_id=2010,
+    )
+    TimeLog.objects.create(
+        id_issue=issue,
+        id_user=user,
+        seconds=3600,
+        description_log="Trabalho na issue",
+        jira_id=5009,
     )
 
     result = get_project_developers(project.id)
@@ -300,12 +364,19 @@ def test_get_project_developers_rounding_hours():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue = Issue.objects.create(
         description="Issue round",
         project=project,
         id_user=user,
         time_estimate_seconds=5400,
         jira_id=2011,
+    )
+    TimeLog.objects.create(
+        id_issue=issue,
+        id_user=user,
+        seconds=5400,
+        description_log="Trabalho na issue",
+        jira_id=5010,
     )
 
     result = get_project_developers(project.id)
@@ -333,12 +404,19 @@ def test_get_project_developers_aggregates_multiple_issues_same_user():
     )
 
     for i in range(5):
-        Issue.objects.create(
+        issue = Issue.objects.create(
             description=f"Issue {i}",
             project=project,
             id_user=user,
             time_estimate_seconds=3600,
             jira_id=3000 + i,
+        )
+        TimeLog.objects.create(
+            id_issue=issue,
+            id_user=user,
+            seconds=3600,
+            description_log=f"Trabalho na issue {i}",
+            jira_id=5011 + i,
         )
 
     result = get_project_developers(project.id)
@@ -371,20 +449,34 @@ def test_get_project_developers_different_projects_isolated():
         projectTypeKey="software",
     )
 
-    Issue.objects.create(
+    issue_a = Issue.objects.create(
         description="Issue A",
         project=project_a,
         id_user=user1,
         time_estimate_seconds=3600,
         jira_id=4001,
     )
+    TimeLog.objects.create(
+        id_issue=issue_a,
+        id_user=user1,
+        seconds=3600,
+        description_log="Trabalho no projeto A",
+        jira_id=5016,
+    )
 
-    Issue.objects.create(
+    issue_b = Issue.objects.create(
         description="Issue B",
         project=project_b,
         id_user=user2,
         time_estimate_seconds=7200,
         jira_id=4002,
+    )
+    TimeLog.objects.create(
+        id_issue=issue_b,
+        id_user=user2,
+        seconds=7200,
+        description_log="Trabalho no projeto B",
+        jira_id=5017,
     )
 
     result_a = get_project_developers(project_a.id)

@@ -20,7 +20,7 @@ def test_execute_status_types(monkeypatch, mock_status_type_model):
     mock_response.json.return_value = [{"id": "1", "name": "To Do", "statusCategory": {"key": "new"}}]
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
-    result = strategy.execute()
+    result = strategy.execute(project_key="TEST")
     assert isinstance(result, int)
     assert result >= 0
 
@@ -31,7 +31,7 @@ def test_execute_status_types_empty(monkeypatch, mock_status_type_model):
     mock_response.json.return_value = []
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
-    result = strategy.execute()
+    result = strategy.execute(project_key="TEST")
     assert result == 0
 
 
@@ -46,7 +46,7 @@ def test_execute_status_types_exception(monkeypatch, mock_status_type_model):
 
     mock_status_type_model.objects.update_or_create.side_effect = update_or_create_fail
     monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
-    result = strategy.execute()
+    result = strategy.execute(project_key="TEST")
     assert result == 0
 
 
@@ -56,5 +56,5 @@ def test_execute_status_types_missing_fields(monkeypatch, mock_status_type_model
     mock_response.json.return_value = [{"id": "2", "name": "In Progress"}]
     mock_response.raise_for_status = MagicMock()
     monkeypatch.setattr(strategy, "_make_request", lambda *a, **k: mock_response)
-    result = strategy.execute()
+    result = strategy.execute(project_key="TEST")
     assert isinstance(result, int)
