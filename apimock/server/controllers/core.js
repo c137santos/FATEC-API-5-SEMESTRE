@@ -1,17 +1,10 @@
 const data = require("../data");
-const accounts = require("./accounts");
-
 function getMaxId(items) {
   return Math.max(...items.map((item) => item.id));
 }
 
 module.exports = {
   find: (req, res) => {
-    const loggedUser = accounts.loginRequired(req, res);
-    if (!loggedUser) {
-      return;
-    }
-
     const mappedIssues = data.issues.map(issue => ({
       jira_id: issue.key,
       description: issue.fields.summary,
@@ -29,10 +22,6 @@ module.exports = {
     res.send(response);
   },
   add: (req, res) => {
-    const loggedUser = accounts.loginRequired(req, res);
-    if (!loggedUser) {
-      return;
-    }
     const { description } = req.body;
     const id = getMaxId(data.issues) + 1;
     const newIssue = {
