@@ -22,4 +22,12 @@ class Migration(migrations.Migration):
                 verbose_name="Valor por Hora",
             ),
         ),
+        migrations.AddField(
+            model_name="user",
+            name="jira_id",
+            field=models.IntegerField(
+                null=True,
+                blank=True,
+            ),
+        ),
     ]

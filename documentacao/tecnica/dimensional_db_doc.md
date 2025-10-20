@@ -3,11 +3,11 @@ Este modelo utiliza o esquema Star (Estrela), otimizado para análises de desemp
 
 ![alt text](../assets/starDB.png)
 
-# 🧩 Modelo: FatoProjetoSnapshot
+# 🧩 Modelo: FactProjectSnapshot
 
-O modelo **FatoProjetoSnapshot** representa um registro histórico consolidado do andamento de um projeto em um determinado intervalo temporal.
+O modelo **FactProjectSnapshot** representa um registro histórico consolidado do andamento de um projeto em um determinado intervalo temporal.
 
-Ele faz parte da camada de **fatos** do modelo dimensional, sendo utilizado para análises de **desempenho**, **produtividade** e **custos acumulados** ao longo do tempo. Cada instância reflete um *snapshot* (foto no tempo) do projeto, relacionando métricas de execução, esforço e custo em um período definido por `intervalo_snapshot`.
+Ele faz parte da camada de **fatos** do modelo dimensional, sendo utilizado para análises de **desempenho**, **produtividade** e **custos acumulados** ao longo do tempo. Cada instância reflete um *snapshot* (foto no tempo) do projeto, relacionando métricas de execução, esforço e custo em um período definido por `snapshot_interval`.
 
 ---
 ## 🔗 Relações (Foreign Keys)
@@ -15,7 +15,7 @@ Ele faz parte da camada de **fatos** do modelo dimensional, sendo utilizado para
 | Campo | Referência | Descrição |
 | :--- | :--- | :--- |
 | **projeto** | `DimProjeto` | Referência ao projeto monitorado. Cada fato está vinculado a um projeto específico. |
-| **intervalo_snapshot** | `DimIntervaloTemporal` | Indica o intervalo de tempo (por exemplo, semana, mês ou sprint) ao qual o snapshot se refere. Permite análises temporais e comparativas entre períodos. |
+| **snapshot_interval** | `DimIntervaloTemporal` | Indica o intervalo de tempo (por exemplo, semana, mês ou sprint) ao qual o snapshot se refere. Permite análises temporais e comparativas entre períodos. |
 
 ---
 ## 📊 Métricas e Indicadores (Campos de Fato)
@@ -39,8 +39,8 @@ Alguns indicadores derivados podem ser definidos como propriedades calculadas pa
 | Propriedade | Fórmula de Cálculo | Significado |
 | :--- | :--- | :--- |
 | **custo\_medio\_por\_issue** | `custo_do_projeto_atual_rs / total_issues` | Valor médio gasto por issue concluída. |
-| **progresso\_percentual** | `total_horas_acumuladas / (total_horas_acumuladas + projecao_termino_dias)` | Percentual estimado de conclusão do projeto. |
-| **dias\_restantes\_estimados** | `minutos_faltando_fim_projeto - projecao_termino_dias` | Diferença entre o prazo oficial e a projeção baseada nas tarefas abertas. |
+| **progresso\_percentual** | `total_horas_acumuladas / (total_horas_acumuladas + projection_end_days)` | Percentual estimado de conclusão do projeto. |
+| **dias\_restantes\_estimados** | `minutes_left_end_project - projection_end_days` | Diferença entre o prazo oficial e a projeção baseada nas tarefas abertas. |
 
 ---
 ## ⚖️ Resumo Conceitual
@@ -53,9 +53,9 @@ Alguns indicadores derivados podem ser definidos como propriedades calculadas pa
 | **Uso Típico** | Dashboards de acompanhamento, relatórios de produtividade e indicadores de custo/tempo. |
 
 
-# 🧩 Modelo: FatoIssue
+# 🧩 Modelo: FactIssue
 
-O modelo **FatoIssue** representa a unidade de trabalho (**issue, tarefa ou ticket**) dentro de um projeto, consolidando as principais métricas de tempo, esforço e status.
+O modelo **FactIssue** representa a unidade de trabalho (**issue, tarefa ou ticket**) dentro de um projeto, consolidando as principais métricas de tempo, esforço e status.
 
 Faz parte da camada de **fatos operacionais** do modelo dimensional, permitindo análises detalhadas sobre o desempenho das equipes, produtividade e andamento das tarefas individuais ao longo do tempo. Cada registro corresponde a uma issue específica de um projeto em um determinado instante.
 
@@ -211,7 +211,7 @@ Esta query soma o tempo gasto em todas as issues ativas, agrupado por projeto.
 ```
 SQL
 SELECT
-    dp.nome_projeto AS NomeProjeto,
+    dp.project_name AS NomeProjeto,
     dp.id as IdProjeto,
     SUM(fi.horas_gastas) AS HorasTotais
 FROM
@@ -219,7 +219,7 @@ FROM
 JOIN
     dim_projeto AS dp ON fi.projeto_id = dp.id
 GROUP BY
-    dp.nome_projeto,
+    dp.project_name,
     dp.id
 ORDER BY
     HorasTotais DESC;
@@ -243,7 +243,7 @@ WITH UltimoSnapshot AS (
         fato_projeto_snapshot AS fps
 )
 SELECT
-    dp.nome_projeto AS NomeProjeto,
+    dp.project_name AS NomeProjeto,
     us.total_issues
 FROM
     UltimoSnapshot AS us
@@ -276,7 +276,7 @@ Retorna a projeção de término do projeto do último snapshot disponível.
 SQL
 
 SELECT
-    fps.projecao_termino_dias
+    fps.projection_end_days
 FROM
     fato_projeto_snapshot AS fps
 ORDER BY
@@ -290,14 +290,14 @@ Conta o total de issues ativas por tipo (dim_type).
 ```
 SQL
 SELECT
-    dti.nome_tipo AS TipoIssue,
+    dti.name_type AS TipoIssue,
     COUNT(fi.id) AS Quantidade
 FROM
     fato_issue AS fi
 JOIN
-    dim_tipo_issue AS dti ON fi.tipo_issue_id = dti.id
+    dim_issue_type AS dti ON fi.issue_type_id = dti.id
 GROUP BY
-    dti.nome_tipo
+    dti.name_type
 ORDER BY
     Quantidade DESC;
 
@@ -310,16 +310,16 @@ Conta o total de issues por status (dim_status).
 SQL
 
 SELECT
-    ds.nome_status AS StatusIssue,
+    ds.status_name AS StatusIssue,
     COUNT(fi.id) AS Quantidade
 FROM
     fato_issue AS fi
 JOIN
     dim_status AS ds ON fi.status_id = ds.id
 GROUP BY
-    ds.nome_status
+    ds.status_name
 ORDER BY
-    CASE ds.nome_status
+    CASE ds.status_name
         WHEN 'Concluída' THEN 1
         WHEN 'Em Revisão' THEN 2
         WHEN 'Em Andamento' THEN 3

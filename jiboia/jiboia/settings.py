@@ -204,13 +204,20 @@ CRONJOBS = [
     ),
     # New: Sync issues for all projects at 3 AM (separate flow)
     (
-        "0 3 * * *",
+        "0 1 * * *",
         "jiboia.core.cron.jira_sync_issues_all_projects",
         ">> /tmp/jira_sync_issues.log 2>&1",
         {},
         "jira_sync_issues_all_projects",
     ),
-    ("0 1 * * *", "jiboia.core.cron.jira_project", ">> /tmp/jira_project.log 2>&1", {}, "jira_daily_project"),
+    ("0 2 * * *", "jiboia.core.cron.jira_project", ">> /tmp/jira_project.log 2>&1", {}, "jira_daily_project"),
+    (
+        "0 3 * * *",
+        "jiboia.core.cron.dimensional_load_daily",
+        ">> /tmp/dimensional_load_daily.log 2>&1",
+        {},
+        "load_dimenssional_daily",
+    ),
 ]
 
 
