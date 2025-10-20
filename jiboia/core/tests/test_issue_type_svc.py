@@ -21,6 +21,6 @@ def test_list_issues_com_dados():
 
 
 @pytest.mark.django_db
-def test_list_issues_sem_dados(IssueType):
+def test_list_issues_sem_dados():
     result = list_type_issues()
     assert result == []

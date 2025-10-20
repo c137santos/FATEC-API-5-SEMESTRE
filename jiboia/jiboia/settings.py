@@ -216,7 +216,7 @@ CRONJOBS = [
         "jiboia.core.cron.dimensional_load_daily",
         ">> /tmp/dimensional_load_daily.log 2>&1",
         {},
-        "load_dimenssional_daily",
+        "load_dimensional_daily",
     ),
 ]
 
