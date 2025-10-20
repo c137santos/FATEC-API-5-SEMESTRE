@@ -24,6 +24,7 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
             "id": ANY,
             "name": "Jon Snow",
             "username": "jon",
+            "valor_hora": "0.00",
             "first_name": "Jon",
             "last_name": "Snow",
             "email": "jon@example.com",
@@ -37,6 +38,7 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
 def test_deve_fazer_login(client):
     User.objects.create_user(
         username="jon",
+        valor_hora="0.00",
         first_name="Jon",
         last_name="Snow",
         email="jon@example.com",
@@ -61,6 +63,7 @@ def test_deve_fazer_login(client):
             "id": ANY,
             "name": "Jon Snow",
             "username": "jon",
+            "valor_hora": "0.00",
             "first_name": "Jon",
             "last_name": "Snow",
             "email": "jon@example.com",
