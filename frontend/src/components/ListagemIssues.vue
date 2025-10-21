@@ -11,6 +11,17 @@
       @update:options="loadIssues"
     >
 
+      <template v-slot:item.actions="{ item }">
+        <v-btn
+          icon
+          variant="text"
+          color="black"
+          @click="abrirDialog(item)"
+        >
+          <v-icon>mdi-eye</v-icon>
+        </v-btn>
+      </template>
+
       <template v-slot:item.author="{ item }">
           {{ item.user_related?.user_name || 'Não foi encontrado ou não existe autor para essa issue' }}
       </template>
@@ -23,24 +34,40 @@
         <div class="text-center pa-4">Nenhuma issue encontrada.</div>
       </template>
     </v-data-table-server>
+
+    <PopUpIssue
+      v-model:abrir="dialogAberto"
+      :issue="issueSelecionada"
+      @close="dialogAberto = false"
+    />
   </v-container>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import coreApi from '@/api/core.api.js'
+import PopUpIssue from './PopUpIssue.vue';
 
 const headers = ref([
   { title: "Id da Issue", key: "jira_id", align: "start" },
   { title: "Sumário issue ", key: "description", align: "start" },
   { title: "Autor", key: "author", align: "start" },
   { title: "Data de criação", key: "timeCreated", align: "start" },
+  { key: "actions", align: "center", sortable: false },
 ]);
 
 const issues = ref([]);
 const itemsPerPage = ref(10);
 const totalIssues = ref(0);
 const loading = ref(true);
+const dialogAberto = ref(false);
+const issueSelecionada = ref(null);
+
+const abrirDialog = (issue) => {
+  console.log("Issue selecionada:", issue);
+  issueSelecionada.value = issue;
+  dialogAberto.value = true;
+};
 
 const searchIssues = async (page = 1) => {
   loading.value = true;
