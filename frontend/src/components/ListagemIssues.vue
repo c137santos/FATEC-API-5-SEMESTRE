@@ -64,7 +64,6 @@ const dialogAberto = ref(false);
 const issueSelecionada = ref(null);
 
 const abrirDialog = (issue) => {
-  console.log("Issue selecionada:", issue);
   issueSelecionada.value = issue;
   dialogAberto.value = true;
 };
