@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from jiboia.core.models import Project
-from jiboia.core.service.dimensional_svc import DimensionalService, TipoGranularidade
+from jiboia.core.service.dimensional_svc import DimensionalService, DimIntervaloTemporalService, TipoGranularidade
 
 from .service.jira_svc import JiraService
 
@@ -79,19 +79,19 @@ def dimensional_load_daily():
     """
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-
-    success = DimensionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
-    if not success:
-        logger.error("[CRON] Carga dimensional falhou")
-        return
-    success = DimensionalService.generate_fact_issue(TipoGranularidade.DIA)
-    if not success:
-        logger.error("[CRON] Carga dimensional falhou")
-        return
-    success = DimensionalService.generate_fact_worklog(TipoGranularidade.DIA)
     try:
+        intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+        success = DimensionalService.generate_project_snapshot_data(intervalo_tempo)
+        if not success:
+            logger.error("[CRON] Carga dimensional falhou")
+            return
+        success = DimensionalService.generate_fact_issue(intervalo_tempo)
+        if not success:
+            logger.error("[CRON] Carga dimensional falhou")
+            return
+        success = DimensionalService.generate_fact_worklog(intervalo_tempo)
         logger.info("[CRON] Carga dimensional concluída com sucesso.")
-        return True
     except Exception as e:
         logger.error(f"[CRON] Carga dimensional falhou: {e}")
-        return False
+        raise e
+    return True
