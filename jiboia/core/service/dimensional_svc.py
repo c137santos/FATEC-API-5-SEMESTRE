@@ -1,4 +1,5 @@
 import datetime
+import logging
 from datetime import timedelta
 from enum import Enum
 
@@ -22,6 +23,8 @@ from jiboia.core.models import (
 )
 from jiboia.core.service import issue_status_svc, issues_type_svc, projects_svc
 
+logger = logging.getLogger(__name__)
+
 
 class TipoGranularidade(Enum):
     DIA = "Dia"
@@ -35,24 +38,39 @@ class TipoGranularidade(Enum):
 class DimensionalService:
     @classmethod
     def generate_project_snapshot_data(cls, time_interval):
+        logger.info(
+            "[DIM LOAD]: Iniciando geração de snapshot de projetos para intervalo: %s", time_interval.dimtemporal
+        )
         projects_filter = DimProjetoService()
-        return cls.save_fact_project_snapshot(projects_filter, time_interval)
+        result = cls.save_fact_project_snapshot(projects_filter, time_interval)
+        logger.info("[DIM LOAD]: Geração de snapshot de projetos concluída.")
+        return result
 
     @classmethod
     def generate_fact_issue(cls, time_interval):
+        logger.info("[DIM LOAD]: Iniciando geração de Fato Issues para intervalo: %s", time_interval.dimtemporal)
         projetos = DimProjetoService()
         issue_types = DimIssueTypesService()
         status_types = DimStatusTypeService()
-        return cls.save_fact_issue(projetos, issue_types, status_types, time_interval)
+        result = cls.save_fact_issue(projetos, issue_types, status_types, time_interval)
+        logger.info("[DIM LOAD]: Geração de Fato Issues concluída.")
+        return result
 
     @classmethod
     def generate_fact_worklog(cls, time_interval):
+        logger.info("[DIM LOAD]: Iniciando geração de Fato Worklogs para intervalo: %s", time_interval.dimtemporal)
         devs = DimDevService()
         projects_filter = DimProjetoService()
-        return cls.save_fact_worklog(time_interval, projects_filter, devs)
+        result = cls.save_fact_worklog(time_interval, projects_filter, devs)
+        logger.info("[DIM LOAD]: Geração de Fato Worklogs concluída.")
+        return result
 
     @classmethod
     def save_fact_project_snapshot(cls, project_filter, dimtemporal):
+        logger.info(
+            "[DIM LOAD]: Salvando FactProjectSnapshot. Total de projetos a processar: %s",
+            len(project_filter.projetos_filtros),
+        )
         for proj in project_filter.projetos_filtros:
             proj_instance = FactProjectSnapshot.objects.create(
                 project=proj["project"],
@@ -61,12 +79,25 @@ class DimensionalService:
                 total_accumulated_minutes=proj["total_accumulated_minutes"],
                 projection_end_days=proj["projection_end_days"],
             )
-            print(proj_instance)
+            logger.debug(
+                "[DIM LOAD]: FactProjectSnapshot criado. ID: %s, Projeto: %s, Intervalo: %s",
+                proj_instance.id,
+                proj_instance.project,
+                proj_instance.snapshot_interval,
+            )
+        logger.info("[DIM LOAD]: FactProjectSnapshot salvo com sucesso para o intervalo: %s", dimtemporal.dimtemporal)
         return True
 
     @classmethod
     def save_fact_issue(cls, projetos, issue_types, status_types, intervalo_tempo):
+        logger.info(
+            "[DIM LOAD]: Salvando FactIssue. Projetos: %s, Tipos de Issue: %s, Status: %s",
+            len(projetos.projetos_filtros),
+            len(issue_types.issues_types),
+            len(status_types.status_types),
+        )
         for projeto in projetos.projetos_filtros:
+            logger.debug("[DIM LOAD]: Processando projeto para FactIssue: %s", projeto["project"])
             for issue_type in issue_types.issues_types:
                 for status in status_types.status_types:
                     total_issue = Issue.objects.filter(
@@ -82,12 +113,28 @@ class DimensionalService:
                         total_issue=total_issue if total_issue else 0,
                         worklog_interval=intervalo_tempo.dimtemporal,
                     )
+                    logger.debug(
+                        "[DIM LOAD]: FactIssue criado. Projeto: %s, Tipo: %s, Status: %s, Total: %s",
+                        projeto["project"],
+                        issue_type["issue_type"],
+                        status["dimstatus"],
+                        total_issue,
+                    )
+        logger.info("[DIM LOAD]: FactIssue salvo com sucesso para o intervalo: %s", intervalo_tempo.dimtemporal)
         return True
 
     @classmethod
     def save_fact_worklog(cls, worklog_interval, projects_filter, todos_devs):
+        logger.info(
+            "[DIM LOAD]: Salvando FactEsforco. Intervalo: %s, Projetos: %s, Desenvolvedores: %s",
+            worklog_interval.dimtemporal,
+            len(projects_filter.projetos_filtros),
+            len(todos_devs.devs),
+        )
         esforcos_agrupados = projects_filter.worklog_group()
+        logger.debug("[DIM LOAD]: Worklogs agrupados obtidos. Total de itens agrupados: %s", len(esforcos_agrupados))
         mapa = {(item["id_user"], item["id_issue__project_id"]): item["total_seconds"] for item in esforcos_agrupados}
+
         for dev in todos_devs.devs:
             for projeto in projects_filter.projetos_filtros:
                 total_seconds = mapa.get((dev["id_dev_jiba"], projeto["id_project_jiba"]), 0)
@@ -101,6 +148,14 @@ class DimensionalService:
                     accumulated_minutes=total_minutes,
                     accumulated_cost=accumulated_cost,
                 )
+                logger.debug(
+                    "[DIM LOAD]: FactEsforco criado. Dev: %s, Projeto: %s, Minutos: %s, Custo: %.2f",
+                    dev["dev"],
+                    projeto["project"],
+                    total_minutes,
+                    accumulated_cost,
+                )
+        logger.info("[DIM LOAD]: FactEsforco salvo com sucesso para o intervalo: %s", worklog_interval.dimtemporal)
         return True
 
 
@@ -182,24 +237,24 @@ class DimProjetoService:
 
     @classmethod
     def total_accumulated_minutes(cls, projeto_id=None):
-        total_minutos = TimeLog.objects.filter(id_issue__project_id=projeto_id).aggregate(
+        total_minutes = TimeLog.objects.filter(id_issue__project_id=projeto_id).aggregate(
             minutos=Sum(F("seconds") / 60.0, output_field=FloatField())
         )
-        return total_minutos.get("minutos") or 0
+        return total_minutes.get("minutos") or 0
 
     @classmethod
     def projection_end_days(cls, projeto_id: int):
         total_seconds_agg = Issue.objects.filter(project_id=projeto_id).aggregate(
             total_seconds=Sum("time_estimate_seconds", output_field=FloatField())
         )
-        tempo_total_em_segundos = total_seconds_agg.get("total_seconds") or 0.0
+        total_time_in_sec = total_seconds_agg.get("total_seconds") or 0.0
 
-        if tempo_total_em_segundos <= 0:
+        if total_time_in_sec <= 0:
             return 0.0
         else:
-            SEGUNDOS_POR_DIA_UTIL = 28800
-            dias_uteis_necessarios = tempo_total_em_segundos / SEGUNDOS_POR_DIA_UTIL
-            return dias_uteis_necessarios
+            UTIL_SECONDS_PER_DAY = 28800  # 8 hour per day in sec
+            utils_days_necessary = total_time_in_sec / UTIL_SECONDS_PER_DAY
+            return utils_days_necessary
 
     @classmethod
     def save_or_create_dim_projeto(cls, project):
@@ -216,8 +271,8 @@ class DimProjetoService:
 
     @classmethod
     def worklog_group(cls):
-        agora = timezone.now()
-        start = agora.replace(hour=0, minute=0, second=0, microsecond=0)
+        now = timezone.now()
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         end = start + timedelta(days=1)
 
         esforcos_agrupados = (
@@ -234,7 +289,7 @@ class DimIntervaloTemporalService:
         self.start_date, self.end_date = self.create_interval(granularity_type)
         self.dimtemporal = self.save_dimtemporal()
 
-    def create_interval(self, tipo: TipoGranularidade, refer: datetime.datetime = None):  # noqa C901
+    def create_interval(self, tipo: TipoGranularidade, refer: datetime.datetime = None):
         if refer is None:
             refer = datetime.datetime.now()
 
@@ -335,10 +390,10 @@ class DimIssueTypesService:
         return dim_issue_type
 
     def create_or_update_dim_issue(self, issue_type, dim_issuetype):
-        issues_do_tipo = Issue.objects.filter(type_issue__jira_id=issue_type["jira_id"]).select_related(
+        issues_from_type = Issue.objects.filter(type_issue__jira_id=issue_type["jira_id"]).select_related(
             "project", "type_issue"
         )
-        for issue in issues_do_tipo:
+        for issue in issues_from_type:
             DimIssue.objects.update_or_create(
                 id_issue_jiba=issue.id,
                 id_issue_jira=issue.jira_id,
@@ -389,17 +444,17 @@ class DimIssueService:
         self.issues = self._create_issues()
 
     def _create_issues(self):
-        agora = timezone.now()
-        start = agora.replace(hour=0, minute=0, second=0, microsecond=0)
+        now = timezone.now()
+        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
         end = start + timedelta(days=1)
 
-        issues_com_soma = (
+        issues_with_sum = (
             TimeLog.objects.filter(log_date__gte=start, log_date__lt=end)
             .select_related("id_issue", "id_issue__project", "id_issue__type_issue", "id_user")
             .annotate(total_seconds=Sum("seconds"))
         )
         filtros = []
-        for issue in issues_com_soma:
+        for issue in issues_with_sum:
             total_seconds = issue.total_seconds or 0
             total_minutos_hoje = total_seconds / 60.0
 
