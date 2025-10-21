@@ -148,7 +148,7 @@ class DimDev(models.Model):
     id = models.AutoField(primary_key=True, help_text="ID Natural do Desenvolvedor")
     dev_name = models.CharField(max_length=255)
     id_dev_jiba = models.IntegerField(db_index=True, help_text="ID do Desenvolvedor no jiboia")
-    id_dev_jira = models.IntegerField(db_index=True, help_text="ID do Desenvolvedor no jira")
+    id_dev_jira = models.CharField(max_length=100, help_text="ID do Desenvolvedor no jira")
     valor_hora = models.DecimalField(
         max_digits=10, decimal_places=2, help_text="Valor da hora do desenvolvedor", null=True, blank=True
     )

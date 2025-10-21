@@ -12,7 +12,7 @@ class User(AbstractUser):
         verbose_name="Valor por Hora",
         help_text="Valor cobrado por hora de trabalho",
     )
-    jira_id = models.IntegerField(null=True, blank=True)
+    jira_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return str(self.username)
