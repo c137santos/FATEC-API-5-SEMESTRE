@@ -34,37 +34,34 @@ class TipoGranularidade(Enum):
 
 class DimensionalService:
     @classmethod
-    def generate_project_snapshot_data(cls, granularity_type: TipoGranularidade):
-        intervalo_tempo = DimIntervaloTemporalService(granularity_type)
+    def generate_project_snapshot_data(cls, time_interval):
         projects_filter = DimProjetoService()
-        return cls.save_fact_project_snapshot(projects_filter, intervalo_tempo)
+        return cls.save_fact_project_snapshot(projects_filter, time_interval)
 
     @classmethod
-    def generate_fact_issue(cls, granularity_type):
-        intervalo_tempo = DimIntervaloTemporalService(granularity_type)
+    def generate_fact_issue(cls, time_interval):
         projetos = DimProjetoService()
         issue_types = DimIssueTypesService()
         status_types = DimStatusTypeService()
-        return cls.save_fact_issue(projetos, issue_types, status_types, intervalo_tempo)
+        return cls.save_fact_issue(projetos, issue_types, status_types, time_interval)
 
     @classmethod
-    def generate_fact_worklog(cls, granularity_type):
+    def generate_fact_worklog(cls, time_interval):
         devs = DimDevService()
         projects_filter = DimProjetoService()
-        worklog_interval = DimIntervaloTemporalService(granularity_type)
-        return cls.save_fact_worklog(worklog_interval, projects_filter, devs)
+        return cls.save_fact_worklog(time_interval, projects_filter, devs)
 
     @classmethod
     def save_fact_project_snapshot(cls, project_filter, dimtemporal):
         for proj in project_filter.projetos_filtros:
-            proj_instace = FactProjectSnapshot.objects.create(
+            proj_instance = FactProjectSnapshot.objects.create(
                 project=proj["project"],
                 snapshot_interval=dimtemporal.dimtemporal,
                 current_project_cost_rs=proj["current_project_cost_rs"],
                 total_accumulated_minutes=proj["total_accumulated_minutes"],
                 projection_end_days=proj["projection_end_days"],
             )
-            print(proj_instace)
+            print(proj_instance)
         return True
 
     @classmethod
@@ -130,7 +127,7 @@ class DimDevService:
         return filtros
 
     def _get_or_create_dev(self, dev):
-        dim_dev, created = DimDev.objects.update_or_create(
+        dim_dev, _ = DimDev.objects.update_or_create(
             id_dev_jiba=dev["id"],
             defaults={
                 "id_dev_jira": dev["jira_id"],
@@ -241,46 +238,59 @@ class DimIntervaloTemporalService:
         if refer is None:
             refer = datetime.datetime.now()
 
-        if tipo == TipoGranularidade.DIA:
-            start_date = refer.replace(hour=0, minute=0, second=0, microsecond=0)
-            end_date = start_date + datetime.timedelta(days=1)
-
-        elif tipo == TipoGranularidade.SEMANA:
-            # início na segunda-feira
-            start_date = refer - datetime.timedelta(days=refer.weekday())
-            start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
-            end_date = start_date + datetime.timedelta(weeks=1)
-
-        elif tipo == TipoGranularidade.MES:
-            start_date = refer.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            if refer.month == 12:
-                end_date = start_date.replace(year=refer.year + 1, month=1)
-            else:
-                end_date = start_date.replace(month=refer.month + 1)
-
-        elif tipo == TipoGranularidade.TRIMESTRE:
-            mes_base = ((refer.month - 1) // 3) * 3 + 1
-            start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
-            if mes_base == 10:
-                end_date = start_date.replace(year=refer.year + 1, month=1)
-            else:
-                end_date = start_date.replace(month=mes_base + 3)
-
-        elif tipo == TipoGranularidade.SEMESTRE:
-            mes_base = 1 if refer.month <= 6 else 7
-            start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
-            if mes_base == 7:
-                end_date = start_date.replace(year=refer.year + 1, month=1)
-            else:
-                end_date = start_date.replace(month=7)
-
-        elif tipo == TipoGranularidade.ANO:
-            start_date = refer.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
-            end_date = start_date.replace(year=refer.year + 1)
-
-        else:
+        interval_methods = {
+            TipoGranularidade.DIA: self._interval_dia,
+            TipoGranularidade.SEMANA: self._interval_semana,
+            TipoGranularidade.MES: self._interval_mes,
+            TipoGranularidade.TRIMESTRE: self._interval_trimestre,
+            TipoGranularidade.SEMESTRE: self._interval_semestre,
+            TipoGranularidade.ANO: self._interval_ano,
+        }
+        try:
+            return interval_methods[tipo](refer)
+        except KeyError:
             raise ValueError("Tipo de granularidade inválido")
 
+    def _interval_dia(self, refer):
+        start_date = refer.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date = start_date + datetime.timedelta(days=1)
+        return start_date, end_date
+
+    def _interval_semana(self, refer):
+        start_date = refer - datetime.timedelta(days=refer.weekday())
+        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        end_date = start_date + datetime.timedelta(weeks=1)
+        return start_date, end_date
+
+    def _interval_mes(self, refer):
+        start_date = refer.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        if refer.month == 12:
+            end_date = start_date.replace(year=refer.year + 1, month=1)
+        else:
+            end_date = start_date.replace(month=refer.month + 1)
+        return start_date, end_date
+
+    def _interval_trimestre(self, refer):
+        mes_base = ((refer.month - 1) // 3) * 3 + 1
+        start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
+        if mes_base == 10:
+            end_date = start_date.replace(year=refer.year + 1, month=1)
+        else:
+            end_date = start_date.replace(month=mes_base + 3)
+        return start_date, end_date
+
+    def _interval_semestre(self, refer):
+        mes_base = 1 if refer.month <= 6 else 7
+        start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
+        if mes_base == 7:
+            end_date = start_date.replace(year=refer.year + 1, month=1)
+        else:
+            end_date = start_date.replace(month=7)
+        return start_date, end_date
+
+    def _interval_ano(self, refer):
+        start_date = refer.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+        end_date = start_date.replace(year=refer.year + 1)
         return start_date, end_date
 
     def save_dimtemporal(self):
@@ -316,9 +326,9 @@ class DimIssueTypesService:
 
     def _get_or_create_issue_type(self, issue_type):
         dim_issue_type, _ = DimTipoIssue.objects.update_or_create(
-            id_type_jiba=issue_type["issuetype_id"],  # Campo de busca
+            id_type_jiba=issue_type["issuetype_id"],
+            id_type_jira=issue_type["jira_id"],
             defaults={
-                "id_type_jira": issue_type["jira_id"],
                 "name_type": issue_type["name"],
             },
         )
@@ -330,9 +340,9 @@ class DimIssueTypesService:
         )
         for issue in issues_do_tipo:
             DimIssue.objects.update_or_create(
-                id_issue_jiba=issue.id,  # Campo de busca
+                id_issue_jiba=issue.id,
+                id_issue_jira=issue.jira_id,
                 defaults={
-                    "id_issue_jira": issue.jira_id,
                     "project": DimProjeto.objects.get(id_project_jiba=issue.project.id),
                     "issue_type": dim_issuetype,
                     "start_date": issue.start_date,
@@ -364,10 +374,10 @@ class DimStatusTypeService:
 
     def _get_or_create_status_type(self, status):
         """Busca ou cria um registro de DimStatus."""
-        dim_status, created = DimStatus.objects.update_or_create(
-            id_status_jira=status["jira_id"],  # Campo de busca
+        dim_status, _ = DimStatus.objects.update_or_create(
+            id_status_jira=status["jira_id"],
+            id_status_jiba=status["statustype_id"],
             defaults={
-                "id_status_jiba": status["statustype_id"],
                 "status_name": status["name"],
             },
         )
@@ -415,10 +425,10 @@ class DimIssueService:
 
     def _get_or_create_issue(self, timelog):
         issue = timelog.id_issue
-        dim_issue, created = DimIssue.objects.update_or_create(
+        dim_issue, _ = DimIssue.objects.update_or_create(
             id_issue_jiba=issue.id,
+            id_issue_jira=issue.jira_id,
             defaults={
-                "id_issue_jira": issue.jira_id,
                 "project": DimProjeto.objects.get(id_project_jiba=issue.project.id),
                 "issue_type": DimTipoIssue.objects.get(id_type_jiba=issue.type_issue.id),
                 "start_date": issue.start_date,

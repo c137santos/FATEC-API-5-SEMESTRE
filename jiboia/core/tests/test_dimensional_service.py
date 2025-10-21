@@ -49,7 +49,8 @@ def test_generate_project_snapshot_data_creates_snapshots():
     )
     TimeLog.objects.create(id_issue=issue, seconds=1800, log_date=timezone.now(), jira_id=issue.id)
 
-    DimensionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    DimensionalService.generate_project_snapshot_data(intervalo_tempo)
 
     assert FactProjectSnapshot.objects.count() == 1
     snap = FactProjectSnapshot.objects.first()
@@ -83,8 +84,8 @@ def test_generate_project_snapshot_data_multiple_projects():
     )
     Issue.objects.create(description="Issue 1", created_at=timezone.now(), project=projeto1, time_estimate_seconds=3600)
     Issue.objects.create(description="Issue 2", created_at=timezone.now(), project=projeto2, time_estimate_seconds=7200)
-
-    DimensionalService.generate_project_snapshot_data(TipoGranularidade.DIA)
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    DimensionalService.generate_project_snapshot_data(intervalo_tempo)
     assert FactProjectSnapshot.objects.count() == 2
     nomes = set(FactProjectSnapshot.objects.values_list("project__project_name", flat=True))
     assert "Projeto 1" in nomes
@@ -159,8 +160,8 @@ def test_load_fato_issue():
         type_issue=issue_type_history,
         status=status_type_done,
     )
-
-    DimensionalService.generate_fact_issue(TipoGranularidade.DIA)
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    DimensionalService.generate_fact_issue(intervalo_tempo)
     assert FactIssue.objects.count() == 8
     fato_bug_open = FactIssue.objects.filter(
         issue_type__name_type="Bug", status__status_name="Open", project__id=projeto.id
@@ -228,7 +229,7 @@ def test_generate_fact_worlog():
         jira_id=1,
         projectTypeKey="software",
     )
-    p = DimProjeto.objects.create(
+    project2 = DimProjeto.objects.create(
         id_project_jiba=projeto.id,
         id_project_jira=projeto.jira_id,
         start_date=projeto.start_date_project,
@@ -290,7 +291,7 @@ def test_generate_fact_worlog():
         DimIssue.objects.create(
             id_issue_jira=issue_fato.jira_id,
             id_issue_jiba=issue_fato.id,
-            project=p,
+            project=project2,
             issue_type=issue_type,
             start_date=issue_fato.start_date,
         )
@@ -299,10 +300,13 @@ def test_generate_fact_worlog():
     log_date_ontem = datetime(1999, 1, 1)
     TimeLog.objects.create(id_user=dev, id_issue=issue1, seconds=1200, log_date=log_date, jira_id=444)
     TimeLog.objects.create(id_user=dev, id_issue=issue2, seconds=2400, log_date=log_date, jira_id=555)
-    a = TimeLog.objects.create(id_user=dev2, id_issue=issue1, seconds=10000, log_date=log_date_ontem, jira_id=666)
-    a.log_date = log_date_ontem
-    a.save()
-    success = DimensionalService.generate_fact_worklog(TipoGranularidade.DIA)
+    timelog_alterado = TimeLog.objects.create(
+        id_user=dev2, id_issue=issue1, seconds=10000, log_date=log_date_ontem, jira_id=666
+    )
+    timelog_alterado.log_date = log_date_ontem
+    timelog_alterado.save()
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    success = DimensionalService.generate_fact_worklog(intervalo_tempo)
 
     assert success is True
 
