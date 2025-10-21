@@ -202,7 +202,6 @@ CRONJOBS = [
         {},
         "jira_daily_healthcheck",
     ),
-    # New: Sync issues for all projects at 3 AM (separate flow)
     (
         "0 1 * * *",
         "jiboia.core.cron.jira_sync_issues_all_projects",

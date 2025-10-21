@@ -29,13 +29,10 @@ class SyncUserStrategy:
         display = user_data.get("displayName") or user_data.get("name") or ""
         first_name = user_data.get("firstName") or ""
         last_name = user_data.get("lastName") or ""
+        account_id = user_data["accountId"] or ""
         if not username:
             username = f"jira_{display.replace(' ', '_')}"
-        defaults = {
-            "email": email_val or "",
-            "first_name": first_name,
-            "last_name": last_name,
-        }
+        defaults = {"email": email_val or "", "first_name": first_name, "last_name": last_name, "jira_id": account_id}
         user, _ = User.objects.get_or_create(username=username, defaults=defaults)
         changed = False
         for k, v in defaults.items():

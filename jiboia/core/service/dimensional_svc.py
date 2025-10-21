@@ -130,14 +130,14 @@ class DimDevService:
         return filtros
 
     def _get_or_create_dev(self, dev):
-        dim_dev = DimDev.objects.filter(id_dev_jiba=dev["id"]).first()
-        if not dim_dev:
-            dim_dev = DimDev.objects.create(
-                id_dev_jiba=dev["id"],
-                id_dev_jira=dev["jira_id"],
-                dev_name=dev["username"],
-                valor_hora=dev["valor_hora"],
-            )
+        dim_dev, created = DimDev.objects.update_or_create(
+            id_dev_jiba=dev["id"],
+            defaults={
+                "id_dev_jira": dev["jira_id"],
+                "dev_name": dev["username"],
+                "valor_hora": dev["valor_hora"],
+            },
+        )
         return dim_dev
 
 
@@ -206,14 +206,15 @@ class DimProjetoService:
 
     @classmethod
     def save_or_create_dim_projeto(cls, project):
-        dim_project = DimProjeto.objects.filter(id_project_jiba=project["project_id"]).first()
-        if not dim_project:
-            dim_project = DimProjeto.objects.create(
-                id_project_jiba=project["project_id"],
-                id_project_jira=project["jira_id"],
-                start_date=project["start_date_project"],
-                project_name=project["name"],
-            )
+        dim_project, _ = DimProjeto.objects.update_or_create(
+            id_project_jiba=project["project_id"],
+            defaults={
+                "id_project_jira": project["jira_id"],
+                "start_date": project["start_date_project"],
+                "project_name": project["name"],
+                "end_date": project["end_date_project"],
+            },
+        )
         return dim_project
 
     @classmethod
@@ -299,8 +300,9 @@ class DimIssueTypesService:
         issues_type = issues_type_svc.list_type_issues()
         filtros = []
 
-        for issue in issues_type:
-            dim_issuetype = self._get_or_create_issue_type(issue)
+        for issue_type in issues_type:
+            dim_issuetype = self._get_or_create_issue_type(issue_type)
+            self.create_or_update_dim_issue(issue_type, dim_issuetype)
 
             filtro = {
                 "issue_type": dim_issuetype,
@@ -313,14 +315,29 @@ class DimIssueTypesService:
         return filtros
 
     def _get_or_create_issue_type(self, issue_type):
-        dim_issue_type = DimTipoIssue.objects.filter(id_type_jiba=issue_type["issuetype_id"]).first()
-        if not dim_issue_type:
-            dim_issue_type = DimTipoIssue.objects.create(
-                id_type_jira=issue_type["jira_id"],
-                id_type_jiba=issue_type["issuetype_id"],
-                name_type=issue_type["name"],
-            )
+        dim_issue_type, _ = DimTipoIssue.objects.update_or_create(
+            id_type_jiba=issue_type["issuetype_id"],  # Campo de busca
+            defaults={
+                "id_type_jira": issue_type["jira_id"],
+                "name_type": issue_type["name"],
+            },
+        )
         return dim_issue_type
+
+    def create_or_update_dim_issue(self, issue_type, dim_issuetype):
+        issues_do_tipo = Issue.objects.filter(type_issue__jira_id=issue_type["jira_id"]).select_related(
+            "project", "type_issue"
+        )
+        for issue in issues_do_tipo:
+            DimIssue.objects.update_or_create(
+                id_issue_jiba=issue.id,  # Campo de busca
+                defaults={
+                    "id_issue_jira": issue.jira_id,
+                    "project": DimProjeto.objects.get(id_project_jiba=issue.project.id),
+                    "issue_type": dim_issuetype,
+                    "start_date": issue.start_date,
+                },
+            )
 
 
 class DimStatusTypeService:
@@ -346,32 +363,15 @@ class DimStatusTypeService:
         return filtros
 
     def _get_or_create_status_type(self, status):
-        """Busca ou cria um registro de DimTipoIssue."""
-        dim_issue_type = DimStatus.objects.filter(id_status_jira=status["jira_id"]).first()
-
-        if not dim_issue_type:
-            dim_issue_type = DimStatus.objects.create(
-                id_status_jira=status["jira_id"],
-                id_status_jiba=status["statustype_id"],
-                status_name=status["name"],
-            )
-
-        return dim_issue_type
-
-    @classmethod
-    def get_all_dim_status(cls):
-        filtros = []
-        varias_dims = DimStatus.objects.all()
-        for dim_status_type in varias_dims:
-            filtro = {
-                "dimstatus": dim_status_type,
-                "id": dim_status_type.id,
-                "id_status_jiba": dim_status_type.id_status_jiba,
-                "id_status_jira": dim_status_type.id_status_jira,
-                "status_name": dim_status_type.status_name,
-            }
-            filtros.append(filtro)
-        return filtros
+        """Busca ou cria um registro de DimStatus."""
+        dim_status, created = DimStatus.objects.update_or_create(
+            id_status_jira=status["jira_id"],  # Campo de busca
+            defaults={
+                "id_status_jiba": status["statustype_id"],
+                "status_name": status["name"],
+            },
+        )
+        return dim_status
 
 
 class DimIssueService:
@@ -413,14 +413,15 @@ class DimIssueService:
 
         return filtros
 
-    def _get_or_create_issue(self, issue):
-        dim_issue = DimIssue.objects.filter(id=issue.id).first()
-        if not dim_issue:
-            dim_issue = DimIssue.objects.create(
-                id_issue_jiba=issue.id,
-                id_issue_jira=issue.jira_id,
-                projeto=DimProjeto.objects.get(id_project_jiba=issue.id_issue.project.id),
-                issue_type=DimTipoIssue.objects.get(id_type_jiba=issue.id_issue.type_issue.id),
-                start_date=issue.id_issue.start_date,
-            )
+    def _get_or_create_issue(self, timelog):
+        issue = timelog.id_issue
+        dim_issue, created = DimIssue.objects.update_or_create(
+            id_issue_jiba=issue.id,
+            defaults={
+                "id_issue_jira": issue.jira_id,
+                "project": DimProjeto.objects.get(id_project_jiba=issue.project.id),
+                "issue_type": DimTipoIssue.objects.get(id_type_jiba=issue.type_issue.id),
+                "start_date": issue.start_date,
+            },
+        )
         return dim_issue
