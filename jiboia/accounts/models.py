@@ -26,6 +26,7 @@ class User(AbstractUser):
             "last_name": self.last_name,
             "email": self.email,
             "valor_hora": 0.0 if self.valor_hora is None else float(self.valor_hora),
+            "jira_id": self.jira_id,
             "permissions": {
                 "ADMIN": self.is_superuser,
                 "STAFF": self.is_staff,
