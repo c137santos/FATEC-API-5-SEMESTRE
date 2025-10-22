@@ -2,6 +2,11 @@
 	<DashboardLayout>
 		<template #title> Project Dashboard: {{ name }} </template>
     <v-container>
+		<v-btn
+			class="mb-4"
+			variant="outlined"
+			@click="listaIssues"
+		> Issues </v-btn>
 			<v-row>
 				<v-col>
 					<span class="w-100 d-flex justify-center"> Movimentação de issues (por mês) </span>
@@ -148,9 +153,10 @@ import { Line, Doughnut, Bar } from 'vue-chartjs'
 import DashboardLayout from '@/layouts/default/DashboardLayout.vue';
 import StatusBreakdownGraph from '@/components/StatusBreakdownGraph.vue'
 import { chartColors } from '@/utils/chart-utils';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute()
+const router = useRouter()
 
 const issuesList = ref([])
 const dataRef = ref()
@@ -170,6 +176,10 @@ const emptyDataset = {
 	labels: [],
 	datasets: [],
 }
+
+const listaIssues = () => {
+  router.push(`/projects/${route.params.id}/issues`);
+};
 
 const burndownData = computed(() => {
 	const burndown = dataRef.value?.burndown
