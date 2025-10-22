@@ -1,9 +1,13 @@
 # coding: utf-8
 import json
 import logging
-
+import threading
+from jiboia.core.cron import jira_full_sync
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+
 
 from jiboia.core.service import projects_svc
 
@@ -12,6 +16,7 @@ from .service import issues_svc, project_overview_svc
 
 logger = logging.getLogger(__name__)
 
+jira_sync_lock = threading.Lock()
 
 @require_http_methods(["POST"])
 @ajax_login_required
@@ -95,3 +100,33 @@ def project_developers(request, project_id):
     developers = projects_svc.get_project_developers(project_id)
 
     return JsonResponse(developers, safe=False)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def trigger_jira_sync(request):
+    
+    if not jira_sync_lock.acquire(blocking=False):
+
+        logger.warning("Uma sincronização já está em andamento. Nova requisição bloqueada.")
+        return JsonResponse({'status': 'error', 'message': 'Uma sincronização já está em andamento.'}, status=409)
+    try:
+        def sync_and_release_lock():
+            try:
+                logger.info("Iniciando jira_full_sync na thread...")
+                jira_full_sync()
+            except Exception as e:
+                logger.error(f"Erro na thread de sincronização: {e}", exc_info=True)
+            finally:
+                logger.info("Sincronização terminada. Soltando o cadeado.")
+                jira_sync_lock.release()
+
+        sync_thread = threading.Thread(target=sync_and_release_lock)
+        sync_thread.start()
+
+        logger.info("Atualizando dados do Jira, aguarde...")
+        return JsonResponse({'status': 'success', 'message': 'A sincronização foi iniciada em segundo plano.'}, status=202)
+
+    except Exception as e:
+        logger.error(f"Falha ao iniciar a thread de sincronização: {e}")
+        jira_sync_lock.release()
+        return JsonResponse({'status': 'error', 'message': f'Falha ao iniciar a tarefa de sincronização: {str(e)}'}, status=500)
