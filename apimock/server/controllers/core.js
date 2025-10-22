@@ -5,6 +5,13 @@ function getMaxId(items) {
 
 module.exports = {
   find: (req, res) => {
+    const projectId = parseInt(req.params.id);
+
+    const projectIssues = data.issues.filter(issue => {
+      return issue.fields.project.id === projectId ||
+             issue.fields.project.key === projectId.toString();
+    });
+
     const mappedIssues = data.issues.map(issue => ({
       jira_id: issue.key,
       description: issue.fields.summary,
