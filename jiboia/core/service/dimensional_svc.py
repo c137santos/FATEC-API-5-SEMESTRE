@@ -1,9 +1,8 @@
 import datetime
 import logging
-from datetime import timedelta
 from enum import Enum
 
-from django.db.models import F, FloatField, Sum
+from django.db.models import ExpressionWrapper, F, FloatField, Sum
 from django.utils import timezone
 
 from jiboia.accounts import services
@@ -18,7 +17,6 @@ from jiboia.core.models import (
     FactIssue,
     FactProjectSnapshot,
     Issue,
-    Project,
     TimeLog,
 )
 from jiboia.core.service import issue_status_svc, issues_type_svc, projects_svc
@@ -41,7 +39,7 @@ class DimensionalService:
         logger.info(
             "[DIM LOAD]: Iniciando geração de snapshot de projetos para intervalo: %s", time_interval.dimtemporal
         )
-        projects_filter = DimProjetoService()
+        projects_filter = DimProjetoService(time_interval)
         result = cls.save_fact_project_snapshot(projects_filter, time_interval)
         logger.info("[DIM LOAD]: Geração de snapshot de projetos concluída.")
         return result
@@ -49,7 +47,7 @@ class DimensionalService:
     @classmethod
     def generate_fact_issue(cls, time_interval):
         logger.info("[DIM LOAD]: Iniciando geração de Fato Issues para intervalo: %s", time_interval.dimtemporal)
-        projetos = DimProjetoService()
+        projetos = DimProjetoService(time_interval)
         issue_types = DimIssueTypesService()
         status_types = DimStatusTypeService()
         result = cls.save_fact_issue(projetos, issue_types, status_types, time_interval)
@@ -60,7 +58,7 @@ class DimensionalService:
     def generate_fact_worklog(cls, time_interval):
         logger.info("[DIM LOAD]: Iniciando geração de Fato Worklogs para intervalo: %s", time_interval.dimtemporal)
         devs = DimDevService()
-        projects_filter = DimProjetoService()
+        projects_filter = DimProjetoService(time_interval)
         result = cls.save_fact_worklog(time_interval, projects_filter, devs)
         logger.info("[DIM LOAD]: Geração de Fato Worklogs concluída.")
         return result
@@ -124,18 +122,18 @@ class DimensionalService:
         return True
 
     @classmethod
-    def save_fact_worklog(cls, worklog_interval, projects_filter, todos_devs):
+    def save_fact_worklog(cls, worklog_interval, projects_filter, all_devs):
         logger.info(
             "[DIM LOAD]: Salvando FactEsforco. Intervalo: %s, Projetos: %s, Desenvolvedores: %s",
             worklog_interval.dimtemporal,
             len(projects_filter.projetos_filtros),
-            len(todos_devs.devs),
+            len(all_devs.devs),
         )
-        esforcos_agrupados = projects_filter.worklog_group()
-        logger.debug("[DIM LOAD]: Worklogs agrupados obtidos. Total de itens agrupados: %s", len(esforcos_agrupados))
-        mapa = {(item["id_user"], item["id_issue__project_id"]): item["total_seconds"] for item in esforcos_agrupados}
+        grouped_effort = projects_filter.worklog_interval
+        logger.debug("[DIM LOAD]: Worklogs agrupados obtidos. Total de itens agrupados: %s", len(grouped_effort))
+        mapa = {(item["id_user"], item["id_issue__project_id"]): item["total_seconds"] for item in grouped_effort}
 
-        for dev in todos_devs.devs:
+        for dev in all_devs.devs:
             for projeto in projects_filter.projetos_filtros:
                 total_seconds = mapa.get((dev["id_dev_jiba"], projeto["id_project_jiba"]), 0)
                 total_minutes = total_seconds // 60
@@ -194,8 +192,11 @@ class DimDevService:
 
 
 class DimProjetoService:
-    def __init__(self):
+    def __init__(self, intervalo_temporal_service):
+        self.start_date = intervalo_temporal_service.start_date
+        self.end_date = intervalo_temporal_service.end_date
         self.projetos_filtros = self.filters_projects()
+        self.worklog_interval = self.worklog_group()
 
     def filters_projects(self):
         projects = projects_svc.list_all_projects()
@@ -212,38 +213,48 @@ class DimProjetoService:
                 "project_name": project["name"],
                 "start_date": project["start_date_project"],
                 "end_date": project["end_date_project"],
-                "current_project_cost_rs": self.current_project_cost_rs(projeto_id=projeto_id),
-                "total_accumulated_minutes": self.total_accumulated_minutes(projeto_id=projeto_id),
+                "current_project_cost_rs": self.current_project_cost_rs(
+                    projeto_id=projeto_id,
+                    start_date=self.start_date,
+                    end_date=self.end_date,
+                ),
+                "total_accumulated_minutes": self.total_accumulated_minutes(
+                    projeto_id=projeto_id,
+                    start_date=self.start_date,
+                    end_date=self.end_date,
+                ),
                 "projection_end_days": self.projection_end_days(projeto_id=projeto_id),
             }
             filtros.append(filtro)
         return filtros
 
-    @classmethod
-    def current_project_cost_rs(cls, projeto_id=None):
+    def current_project_cost_rs(self, projeto_id=None, start_date=None, end_date=None):
+        """
+        Calcula o custo real do projeto baseado nos TimeLogs (worklogs) registrados
+        dentro do intervalo pesquisado.
+        """
         result = (
-            Project.objects.filter(id=projeto_id)
-            .annotate(
-                project_cost_rs=Sum(
-                    (F("issue__time_estimate_seconds") / 3600.0) * F("issue__id_user__valor_hora"),
-                    output_field=FloatField(),
-                )
+            TimeLog.objects.filter(
+                id_issue__project_id=projeto_id,
+                log_date__gte=start_date,
+                log_date__lt=end_date,
             )
-            .values("project_cost_rs")
-            .first()
+            .annotate(
+                custo=ExpressionWrapper((F("seconds") / 3600.0) * F("id_user__valor_hora"), output_field=FloatField())
+            )
+            .aggregate(project_cost_rs=Sum("custo"))
         )
-
         return result.get("project_cost_rs") or 0.0
 
-    @classmethod
-    def total_accumulated_minutes(cls, projeto_id=None):
-        total_minutes = TimeLog.objects.filter(id_issue__project_id=projeto_id).aggregate(
-            minutos=Sum(F("seconds") / 60.0, output_field=FloatField())
-        )
+    def total_accumulated_minutes(self, projeto_id=None, start_date=None, end_date=None):
+        total_minutes = TimeLog.objects.filter(
+            id_issue__project_id=projeto_id,
+            log_date__gte=start_date,
+            log_date__lt=end_date,
+        ).aggregate(minutos=Sum(F("seconds") / 60.0, output_field=FloatField()))
         return total_minutes.get("minutos") or 0
 
-    @classmethod
-    def projection_end_days(cls, projeto_id: int):
+    def projection_end_days(self, projeto_id: int):
         total_seconds_agg = Issue.objects.filter(project_id=projeto_id).aggregate(
             total_seconds=Sum("time_estimate_seconds", output_field=FloatField())
         )
@@ -251,32 +262,30 @@ class DimProjetoService:
 
         if total_time_in_sec <= 0:
             return 0.0
-        else:
-            UTIL_SECONDS_PER_DAY = 28800  # 8 hour per day in sec
-            utils_days_necessary = total_time_in_sec / UTIL_SECONDS_PER_DAY
-            return utils_days_necessary
+        UTIL_SECONDS_PER_DAY = 28800  # 8 horas
+        return total_time_in_sec / UTIL_SECONDS_PER_DAY
 
-    @classmethod
-    def save_or_create_dim_projeto(cls, project):
-        dim_project, _ = DimProjeto.objects.update_or_create(
-            id_project_jiba=project["project_id"],
-            defaults={
-                "id_project_jira": project["jira_id"],
-                "start_date": project["start_date_project"],
-                "project_name": project["name"],
-                "end_date": project["end_date_project"],
-            },
-        )
+    def save_or_create_dim_projeto(self, project):
+        try:
+            dim_project, _ = DimProjeto.objects.update_or_create(
+                id_project_jiba=project["project_id"],
+                defaults={
+                    "id_project_jira": project["jira_id"],
+                    "start_date": project["start_date_project"],
+                    "project_name": project["name"],
+                    "end_date": project["end_date_project"],
+                },
+            )
+        except Exception as e:
+            logger.error(
+                "[DIM LOAD]: Erro ao criar/atualizar DimProjeto para projeto ID %s: %s", project["project_id"], str(e)
+            )
+            raise e
         return dim_project
 
-    @classmethod
-    def worklog_group(cls):
-        now = timezone.now()
-        start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end = start + timedelta(days=1)
-
+    def worklog_group(self):
         esforcos_agrupados = (
-            TimeLog.objects.filter(log_date__gte=start, log_date__lt=end)
+            TimeLog.objects.filter(log_date__gte=self.start_date, log_date__lt=self.end_date)
             .values("id_user", "id_issue__project_id")
             .annotate(total_seconds=Sum("seconds"))
         )
@@ -446,7 +455,7 @@ class DimIssueService:
     def _create_issues(self):
         now = timezone.now()
         start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        end = start + timedelta(days=1)
+        end = start + datetime.timedelta(days=1)
 
         issues_with_sum = (
             TimeLog.objects.filter(log_date__gte=start, log_date__lt=end)

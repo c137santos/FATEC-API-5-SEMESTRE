@@ -71,27 +71,68 @@ def jira_project():
     return success
 
 
-def dimensional_load_daily():
+def dimensional_load(time_interval):
     """
     Função executada por cron para carregar dados dimensionais.
     Esta função é chamada pelo django-crontab de acordo com a programação configurada
     em settings.py. Ela registra o resultado e pode ser expandida para enviar alertas em caso de falha.
     """
     start_time = datetime.now()
-    logger.info(f"[CRON] Iniciando carga dimensional em {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"[CRON] Iniciando carga dimensional em diário{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     try:
-        intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
-        success = DimensionalService.generate_project_snapshot_data(intervalo_tempo)
+        success = DimensionalService.generate_project_snapshot_data(time_interval)
         if not success:
             logger.error("[CRON] Carga dimensional falhou")
             return
-        success = DimensionalService.generate_fact_issue(intervalo_tempo)
+        success = DimensionalService.generate_fact_issue(time_interval)
         if not success:
             logger.error("[CRON] Carga dimensional falhou")
             return
-        success = DimensionalService.generate_fact_worklog(intervalo_tempo)
+        success = DimensionalService.generate_fact_worklog(time_interval)
         logger.info("[CRON] Carga dimensional concluída com sucesso.")
     except Exception as e:
         logger.error(f"[CRON] Carga dimensional falhou: {e}")
         raise e
     return True
+
+
+def dimensional_load_daily():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em diário{start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_weekly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em semanal {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMANA)
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_monthly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em mensal {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.MES)
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_quarterly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em trimestre {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.TRIMESTRE)
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_semester():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em trimestre {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMESTRE)
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_yearly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em anual {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.ANO)
+    return dimensional_load(intervalo_tempo)
