@@ -36,19 +36,22 @@ def add_issue(request):
 
 
 @require_http_methods(["GET"])
-def list_paginable_issues(request):
+def list_paginable_issues(request, project_id):
     """List Issues in pages"""
+    logger.info(f"API list issues for project {project_id}")
 
-    logger.info("API list issues")
     page_number = request.GET.get("page", 1)
+    items_per_page = request.GET.get("itemsPerPage", 10)
 
     try:
         page_number = int(page_number)
+        items_per_page = int(items_per_page)
 
     except (TypeError, ValueError):
         page_number = 1
+        items_per_page = 10
 
-    issues_data = issues_svc.list_issues(page_number)
+    issues_data = issues_svc.list_issues(project_id, page_number, items_per_page)
     return JsonResponse(issues_data)
 
 
