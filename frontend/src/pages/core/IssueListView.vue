@@ -22,7 +22,7 @@ export default {
     const projectId = parseInt(route.params.id)
     const validProjectId = !isNaN(projectId) ? projectId : null;
 
-    return { baseStore, coreStore, projectId:validProjectId }
+    return { baseStore, coreStore, projectId: validProjectId }
   },
   computed: {
     ...mapState(usecoreStore, ["issues", "issuesLoading"]),

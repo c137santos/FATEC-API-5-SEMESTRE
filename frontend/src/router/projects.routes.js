@@ -21,7 +21,6 @@ export default [
 				component: ProjectDashboardView,
 			},
 			{
-
 				path: ':id/issues',
 				name: 'project-issues',
 				component: IssueListView,
