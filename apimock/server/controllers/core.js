@@ -12,7 +12,7 @@ module.exports = {
              issue.fields.project.key === projectId.toString();
     });
 
-    const mappedIssues = data.issues.map(issue => ({
+    const mappedIssues = projectIssues.map(issue => ({
       jira_id: issue.key,
       description: issue.fields.summary,
       details: issue.fields.details,
