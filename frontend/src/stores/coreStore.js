@@ -7,9 +7,9 @@ export const usecoreStore = defineStore("coreStore", {
     issuesLoading: false,
   }),
   actions: {
-    async getIssues() {
+    async getIssues(projectId, page = 1) {
       this.issuesLoading = true
-      const response = await coreApi.getIssues()
+      const response = await coreApi.getIssues(projectId, page)
       this.issues = response.issues
       this.issuesLoading = false
     },
