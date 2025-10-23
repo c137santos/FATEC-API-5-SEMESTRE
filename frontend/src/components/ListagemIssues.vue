@@ -68,11 +68,11 @@ const abrirDialog = (issue) => {
   dialogAberto.value = true;
 };
 
-const searchIssues = async (page = 1) => {
+const searchIssues = async (page = 1, projectId = 1) => {
   loading.value = true;
 
   try {
-    const response = await coreApi.getIssues(page);
+    const response = await coreApi.getIssues(projectId, page);
 
     issues.value = response.issues || [];
     totalIssues.value = response.total_items || 0;
