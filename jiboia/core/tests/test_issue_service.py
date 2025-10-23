@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from django.contrib.auth import get_user_model
@@ -6,35 +6,41 @@ from django.contrib.auth import get_user_model
 from jiboia.core.models import Issue, IssueType, Project, StatusType
 from jiboia.core.service.issues_svc import add_issue, list_issues
 
+DEFAULT_PER_PAGE = 10
+TEST_PROJECT_ID = 99
+
 
 @pytest.mark.django_db
 def test_add_issue_success():
     """Testa se a issue foi cadastrada com sucesso - SEM MOCK"""
     test_description = "Nova issue de teste"
-    
+
     IssueType.objects.create(name="Tarefa", jira_id=1)
     StatusType.objects.create(name="Aberto", jira_id=1)
     Project.objects.create(name="Projeto Teste", jira_id=1)
-    
+
     result = add_issue(test_description)
-    
+
     issue = Issue.objects.get(description=test_description)
     assert issue.description == test_description
-    assert result['id'] == issue.id
+    assert result["id"] == issue.id
+
 
 @pytest.mark.django_db
 def test_add_issue_fails_with_empty_description():
     """Testa que falha o cadastro quando descrição é vazia"""
     with pytest.raises(Exception) as exc_info:
         add_issue("")
-    
+
     assert "Invalid description" in str(exc_info.value)
+
 
 @pytest.mark.django_db
 def test_list_paginable_issues_no_user():
     issue_type = IssueType.objects.create(name="Tarefa", jira_id=1)
     status_type = StatusType.objects.create(name="Aberto", jira_id=1)
-    project = Project.objects.create(name="Projeto Teste", description="Descrição teste", jira_id=1)
+
+    project = Project.objects.create(id=TEST_PROJECT_ID, name="Projeto Teste", description="Descrição teste", jira_id=1)
 
     for i in range(15):
         Issue.objects.create(
@@ -46,7 +52,7 @@ def test_list_paginable_issues_no_user():
             time_estimate_seconds=7200,
         )
 
-    result_page1 = list_issues(page_number=1)
+    result_page1 = list_issues(project_id=TEST_PROJECT_ID, page_number=1, per_page=DEFAULT_PER_PAGE)
 
     assert result_page1["current_page"] == 1
     assert result_page1["total_pages"] == 2
@@ -62,7 +68,7 @@ def test_list_paginable_issues_no_user():
     assert first_issue["description"] == "Issue 14"
     assert first_issue["jira_id"] == 15
 
-    result_page2 = list_issues(page_number=2)
+    result_page2 = list_issues(project_id=TEST_PROJECT_ID, page_number=2, per_page=DEFAULT_PER_PAGE)
 
     assert result_page2["current_page"] == 2
     assert result_page2["total_pages"] == 2
@@ -85,7 +91,7 @@ def test_list_paginable_issues_with_user():
 
     issue_type = IssueType.objects.create(name="Tarefa", jira_id=1)
     status_type = StatusType.objects.create(name="Aberto", jira_id=1)
-    project = Project.objects.create(name="Projeto Teste", description="Teste", jira_id=1)
+    project = Project.objects.create(id=100, name="Projeto Teste", description="Teste", jira_id=1)
 
     Issue.objects.create(
         description="Issue com usuário",
@@ -97,7 +103,7 @@ def test_list_paginable_issues_with_user():
         id_user=test_user,
     )
 
-    result = list_issues(page_number=1)
+    result = list_issues(project_id=100, page_number=1, per_page=DEFAULT_PER_PAGE)
 
     assert result["total_items"] == 1
     assert len(result["issues"]) == 1
@@ -113,14 +119,17 @@ def test_list_paginable_issues_with_user():
 
 @pytest.mark.django_db
 def test_list_paginable_issues_failed():
-    with patch("jiboia.core.service.issues_svc.Paginator") as mock_paginator:
-        mock_instance = mock_paginator.return_value
-        mock_instance.page.side_effect = Exception("Erro simulado")
-        mock_instance.num_pages = 3
-        mock_instance.count = 25
+    with patch("jiboia.core.service.issues_svc.Paginator") as MockPaginator:
+        mock_paginator_instance = Mock()
+        mock_paginator_instance.page.side_effect = Exception("Erro simulado")
+        mock_paginator_instance.num_pages = 3
+        mock_paginator_instance.count = 25
 
-        result = list_issues(page_number=2)
+        MockPaginator.return_value = mock_paginator_instance
+
+        result = list_issues(project_id=1, page_number=2, per_page=DEFAULT_PER_PAGE)
 
         assert result["issues"] == []
         assert result["current_page"] == 2
         assert result["total_pages"] == 3
+        assert result["total_items"] == 25
