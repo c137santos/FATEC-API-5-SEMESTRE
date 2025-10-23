@@ -2,6 +2,10 @@
   {
     "key": "SM2-93",
     "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
       "summary": "Incluir a Assinatura digital Relatório - TCRA",
       "details": "Incluir a Assinatura digital para o relatório Relatório - TCRA",
       "status": {
@@ -21,6 +25,10 @@
   {
     "key": "SM2-92",
     "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
       "summary": "Atualizar layout do Relatório de Atividades - Setembro",
       "details": "Atualizar o layout do Relatório de Atividades realizadas em Setembro",
       "status": {
@@ -40,6 +48,10 @@
   {
     "key": "SM2-90",
     "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
       "summary": "Corrigir cálculo de total de horas nas atividades",
       "details": "Corrigir cálculo de total de horas nas atividades feitas em Outubro",
       "status": {
@@ -59,6 +71,10 @@
   {
     "key": "SM2-88",
     "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
       "summary": "Revisar descrições das categorias no módulo Gestão",
       "details": "Revisar as descrições das categorias no módulo Gestão realizados em Setembro",
       "status": {
@@ -78,6 +94,10 @@
   {
     "key": "SM2-82",
     "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
       "summary": "Editar a Descrição Categoria - Gestão",
       "details": "Editar a Descrição Categoria de Gestão",
       "status": {
@@ -91,6 +111,213 @@
       "created": "2025-09-10T08:43:54.329-0300",
       "timespent": 0,
       "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-81", "summary": "Setembro"}
+    }
+  },
+  {
+    "key": "SM2-89",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Outubro",
+      "details": "Tarefas do mês de Outubro",
+      "status": {
+        "name": "Em andamento",
+        "statusCategory": {"name": "Itens em andamento"}
+      },
+      "assignee": {
+        "displayName": "gerente.projeto",
+        "emailAddress": "gerente@necto.com"
+      },
+      "created": "2025-10-01T08:00:00.000-0300",
+      "timespent": 0,
+      "issuetype": {"name": "Epic"},
+      "parent": null
+    }
+  },
+  {
+    "key": "SM2-81",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Setembro",
+      "details": "Tarefas do mês de Setembro",
+      "status": {
+        "name": "Concluído",
+        "statusCategory": {"name": "Itens concluídos"}
+      },
+      "assignee": {
+        "displayName": "gerente.projeto",
+        "emailAddress": "gerente@necto.com"
+      },
+      "created": "2025-09-01T08:00:00.000-0300",
+      "timespent": 0,
+      "issuetype": {"name": "Epic"},
+      "parent": null
+    }
+  },
+  {
+    "key": "SM2-87",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Implementar nova funcionalidade de exportação",
+      "details": "Desenvolver funcionalidade para exportar relatórios em PDF",
+      "status": {
+        "name": "Em andamento",
+        "statusCategory": {"name": "Itens em andamento"}
+      },
+      "assignee": {
+        "displayName": "felipe.faria",
+        "emailAddress": "felipe@necto.com"
+      },
+      "created": "2025-10-18T14:30:25.789-0300",
+      "timespent": 5400,
+      "issuetype": {"name": "Melhoria"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
+  },
+  {
+    "key": "SM2-86",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Corrigir bug no cálculo de horas extras",
+      "details": "O sistema está calculando incorretamente as horas extras nos finais de semana",
+      "status": {
+        "name": "Concluído",
+        "statusCategory": {"name": "Itens concluídos"}
+      },
+      "assignee": {
+        "displayName": "marcelo.oliveira",
+        "emailAddress": "marcelo@necto.com"
+      },
+      "created": "2025-10-12T16:45:12.456-0300",
+      "timespent": 1800,
+      "issuetype": {"name": "Bug"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
+  },
+  {
+    "key": "SM2-85",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Atualizar documentação da API",
+      "details": "Revisar e atualizar a documentação da API para a versão 2.0",
+      "status": {
+        "name": "Tarefas pendentes",
+        "statusCategory": {"name": "Itens Pendentes"}
+      },
+      "assignee": {
+        "displayName": "sergio.casas",
+        "emailAddress": "sergio@necto.com"
+      },
+      "created": "2025-10-08T11:20:33.987-0300",
+      "timespent": 0,
+      "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
+  },
+  {
+    "key": "SM2-84",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Otimizar performance do banco de dados",
+      "details": "Implementar índices e otimizar queries para melhorar performance",
+      "status": {
+        "name": "Em andamento",
+        "statusCategory": {"name": "Itens em andamento"}
+      },
+      "assignee": {
+        "displayName": "felipe.faria",
+        "emailAddress": "felipe@necto.com"
+      },
+      "created": "2025-10-05T09:15:44.321-0300",
+      "timespent": 7200,
+      "issuetype": {"name": "Melhoria"},
+      "parent": {"key": "SM2-89", "summary": "Outubro"}
+    }
+  },
+  {
+    "key": "SM2-83",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Revisar testes unitários",
+      "details": "Revisar e expandir a cobertura de testes unitários",
+      "status": {
+        "name": "Concluído",
+        "statusCategory": {"name": "Itens concluídos"}
+      },
+      "assignee": {
+        "displayName": "marcelo.oliveira",
+        "emailAddress": "marcelo@necto.com"
+      },
+      "created": "2025-09-28T13:40:55.654-0300",
+      "timespent": 3600,
+      "issuetype": {"name": "Tarefa"},
+      "parent": {"key": "SM2-81", "summary": "Setembro"}
+    }
+  },
+  {
+    "key": "SM2-80",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Implementar autenticação two-factor",
+      "details": "Adicionar autenticação two-factor para aumentar segurança",
+      "status": {
+        "name": "Tarefas pendentes",
+        "statusCategory": {"name": "Itens Pendentes"}
+      },
+      "assignee": {
+        "displayName": "sergio.casas",
+        "emailAddress": "sergio@necto.com"
+      },
+      "created": "2025-09-25T15:25:38.147-0300",
+      "timespent": 0,
+      "issuetype": {"name": "Melhoria"},
+      "parent": {"key": "SM2-81", "summary": "Setembro"}
+    }
+  },
+  {
+    "key": "SM2-79",
+    "fields": {
+      "project": {
+        "id": 1,
+        "key": "SM2"
+      },
+      "summary": "Corrigir responsividade no mobile",
+      "details": "Ajustar layout para melhor experiência em dispositivos móveis",
+      "status": {
+        "name": "Concluído",
+        "statusCategory": {"name": "Itens concluídos"}
+      },
+      "assignee": {
+        "displayName": "felipe.faria",
+        "emailAddress": "felipe@necto.com"
+      },
+      "created": "2025-09-20T10:35:42.852-0300",
+      "timespent": 2400,
+      "issuetype": {"name": "Bug"},
       "parent": {"key": "SM2-81", "summary": "Setembro"}
     }
   }
