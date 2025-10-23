@@ -11,7 +11,7 @@
 Este relatório apresenta a análise técnica e recomendações para o deployment da aplicação **Jiboia** na AWS, baseado em testes de performance reais executados em ambiente Docker equivalente à produção.
 
 ### Decisão Recomendada
-**AWS Lightsail - Plano de $5/mês**
+**AWS Lightsail - Plano de $10/mês**
 
 **Justificativa:** Os testes demonstraram que a aplicação consome apenas **163 MB de RAM** sob carga e suporta **1038 req/s**, muito acima da demanda estimada de **0.46 req/s** (40.000 requisições/dia). O plano mais econômico da Lightsail atende plenamente aos requisitos do projeto acadêmico.
 
@@ -122,35 +122,19 @@ Testes com ApacheBench (1000 requisições em diferentes níveis de concorrênci
 
 | Serviço | Configuração | Custo Mensal | Adequação |
 |---------|--------------|--------------|-----------|
-| **Lightsail $5** ✅ | 512MB RAM, 1 vCPU, 20GB SSD, 1TB transfer | **$5.00** | ✅ **RECOMENDADO** |
-| Lightsail $10 | 1GB RAM, 1 vCPU, 40GB SSD, 2TB transfer | $10.00 | ⚠️ Superdimensionado |
+| Lightsail $10 ✅ | 1GB RAM, 1 vCPU, 40GB SSD, 2TB transfer | $10.00 | ✅ **RECOMENDADO** |
 | EC2 t4g.nano | 512MB RAM, 2 vCPU | ~$3.50 + EBS + transfer | ⚠️ Mais complexo |
 | EC2 t4g.micro | 1GB RAM, 2 vCPU | ~$7.00 + EBS + transfer | ⚠️ Mais caro |
 | Elastic Beanstalk | Mínimo 1GB | ~$15.00+ | ❌ Overkill |
 | ECS Fargate | 0.5 vCPU, 1GB | ~$14.40 | ❌ Muito caro |
 
-### Infraestrutura Completa Recomendada
-
-| Item | Serviço AWS | Configuração | Custo Mensal |
-|------|-------------|--------------|--------------|
-| **Aplicação** | Lightsail Instance | 512MB RAM, 1 vCPU, 20GB SSD | $5.00 |
-| **Database** | PostgreSQL no Lightsail | (incluído na instância) | $0.00 |
-| **Arquivos Estáticos** | S3 Standard | ~5GB armazenamento + requests | $0.12 |
-| **DNS** | Route 53 | 1 hosted zone + queries | $0.90 |
-| **Snapshots/Backups** | Lightsail Snapshots | 2 snapshots × $0.05/GB × 20GB × 2 | $4.00 |
-| **CDN (opcional)** | CloudFront | 10GB transfer/mês | $2.00 |
-| | | **TOTAL** | **~$12.02/mês** |
-
----
-
-
-### AWS Lightsail - Plano $5/mês
+### AWS Lightsail - Plano $10/mês
 
 #### Recursos Incluídos:
-- **Memória RAM:** 512 MB
-- **CPU:** 1 vCPU (processador compartilhado)
-- **Armazenamento:** 20 GB SSD
-- **Transferência:** 1 TB/mês de data transfer
+- **Memória RAM:** 2 gB
+- **CPU:** 2 vCPU (processador compartilhado)
+- **Armazenamento:** 60 GB SSD
+- **Transferência:** 3 TB/mês de data transfer
 - **IP Estático:** Incluído (1 IPv4)
 - **Sistema Operacional:** Ubuntu 22.04 LTS
 
@@ -280,16 +264,16 @@ Com margem 20% = 1.68 × 1.2 = 2.016 GB ≈ 1.94 GB
 
 ### Resumo da Recomendação
 
-✅ **AWS Lightsail - Plano $5/mês** é a escolha ideal para o projeto Jiboia porque:
+✅ **AWS Lightsail - Plano $10/mês** é a escolha ideal para o projeto Jiboia porque:
 
 1. **Adequação Técnica:**
-   - 512 MB RAM > 244 MB necessários (margem de 109%)
-   - 1 vCPU > 0.1 vCPU necessária (margem de 900%)
-   - 1 TB transfer > 1.94 GB necessários (margem de 51400%)
+   - 2 GB RAM > 244 MB necessários (margem de 109%)
+   - 2 vCPU > 0.1 vCPU necessária (margem de 900%)
+   - 3 TB transfer > 1.94 GB necessários (margem de 51400%)
    - Throughput 810 req/s > 0.46 req/s necessária (margem de 176000%)
 
 2. **Custo-Benefício:**
-   - Custo total: **~$12/mês** (incluindo backups e DNS)
+   - Custo total: **~$10/mês** (incluindo backups e DNS)
    - Alternativa mais próxima (EC2 t4g.nano): ~$10/mês + complexidade
    - Lightsail inclui: IP estático, snapshots, interface simplificada
 
