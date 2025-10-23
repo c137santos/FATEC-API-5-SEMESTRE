@@ -46,6 +46,7 @@ class Issue(models.Model):
     def to_dict_json(self):
         return {
             "id": self.id,
+            "project_id": self.project.id if self.project else None,
             "description": self.description,
             "details": self.details,
             "status": {"id": self.status.id, "name": self.status.name} if self.status else None,
