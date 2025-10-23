@@ -95,3 +95,26 @@ def project_developers(request, project_id):
     developers = projects_svc.get_project_developers(project_id)
 
     return JsonResponse(developers, safe=False)
+
+
+@require_http_methods(["PATCH"])
+def update_developer_hour_value(request, project_id, user_id):
+    """
+    Update the hourly rate (valor_hora) for a specific developer in a project.
+    """
+    logger.info(f"API update developer hour value for project_id={project_id}, user_id={user_id}")
+
+    try:
+        body = json.loads(request.body)
+        valor_hora = body.get("valorHora")
+        hour_updated = projects_svc.update_developer_hour_value(project_id, user_id, valor_hora)
+
+        return JsonResponse(hour_updated, status=200)
+
+    except ValueError as e:
+        logger.error(f"ValueError updating developer hour value: {e}")
+        return JsonResponse({"error": str(e)}, status=400)
+
+    except Exception as e:
+        logger.error(f"Error updating developer hour value: {e}")
+        return JsonResponse({"error": "Internal server error"}, status=500)

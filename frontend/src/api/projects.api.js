@@ -25,5 +25,11 @@ export default {
 			total_worked_hours: totalWorkedHours,
 			hourValue,
 		}
+	},
+	updateDeveloperHourValue: async (projectId, userId, valorHora) => {
+		const response = await api.patch(`/api/core/projects/${projectId}/desenvolvedores/${userId}`, {
+			valorHora
+		})
+		return response.data
 	}
 }

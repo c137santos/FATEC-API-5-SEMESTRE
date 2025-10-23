@@ -168,3 +168,34 @@ def list_all_projects():
             }
         )
     return projects_list
+
+
+def update_developer_hour_value(project_id, user_id, valor_hora):
+    from jiboia.accounts.models import User
+
+    # Validate that the project exists
+    project = Project.objects.get(id=project_id)
+    user = User.objects.get(id=user_id)
+
+    user.valor_hora = valor_hora
+    user.save()
+
+    logger.info(f"Updated valor_hora for user {user_id} to {valor_hora}")
+
+    # Return updated developer info
+    total_seconds = (
+        TimeLog.objects.filter(id_issue__project=project, id_user=user).aggregate(total=Sum("seconds"))["total"] or 0
+    )
+    hours_worked = round(total_seconds / 3600) if total_seconds else 0
+
+    first_name = user.first_name.strip()
+    last_name = user.last_name.strip()
+    full_name = f"{first_name} {last_name}".strip()
+    nome = full_name if full_name else user.username
+
+    return {
+        "id": user.id,
+        "nome": nome,
+        "horasTrabalhadas": hours_worked,
+        "valorHora": float(valor_hora) if valor_hora is not None else None,
+    }
