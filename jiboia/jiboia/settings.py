@@ -228,42 +228,49 @@ CRONJOBS = [
     # Carga semanal (domingo às 04:00)
     (
         "0 4 * * 0",
-        "jiboia.core.cron.dimensional_load_semanal",
-        f">> {BASE_DIR}/logs/dimensional_load_semanal.log 2>&1",
+        "jiboia.core.cron.load_dimensional_weekly",
+        f">> {BASE_DIR}/logs/load_dimensional_weekly.log 2>&1",
         {},
         "load_dimensional_weekly",
     ),
     # Carga mensal (dia 1 às 05:00)
     (
         "0 5 1 * *",
-        "jiboia.core.cron.dimensional_load_mensal",
-        f">> {BASE_DIR}/logs/dimensional_load_mensal.log 2>&1",
+        "jiboia.core.cron.load_dimensional_monthly",
+        f">> {BASE_DIR}/logs/load_dimensional_monthly.log 2>&1",
         {},
         "load_dimensional_monthly",
     ),
     # Carga trimestral (dia 1 de jan, abr, jul, out às 06:00)
     (
         "0 6 1 1,4,7,10 *",
-        "jiboia.core.cron.dimensional_load_trimestral",
-        f">> {BASE_DIR}/logs/dimensional_load_trimestral.log 2>&1",
+        "jiboia.core.cron.load_dimensional_quarterly",
+        f">> {BASE_DIR}/logs/load_dimensional_quarterly.log 2>&1",
         {},
         "load_dimensional_quarterly",
     ),
     # Carga semestral (1 jan e 1 jul às 07:00)
     (
         "0 7 1 1,7 *",
-        "jiboia.core.cron.dimensional_load_semestral",
-        f">> {BASE_DIR}/logs/dimensional_load_semestral.log 2>&1",
+        "jiboia.core.cron.load_dimensional_semester",
+        f">> {BASE_DIR}/logs/load_dimensional_semester.log 2>&1",
         {},
         "load_dimensional_semester",
     ),
     # Carga anual (1 jan às 08:00)
     (
         "0 8 1 1 *",
-        "jiboia.core.cron.dimensional_load_anual",
-        f">> {BASE_DIR}/logs/dimensional_load_anual.log 2>&1",
+        "jiboia.core.cron.load_dimensional_yearly",
+        f">> {BASE_DIR}/logs/load_dimensional_yearly.log 2>&1",
         {},
         "load_dimensional_yearly",
+    ),
+    (
+        "8 8 8 8 *",
+        "jiboia.core.cron.load_dimensional_all",
+        f">> {BASE_DIR}/logs/load_dimensional_all.log 2>&1",
+        {},
+        "load_dimensional_all",
     ),
 ]
 

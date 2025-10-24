@@ -1,7 +1,7 @@
 # Descrição do Modelo Dimensional de Projetos
 Este modelo utiliza o esquema SnowFlake, otimizado para análises de desempenho e custos, com foco na imutabilidade dos registros de transação (Fato_issue) e na captura do estado do projeto ao longo do tempo (Fato_snapshot_projeto).
 
-![alt text](../assets/dimdb.png.png)
+![alt text](../assets/dimdb.png)
 
 # 📊 Modelo Dimensional - Fato Issue (Snowflake)
 

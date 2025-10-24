@@ -293,40 +293,44 @@ class DimProjetoService:
 
 
 class DimIntervaloTemporalService:
-    def __init__(self, granularity_type: TipoGranularidade):
+    def __init__(self, granularity_type: TipoGranularidade, refer: datetime.datetime = None):
         self.granularity_type = granularity_type
-        self.start_date, self.end_date = self.create_interval(granularity_type)
+        self.start_date, self.end_date = type(self).create_interval(granularity_type, refer)
         self.dimtemporal = self.save_dimtemporal()
 
-    def create_interval(self, tipo: TipoGranularidade, refer: datetime.datetime = None):
+    @classmethod
+    def create_interval(cls, tipo: TipoGranularidade, refer: datetime.datetime = None):
         if refer is None:
             refer = datetime.datetime.now()
 
         interval_methods = {
-            TipoGranularidade.DIA: self._interval_dia,
-            TipoGranularidade.SEMANA: self._interval_semana,
-            TipoGranularidade.MES: self._interval_mes,
-            TipoGranularidade.TRIMESTRE: self._interval_trimestre,
-            TipoGranularidade.SEMESTRE: self._interval_semestre,
-            TipoGranularidade.ANO: self._interval_ano,
+            TipoGranularidade.DIA: cls._interval_dia,
+            TipoGranularidade.SEMANA: cls._interval_semana,
+            TipoGranularidade.MES: cls._interval_mes,
+            TipoGranularidade.TRIMESTRE: cls._interval_trimestre,
+            TipoGranularidade.SEMESTRE: cls._interval_semestre,
+            TipoGranularidade.ANO: cls._interval_ano,
         }
         try:
             return interval_methods[tipo](refer)
         except KeyError:
             raise ValueError("Tipo de granularidade inválido")
 
-    def _interval_dia(self, refer):
+    @staticmethod
+    def _interval_dia(refer):
         start_date = refer.replace(hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date + datetime.timedelta(days=1)
         return start_date, end_date
 
-    def _interval_semana(self, refer):
+    @staticmethod
+    def _interval_semana(refer):
         start_date = refer - datetime.timedelta(days=refer.weekday())
         start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date + datetime.timedelta(weeks=1)
         return start_date, end_date
 
-    def _interval_mes(self, refer):
+    @staticmethod
+    def _interval_mes(refer):
         start_date = refer.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         if refer.month == 12:
             end_date = start_date.replace(year=refer.year + 1, month=1)
@@ -334,7 +338,8 @@ class DimIntervaloTemporalService:
             end_date = start_date.replace(month=refer.month + 1)
         return start_date, end_date
 
-    def _interval_trimestre(self, refer):
+    @staticmethod
+    def _interval_trimestre(refer):
         mes_base = ((refer.month - 1) // 3) * 3 + 1
         start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
         if mes_base == 10:
@@ -343,7 +348,8 @@ class DimIntervaloTemporalService:
             end_date = start_date.replace(month=mes_base + 3)
         return start_date, end_date
 
-    def _interval_semestre(self, refer):
+    @staticmethod
+    def _interval_semestre(refer):
         mes_base = 1 if refer.month <= 6 else 7
         start_date = refer.replace(month=mes_base, day=1, hour=0, minute=0, second=0, microsecond=0)
         if mes_base == 7:
@@ -352,7 +358,8 @@ class DimIntervaloTemporalService:
             end_date = start_date.replace(month=7)
         return start_date, end_date
 
-    def _interval_ano(self, refer):
+    @staticmethod
+    def _interval_ano(refer):
         start_date = refer.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
         end_date = start_date.replace(year=refer.year + 1)
         return start_date, end_date

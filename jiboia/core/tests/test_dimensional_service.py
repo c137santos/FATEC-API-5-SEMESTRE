@@ -702,13 +702,14 @@ def test_error_handling_missing_relations():
 @pytest.mark.django_db
 def test_empty_data_scenarios():
     """Testa cenários com dados vazios"""
+    intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
     service_dev = DimDevService()
     assert len(service_dev.devs) == 0
 
     service_issue = DimIssueService()
     assert len(service_issue.issues) == 0
 
-    service_projeto = DimProjetoService()
+    service_projeto = DimProjetoService(intervalo_tempo_dia)
     assert len(service_projeto.projetos_filtros) == 0
 
     service_types = DimIssueTypesService()

@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(help_text='ID Natural do Desenvolvedor', primary_key=True, serialize=False)),
                 ('dev_name', models.CharField(max_length=255)),
                 ('id_dev_jiba', models.IntegerField(db_index=True, help_text='ID do Desenvolvedor no jiboia')),
-                ('id_dev_jira', models.IntegerField(db_index=True, help_text='ID do Desenvolvedor no jira')),
+                ('id_dev_jira', models.CharField(help_text='ID do Desenvolvedor no jira', max_length=100)),
                 ('valor_hora', models.DecimalField(blank=True, decimal_places=2, help_text='Valor da hora do desenvolvedor', max_digits=10, null=True)),
             ],
             options={
