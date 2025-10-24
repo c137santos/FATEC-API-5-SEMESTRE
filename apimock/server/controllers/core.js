@@ -8,10 +8,12 @@ module.exports = {
     const mappedIssues = data.issues.map(issue => ({
       jira_id: issue.key,
       description: issue.fields.summary,
+      details: issue.fields.details,
       created_at: issue.fields.created,
       user_related: {
         user_name: issue.fields.assignee.displayName
-      }
+      },
+      time_spend_hours: issue.fields.timespent / 3600,
     }));
 
     const response = {

@@ -47,6 +47,7 @@ class Issue(models.Model):
         return {
             "id": self.id,
             "description": self.description,
+            "details": self.details,
             "status": {"id": self.status.id, "name": self.status.name} if self.status else None,
             "created_at": self.created_at.isoformat(),
             "start_date": self.start_date.isoformat() if self.start_date else None,

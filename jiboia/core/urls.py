@@ -13,4 +13,5 @@ urlpatterns = [
         views.update_developer_hour_value,
         name="update_developer_hour_value",
     ),
+    path("btncron-all", views.trigger_jira_sync, name='trigger_jira_sync'),
 ]

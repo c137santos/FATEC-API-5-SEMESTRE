@@ -95,3 +95,31 @@ def dimensional_load_daily():
         logger.error(f"[CRON] Carga dimensional falhou: {e}")
         raise e
     return True
+
+
+def jira_full_sync():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Starting FULL JIRA SYNC at {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
+    try:
+        projects_synced = jira_project()
+
+        if projects_synced:
+            issues_synced = jira_sync_issues_all_projects()
+        else:
+            logger.error("[CRON] Aborting issues sync because project sync failed.")
+            issues_synced = False
+
+        end_time = datetime.now()
+        duration = (end_time - start_time).total_seconds()
+
+        if projects_synced and issues_synced:
+            logger.info(f"[CRON] FULL JIRA SYNC finished successfully in {duration:.2f}s")
+            return True
+        else:
+            logger.error(f"[CRON] FULL JIRA SYNC failed after {duration:.2f}s")
+            return False
+        
+    except Exception as e:
+        logger.critical(f"[CRON] A critical error occured during full sync: {e}", exc_info=True)
+        return False
