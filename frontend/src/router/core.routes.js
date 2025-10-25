@@ -3,7 +3,6 @@
 import DefaultLayout from "@/layouts/default/DefaultLayout.vue"
 import OverviewView from "@/pages/core/OverviewView"
 import UserView from "@/pages/core/UserView"
-import IssueListView from "@/pages/core/IssueListView.vue"
 
 export default [
   {
@@ -14,11 +13,6 @@ export default [
         path: "overview",
         name: "overview",
         component: OverviewView,
-      },
-      {
-        path: "issues",
-        name: "issues",
-        component: IssueListView,
       },
       {
         path: "user",

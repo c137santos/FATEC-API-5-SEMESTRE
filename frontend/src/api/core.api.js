@@ -1,8 +1,8 @@
 import api from "./config.js"
 
 export default {
-  getIssues: async () => {
-    const response = await api.get("/api/core/issues")
+  getIssues: async (projectId, page = 1) => {
+    const response = await api.get(`/api/core/projects/${projectId}/issues?page=${page}`)
     return response.data
   },
   addNewIssue: async (description) => {

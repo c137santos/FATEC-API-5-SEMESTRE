@@ -45,6 +45,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import coreApi from '@/api/core.api.js'
 import PopUpIssue from './PopUpIssue.vue';
 
@@ -56,6 +57,7 @@ const headers = ref([
   { key: "actions", align: "center", sortable: false },
 ]);
 
+const route = useRoute();
 const issues = ref([]);
 const itemsPerPage = ref(10);
 const totalIssues = ref(0);
@@ -71,8 +73,10 @@ const abrirDialog = (issue) => {
 const searchIssues = async (page = 1) => {
   loading.value = true;
 
+  const projectId = route.params.id;
+
   try {
-    const response = await coreApi.getIssues(page);
+    const response = await coreApi.getIssues(projectId, page);
 
     issues.value = response.issues || [];
     totalIssues.value = response.total_items || 0;

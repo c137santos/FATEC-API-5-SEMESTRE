@@ -23,10 +23,14 @@ def add_issue(new_issue: str) -> dict:
     return issue.to_dict_json()
 
 
-def list_issues(page_number: int = 1):
-    logger.info("SERVICE list issues")
-    issues_list = Issue.objects.all().select_related("id_user", "status").order_by("-id")
-    paginator = Paginator(issues_list, 10)
+def list_issues(project_id: int, page_number: int = 1, per_page: int = 10):
+    logger.info(f"SERVICE list issues for project {project_id}")
+
+    issues_list = Issue.objects.filter(project_id=project_id).select_related("id_user", "status", "project")
+
+    issues_list = issues_list.defer("id_user__jira_id").order_by("-id")
+
+    paginator = Paginator(issues_list, per_page)
 
     try:
         page = paginator.page(page_number)
