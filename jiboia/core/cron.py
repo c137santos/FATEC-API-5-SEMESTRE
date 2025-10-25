@@ -102,96 +102,114 @@ def dimensional_load(time_interval):
 def dimensional_load_daily():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em diário {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
-    if prevent_redundant_cron(intervalo_tempo.start_date, intervalo_tempo.end_date, TipoGranularidade.DIA.value):
+
+    start_date, end_date = DimIntervaloTemporalService.create_interval(TipoGranularidade.DIA)
+    if prevent_redundant_cron(start_date, end_date, TipoGranularidade.DIA.value):
         logger.error(
             (
                 f"[CRON] Carga dimensional do tipo {TipoGranularidade.DIA.value} já existente "
-                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                f"para o período {start_date} a {end_date}. "
                 "Operação abortada."
             )
         )
         return False
+
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
     return dimensional_load(intervalo_tempo)
 
 
 def load_dimensional_weekly():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em semanal {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMANA)
-    if prevent_redundant_cron(intervalo_tempo.start_date, intervalo_tempo.end_date, TipoGranularidade.SEMANA.value):
+
+    start_date, end_date = DimIntervaloTemporalService.create_interval(TipoGranularidade.SEMANA)
+    if prevent_redundant_cron(start_date, end_date, TipoGranularidade.SEMANA.value):
         logger.error(
             (
                 f"[CRON] Carga dimensional do tipo {TipoGranularidade.SEMANA.value} já existente "
-                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                f"para o período {start_date} a {end_date}. "
                 "Operação abortada."
             )
         )
         return False
+
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMANA)
     return dimensional_load(intervalo_tempo)
 
 
 def load_dimensional_monthly():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em mensal {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.MES)
-    if prevent_redundant_cron(intervalo_tempo.start_date, intervalo_tempo.end_date, TipoGranularidade.MES.value):
+
+    start_date, end_date = DimIntervaloTemporalService.create_interval(TipoGranularidade.MES)
+    if prevent_redundant_cron(start_date, end_date, TipoGranularidade.MES.value):
         logger.error(
             (
                 f"[CRON] Carga dimensional do tipo {TipoGranularidade.MES.value} já existente "
-                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                f"para o período {start_date} a {end_date}. "
                 "Operação abortada."
             )
         )
         return False
+
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.MES)
     return dimensional_load(intervalo_tempo)
 
 
 def load_dimensional_quarterly():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em trimestre {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.TRIMESTRE)
-    if prevent_redundant_cron(intervalo_tempo.start_date, intervalo_tempo.end_date, TipoGranularidade.TRIMESTRE.value):
+
+    start_date, end_date = DimIntervaloTemporalService.create_interval(TipoGranularidade.TRIMESTRE)
+    if prevent_redundant_cron(start_date, end_date, TipoGranularidade.TRIMESTRE.value):
         logger.error(
             (
                 f"[CRON] Carga dimensional do tipo {TipoGranularidade.TRIMESTRE.value} já existente "
-                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                f"para o período {start_date} a {end_date}. "
                 "Operação abortada."
             )
         )
         return False
+
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.TRIMESTRE)
     return dimensional_load(intervalo_tempo)
 
 
 def load_dimensional_semester():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em semestre {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMESTRE)
-    if prevent_redundant_cron(intervalo_tempo.start_date, intervalo_tempo.end_date, TipoGranularidade.SEMESTRE.value):
+
+    start_date, end_date = DimIntervaloTemporalService.create_interval(TipoGranularidade.SEMESTRE)
+    if prevent_redundant_cron(start_date, end_date, TipoGranularidade.SEMESTRE.value):
         logger.error(
             (
                 f"[CRON] Carga dimensional do tipo {TipoGranularidade.SEMESTRE.value} já existente "
-                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                f"para o período {start_date} a {end_date}. "
                 "Operação abortada."
             )
         )
         return False
+
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMESTRE)
     return dimensional_load(intervalo_tempo)
 
 
 def load_dimensional_yearly():
     start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional em anual {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.ANO)
-    if prevent_redundant_cron(intervalo_tempo.start_date, intervalo_tempo.end_date, TipoGranularidade.ANO.value):
+
+    start_date, end_date = DimIntervaloTemporalService.create_interval(TipoGranularidade.ANO)
+    if prevent_redundant_cron(start_date, end_date, TipoGranularidade.ANO.value):
         logger.error(
             (
                 f"[CRON] Carga dimensional do tipo {TipoGranularidade.ANO.value} já existente "
-                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                f"para o período {start_date} a {end_date}. "
                 "Operação abortada."
             )
         )
         return False
+
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.ANO)
     return dimensional_load(intervalo_tempo)
 
 
