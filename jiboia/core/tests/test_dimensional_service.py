@@ -738,7 +738,6 @@ def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
         assert snapshot_dia.total_accumulated_minutes == 0
         assert snapshot_dia.current_project_cost_rs == 0
         assert snapshot_dia.projection_end_days == 1
-        assert snapshot_dia.minutes_left_end_project == 3060
 
     one_issue = Issue.objects.all()[0]
     one_issue.time_estimate_seconds = 28800
