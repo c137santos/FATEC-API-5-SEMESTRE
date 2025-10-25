@@ -142,6 +142,47 @@
 			</v-row>
 		</v-container>
 
+		<!-- Dialog para editar valor da hora -->
+		<v-dialog v-model="editDialogVisible" max-width="500px">
+			<v-card>
+				<v-card-title class="text-h5">
+					Editar Valor da Hora
+				</v-card-title>
+				<v-card-text>
+					<div class="mb-4">
+						<strong>Desenvolvedor:</strong> {{ editingDeveloper?.nome }}
+					</div>
+					<v-text-field
+						v-model.number="newHourValue"
+						label="Valor da Hora (R$)"
+						type="number"
+						step="0.01"
+						min="0"
+						prefix="R$"
+						variant="outlined"
+						:rules="[v => v >= 0 || 'O valor deve ser maior ou igual a 0']"
+					></v-text-field>
+				</v-card-text>
+				<v-card-actions>
+					<v-spacer></v-spacer>
+					<v-btn
+						color="grey"
+						variant="text"
+						@click="cancelEdit"
+					>
+						Cancelar
+					</v-btn>
+					<v-btn
+						color="primary"
+						variant="flat"
+						@click="saveHourValue"
+					>
+						Salvar
+					</v-btn>
+				</v-card-actions>
+			</v-card>
+		</v-dialog>
+
 	</DashboardLayout>
 </template>
 
@@ -292,9 +333,38 @@ const formatCurrency = (value) => {
 	}).format(value || 0)
 }
 
+const editDialogVisible = ref(false)
+const editingDeveloper = ref(null)
+const newHourValue = ref(0)
+
 const editDeveloper = (item) => {
-	console.log('Editar desenvolvedor:', item)
-	// TODO: quando clicar no botão de editar, deve-se redirecionar para a página de usuários filtrado pelo desenvolvedor
+	editingDeveloper.value = item
+	newHourValue.value = item.valorHora
+	editDialogVisible.value = true
+}
+
+const saveHourValue = async () => {
+	try {
+		await projectsApi.updateDeveloperHourValue(
+			route.params.id,
+			editingDeveloper.value.id,
+			newHourValue.value
+		)
+
+		editingDeveloper.value.valorHora = newHourValue.value
+
+		await loadDevelopers()
+
+		editDialogVisible.value = false
+	} catch (error) {
+		console.error('Erro ao atualizar valor da hora:', error)
+	}
+}
+
+const cancelEdit = () => {
+	editDialogVisible.value = false
+	editingDeveloper.value = null
+	newHourValue.value = 0
 }
 
 const loadDevelopers = async () => {

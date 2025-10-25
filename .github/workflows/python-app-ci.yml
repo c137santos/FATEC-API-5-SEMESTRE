@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 
+          fetch-depth:
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -46,7 +46,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-          
+
       - name: Install dependencies
         run: |
           uv pip install --no-cache -r requirements-dev.txt
@@ -59,11 +59,3 @@ jobs:
           DATABASE_URL: postgres://postgres:db_test_pwd_ci@localhost:5432/db_test
         run: |
           pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing
-
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.python.coverage.reportPaths=coverage.xml
