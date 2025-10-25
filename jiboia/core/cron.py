@@ -1,7 +1,9 @@
 import logging
 from datetime import datetime
 
-from jiboia.core.models import Project
+from django.utils import timezone
+
+from jiboia.core.models import DimIntervaloTemporal, Project
 from jiboia.core.service.dimensional_svc import DimensionalService, DimIntervaloTemporalService, TipoGranularidade
 
 from .service.jira_svc import JiraService
@@ -71,31 +73,164 @@ def jira_project():
     return success
 
 
-def dimensional_load_daily():
+def dimensional_load(time_interval):
     """
     Função executada por cron para carregar dados dimensionais.
     Esta função é chamada pelo django-crontab de acordo com a programação configurada
     em settings.py. Ela registra o resultado e pode ser expandida para enviar alertas em caso de falha.
     """
     start_time = datetime.now()
-    logger.info(f"[CRON] Iniciando carga dimensional em {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"[CRON] Iniciando carga dimensional em diário {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+
     try:
-        intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
-        success = DimensionalService.generate_project_snapshot_data(intervalo_tempo)
+        success = DimensionalService.generate_project_snapshot_data(time_interval)
         if not success:
             logger.error("[CRON] Carga dimensional falhou")
             return
-        success = DimensionalService.generate_fact_issue(intervalo_tempo)
+        success = DimensionalService.generate_fact_issue(time_interval)
         if not success:
             logger.error("[CRON] Carga dimensional falhou")
             return
-        success = DimensionalService.generate_fact_worklog(intervalo_tempo)
+        success = DimensionalService.generate_fact_worklog(time_interval)
         logger.info("[CRON] Carga dimensional concluída com sucesso.")
     except Exception as e:
         logger.error(f"[CRON] Carga dimensional falhou: {e}")
         raise e
     return True
 
+
+def dimensional_load_daily():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em diário {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    if prevent_redundant_cron(intervalo_tempo, TipoGranularidade.DIA.value):
+        logger.error(
+            (
+                f"[CRON] Carga dimensional do tipo {TipoGranularidade.DIA.value} já existente "
+                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                "Operação abortada."
+            )
+        )
+        return False
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_weekly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em semanal {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMANA)
+    if prevent_redundant_cron(intervalo_tempo, TipoGranularidade.SEMANA.value):
+        logger.error(
+            (
+                f"[CRON] Carga dimensional do tipo {TipoGranularidade.SEMANA.value} já existente "
+                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                "Operação abortada."
+            )
+        )
+        return False
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_monthly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em mensal {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.MES)
+    if prevent_redundant_cron(intervalo_tempo, TipoGranularidade.MES.value):
+        logger.error(
+            (
+                f"[CRON] Carga dimensional do tipo {TipoGranularidade.MES.value} já existente "
+                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                "Operação abortada."
+            )
+        )
+        return False
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_quarterly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em trimestre {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.TRIMESTRE)
+    if prevent_redundant_cron(intervalo_tempo, TipoGranularidade.TRIMESTRE.value):
+        logger.error(
+            (
+                f"[CRON] Carga dimensional do tipo {TipoGranularidade.TRIMESTRE.value} já existente "
+                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                "Operação abortada."
+            )
+        )
+        return False
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_semester():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em semestre {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.SEMESTRE)
+    if prevent_redundant_cron(intervalo_tempo, TipoGranularidade.SEMESTRE.value):
+        logger.error(
+            (
+                f"[CRON] Carga dimensional do tipo {TipoGranularidade.SEMESTRE.value} já existente "
+                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                "Operação abortada."
+            )
+        )
+        return False
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_yearly():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional em anual {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    intervalo_tempo = DimIntervaloTemporalService(TipoGranularidade.ANO)
+    if prevent_redundant_cron(intervalo_tempo, TipoGranularidade.ANO.value):
+        logger.error(
+            (
+                f"[CRON] Carga dimensional do tipo {TipoGranularidade.ANO.value} já existente "
+                f"para o período {intervalo_tempo.start_date} a {intervalo_tempo.end_date}. "
+                "Operação abortada."
+            )
+        )
+        return False
+    return dimensional_load(intervalo_tempo)
+
+
+def load_dimensional_all():
+    start_time = datetime.now()
+    logger.info(f"[CRON] Iniciando carga dimensional completa {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    try:
+        i = 0
+        for tipo in TipoGranularidade:
+            print(i + 1, tipo.value)
+            start_date, end_date = DimIntervaloTemporalService.create_interval(tipo)
+
+            if timezone.is_naive(start_date):
+                start_date = timezone.make_aware(start_date)
+            if timezone.is_naive(end_date):
+                end_date = timezone.make_aware(end_date)
+
+            if prevent_redundant_cron(start_date, end_date, tipo.value):
+                continue
+            temporal_int = DimIntervaloTemporalService(tipo)
+            dimensional_load(temporal_int)
+        logger.info("[CRON] Carga dimensional completa concluída com sucesso.")
+        return True
+    except Exception as e:
+        logger.error(f"[CRON] Carga dimensional completa falhou: {e}")
+        return False
+
+
+def prevent_redundant_cron(start_date, end_date, gran_type):
+    exists = DimIntervaloTemporal.objects.filter(
+        granularity_type=gran_type,
+        start_date=start_date,
+        end_date=end_date,
+    ).exists()
+    if exists:
+        logger.error(f"[CRON] Já existe carga dimensional {gran_type} para {start_date}. Operação abortada.")
+        return True
+    return False
+ 
 
 def jira_full_sync():
     start_time = datetime.now()

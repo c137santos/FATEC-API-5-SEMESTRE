@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 import pytest
 from django.db import IntegrityError
 from django.utils import timezone
+from freezegun import freeze_time
 
 from jiboia.accounts.models import User
 from jiboia.core.models import (
@@ -455,8 +456,6 @@ def test_dim_dev_service_update_existing():
         valor_hora=50.0,
         jira_id=300,
     )
-
-    # Criar DimDev inicial
     DimDev.objects.create(
         id_dev_jiba=dev.id,
         id_dev_jira=dev.jira_id,
@@ -517,8 +516,8 @@ def test_dim_projeto_service():
         jira_id=1002,
         projectTypeKey="business",
     )
-
-    service = DimProjetoService()
+    intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    service = DimProjetoService(intervalo_tempo_dia)
     assert len(service.projetos_filtros) == 2
     dim_projetos = DimProjeto.objects.all()
     assert dim_projetos.count() == 2
@@ -651,17 +650,14 @@ def test_dim_issue_service_with_timelogs():
 
     service = DimIssueService()
 
-    # Deve incluir apenas issues com TimeLogs de hoje
     assert len(service.issues) == 2
 
-    # Verificar se os dados estão corretos
     issue_data_1 = next((item for item in service.issues if item["issue"].id_issue_jira == 3001), None)
     issue_data_2 = next((item for item in service.issues if item["issue"].id_issue_jira == 3002), None)
 
     assert issue_data_1 is not None
     assert issue_data_2 is not None
 
-    # Verificar cálculo de minutos
     assert issue_data_1["total_minutos_hoje"] == 60.0  # 3600 segundos / 60
     assert issue_data_2["total_minutos_hoje"] == 30.0  # 1800 segundos / 60
 
@@ -695,28 +691,25 @@ def test_error_handling_missing_relations():
 
     TimeLog.objects.create(id_user=user, id_issue=issue, seconds=1800, log_date=timezone.now(), jira_id=701)
 
-    # Execute e Assert
-    # Deve falhar graciosamente ou criar apenas os dados possíveis
     try:
         DimensionalService.generate_fact_worklog(TipoGranularidade.DIA)
-        # Se não falhar, verificar se criou pelo menos algumas dimensões
         assert DimDev.objects.filter(id_dev_jira=600).exists()
         assert DimProjeto.objects.filter(id_project_jira=4001).exists()
     except Exception as e:
-        # Se falhar, deve ser uma exceção esperada
         assert isinstance(e, (IntegrityError, AttributeError, DimProjeto.DoesNotExist, DimTipoIssue.DoesNotExist))
 
 
 @pytest.mark.django_db
 def test_empty_data_scenarios():
     """Testa cenários com dados vazios"""
+    intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
     service_dev = DimDevService()
     assert len(service_dev.devs) == 0
 
     service_issue = DimIssueService()
     assert len(service_issue.issues) == 0
 
-    service_projeto = DimProjetoService()
+    service_projeto = DimProjetoService(intervalo_tempo_dia)
     assert len(service_projeto.projetos_filtros) == 0
 
     service_types = DimIssueTypesService()
@@ -724,3 +717,67 @@ def test_empty_data_scenarios():
 
     service_status = DimStatusTypeService()
     assert len(service_status.status_types) == 0
+
+
+@pytest.mark.django_db
+def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
+    """Deve gerar snapshots diários e mensais corretamente"""
+
+    ontem_timestamp = datetime.now() - timedelta(days=1)
+    ontem = ontem_timestamp.strftime("%Y-%m-%d")
+    with freeze_time(ontem):
+        intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
+        success = DimensionalService.generate_project_snapshot_data(intervalo_tempo_dia)
+
+        assert success is True, "A geração de snapshot diário deve retornar True"
+
+        snapshot_dia = FactProjectSnapshot.objects.all().first()
+        assert snapshot_dia is not None, "Snapshot diário deve ser criado no FactProjectSnapshot"
+        assert snapshot_dia.snapshot_interval.granularity_type == TipoGranularidade.DIA.value
+        assert snapshot_dia.project.project_name == setup_issues_data.name
+        assert snapshot_dia.total_accumulated_minutes == 0
+        assert snapshot_dia.current_project_cost_rs == 0
+        assert snapshot_dia.projection_end_days == 1
+        assert snapshot_dia.minutes_left_end_project == 3060
+
+    one_issue = Issue.objects.all()[0]
+    one_issue.time_estimate_seconds = 28800
+    one_issue.save()
+    dev = User.objects.create_user(
+        username="dev1",
+        first_name="João",
+        last_name="Silva",
+        email="joao@example.com",
+        password="pass123",
+        valor_hora=75.0,
+        jira_id=one_issue.id,
+    )
+    timelog = TimeLog.objects.create(
+        id_issue=one_issue, id_user=dev, seconds=1800, log_date=timezone.now(), jira_id=one_issue.id
+    )
+    intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
+    success_mes = DimensionalService.generate_project_snapshot_data(intervalo_tempo_dia)
+    hoje = date.today()
+    snapshot_dia = FactProjectSnapshot.objects.get(created_at__date=hoje)
+
+    assert snapshot_dia is not None, "Snapshot diário deve ser criado no FactProjectSnapshot"
+    assert snapshot_dia.snapshot_interval.granularity_type == TipoGranularidade.DIA.value
+    assert snapshot_dia.project.project_name == setup_issues_data.name
+    assert snapshot_dia.total_accumulated_minutes == 30
+    assert snapshot_dia.current_project_cost_rs == (timelog.seconds / 3600) * dev.valor_hora
+    assert snapshot_dia.projection_end_days == 2
+    assert snapshot_dia.average_hour_value == 75
+
+    assert success_mes is True, "A geração de snapshot mensal deve retornar True"
+    intervalo_mes = DimIntervaloTemporalService(TipoGranularidade.MES)
+    success_mes = DimensionalService.generate_project_snapshot_data(intervalo_mes)
+    snapshot_mes = FactProjectSnapshot.objects.filter(
+        snapshot_interval__granularity_type=TipoGranularidade.MES.value
+    ).first()
+
+    assert snapshot_mes is not None, "Snapshot mensal deve ser criado"
+    assert snapshot_mes.snapshot_interval.start_date.month == timezone.now().month
+    assert snapshot_mes.total_accumulated_minutes >= snapshot_dia.total_accumulated_minutes
+    assert snapshot_mes.projection_end_days >= snapshot_dia.projection_end_days
+    assert snapshot_mes.average_hour_value == 75
+    assert snapshot_mes.total_accumulated_minutes == 30
