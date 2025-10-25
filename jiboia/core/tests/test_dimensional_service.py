@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 
 import pytest
 from django.db import IntegrityError
@@ -723,7 +723,7 @@ def test_empty_data_scenarios():
 def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
     """Deve gerar snapshots diários e mensais corretamente"""
 
-    ontem_timestamp = datetime.now() - timedelta(days=1)
+    ontem_timestamp = timezone.now() - timedelta(days=1)
     ontem = ontem_timestamp.strftime("%Y-%m-%d")
     with freeze_time(ontem):
         intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
@@ -757,7 +757,7 @@ def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
     )
     intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
     success_mes = DimensionalService.generate_project_snapshot_data(intervalo_tempo_dia)
-    hoje = date.today()
+    hoje = timezone.now().date()
     snapshot_dia = FactProjectSnapshot.objects.get(created_at__date=hoje)
 
     assert snapshot_dia is not None, "Snapshot diário deve ser criado no FactProjectSnapshot"

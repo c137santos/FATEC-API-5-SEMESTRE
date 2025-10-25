@@ -43,14 +43,20 @@ def list_issues(project_id: int, page_number: int = 1, per_page: int = 10):
             issue_dict.pop("end_date", None)
 
             user_name = None
+            user_id = None
             if item.id_user:
                 user_name = item.id_user.get_full_name()
+                user_id = item.id_user.id
+
+            time_spend_hours = 0
+            if item.time_estimate_seconds:
+                time_spend_hours = item.time_estimate_seconds / 3600
 
             issue_dict.update(
                 {
                     "jira_id": item.jira_id,
-                    "user_related": {"id": item.id_user.id, "user_name": user_name} if item.id_user else None,
-                    "time_spend_hours": item.time_estimate_seconds / 3600,
+                    "user_related": {"id": user_id, "user_name": user_name} if item.id_user else None,
+                    "time_spend_hours": time_spend_hours,
                 }
             )
             issues_data.append(issue_dict)
@@ -62,7 +68,8 @@ def list_issues(project_id: int, page_number: int = 1, per_page: int = 10):
             "total_items": paginator.count,
         }
 
-    except Exception:
+    except Exception as e:
+        logger.error(f"SERVICE error listing issues for project {project_id}: {e}", exc_info=True)
         return {
             "issues": [],
             "current_page": page_number,
