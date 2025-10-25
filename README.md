@@ -9,7 +9,7 @@
 
 <p align="center">
   | <a href ="#desafio"> Desafio</a>  |
-  <a href ="#solucao"> Solução</a>  |   
+  <a href ="#solucao"> Solução</a>  |
   <a href ="#backlog"> Backlog do Produto</a>  |
   <a href ="#dor">DoR</a>  |
   <a href ="#dod">DoD</a>  |
@@ -18,15 +18,15 @@
   <a href ="#manual">Manual de Instalação</a>  |
   <a href ="#branchs">Manual de Branchs</a>  |
   <a href ="#pb">Product backlog -> DOR e DOD</a>  |
-  <a href ="#manual_usuario">Manual do usuário</a>  | 
+  <a href ="#manual_usuario">Manual do usuário</a>  |
   <a href ="#equipe"> Equipe</a> |
 </p>
 
-> Status do Projeto: Em progresso  🚧 
+> Status do Projeto: Em progresso  🚧
 >
 >
 > Pasta de Documentação: [Link](./documentacao) 📄
-> 
+>
 > Video do Projeto:  Em progresso  📽️
 
 ## 🏅 Desafio <a id="desafio"></a>
@@ -63,7 +63,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 | Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
-| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) |  |
+| 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) | [Sprint 2 entrega](https://drive.google.com/file/d/1ts-Tc75Hhq3WGDdZoDllG1HI9AAI6o32/view?usp=sharing) |
 | 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |  |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
@@ -115,31 +115,25 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
     </tr>
     <tr>
       <td>Marília Moraes</td>
-      <td>Product Owner</td>
+      <td>Desenvolvedora</td>
       <td><a href="https://github.com/marilia-borgo"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/mariliaborgo/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
       <td>Maria Clara Santos</td>
-      <td>Scrum Master</td>
+      <td>Desenvolvedora</td>
       <td><a href="https://github.com/c137santos"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/c137santos/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
-      <td>Matheus Marciano</td>
-      <td>Desenvolvedor</td>
-      <td><a href="https://github.com/MarcyLeite"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/matheus-marciano-leite/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
-    </tr>
-    <tr>
       <td>Yan Yamim</td>
-      <td>Desenvolvedor</td>
+      <td>Product Owner</td>
       <td><a href="https://github.com/YanYamim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/yan-yamim-185220278/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
       <td>Jean Rodrigues</td>
-      <td>Desenvolvedor</td>
+      <td>Scrum Master</td>
       <td><a href="https://github.com/JeanRodrigues1"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/jean-rodrigues-0569a0251/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
