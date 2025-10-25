@@ -1,6 +1,7 @@
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 import pytest
+from django.utils import timezone
 
 from jiboia.core.models import Issue, IssueType, Project, StatusType
 
@@ -20,7 +21,7 @@ def setup_issues_data(db):
         uuid="test-uuid",
         projectTypeKey="software",
         start_date_project=date(2025, 1, 1),
-        end_date_project=datetime.now() + timedelta(days=1),
+        end_date_project=(timezone.now() + timedelta(days=1)).date(),
     )
 
     status = StatusType.objects.create(key="pending", name="Pendente", jira_id=601)

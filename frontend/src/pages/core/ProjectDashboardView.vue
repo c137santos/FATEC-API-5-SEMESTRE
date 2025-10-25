@@ -111,13 +111,13 @@
 				<v-col>
 					<v-card class="d-flex flex-column ga-2 pa-4">
 						<h3 class="d-flex justify-center">Issues Ativas</h3>
-						<span class="text-h4 d-flex justify-center">{{ activeIssues }}</span>
+						<span class="text-h4 d-flex justify-center">{{ activeIssues || 0 }}</span>
 					</v-card>
 				</v-col>
 				<v-col>
 					<v-card class="d-flex flex-column ga-2 pa-4">
 						<h3 class="d-flex justify-center">Issues Concluidas</h3>
-						<span class="text-h4 d-flex justify-center">{{ concludedIssues }}</span>
+						<span class="text-h4 d-flex justify-center">{{ concludedIssues || 0}}</span>
 					</v-card>
 				</v-col>
 			</v-row>

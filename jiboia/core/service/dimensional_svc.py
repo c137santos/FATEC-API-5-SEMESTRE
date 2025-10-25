@@ -301,7 +301,7 @@ class DimIntervaloTemporalService:
     @classmethod
     def create_interval(cls, tipo: TipoGranularidade, refer: datetime.datetime = None):
         if refer is None:
-            refer = datetime.datetime.now()
+            refer = timezone.now()
 
         interval_methods = {
             TipoGranularidade.DIA: cls._interval_dia,
