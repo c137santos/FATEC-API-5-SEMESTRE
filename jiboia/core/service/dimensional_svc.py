@@ -103,6 +103,7 @@ class DimensionalService:
                         type_issue__jira_id=issue_type["id_type_jira"],
                         status__jira_id=status["id_status_jira"],
                     ).count()
+                    # garantir que sem status sejam no_status
 
                     FactIssue.objects.create(
                         project=projeto["project"],
@@ -371,6 +372,59 @@ class DimIntervaloTemporalService:
             end_date=self.end_date,
         )
         return self.dimtemporal
+
+    @classmethod
+    def create_interval_retro(
+        cls,
+        tipo: TipoGranularidade,
+        issues_breakdown_months: int = 0,
+        refer: datetime.datetime = None,
+    ):
+        """
+        Cria múltiplos intervalos retroativos com base na granularidade e quantidade de meses.
+        Exemplo: gerar intervalos para os últimos 3 meses.
+        """
+        if refer is None:
+            refer = timezone.now()
+
+        interval_methods = {
+            TipoGranularidade.DIA: cls._interval_dia,
+            TipoGranularidade.SEMANA: cls._interval_semana,
+            TipoGranularidade.MES: lambda r: cls._interval_mes_retro(r, issues_breakdown_months),
+            TipoGranularidade.TRIMESTRE: cls._interval_trimestre,
+            TipoGranularidade.SEMESTRE: cls._interval_semestre,
+            TipoGranularidade.ANO: cls._interval_ano,
+        }
+
+        try:
+            return interval_methods[tipo](refer)
+        except KeyError:
+            raise ValueError("Tipo de granularidade inválido")
+
+    @staticmethod
+    def _interval_mes_retro(refer, months_back: int):
+        """
+        Retorna um dicionário com os intervalos dos últimos N meses a partir da data de referência.
+        Usa a mesma lógica de _interval_mes.
+        """
+        interval_dict = {}
+        for i in range(months_back):
+            month = refer.month - i
+            year = refer.year
+            if month <= 0:
+                month += 12
+                year -= 1
+
+            ref_date = refer.replace(year=year, month=month)
+
+            start_date, end_date = DimIntervaloTemporalService._interval_mes(ref_date)
+            key = f"{ref_date.year}-{ref_date.month:02d}"
+            interval_dict[key] = {
+                "start_date": start_date,
+                "end_date": end_date,
+            }
+
+        return interval_dict
 
 
 class DimIssueTypesService:

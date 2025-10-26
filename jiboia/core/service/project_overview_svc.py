@@ -1,11 +1,13 @@
 import logging
-from calendar import monthrange
 from datetime import timedelta
 
 from django.db.models import Sum
 from django.utils import timezone
 
-from ..models import Issue, IssueType, Project, StatusType, TimeLog
+from jiboia.core.service import issues_type_svc
+from jiboia.core.service.dimensional_svc import DimIntervaloTemporalService, TipoGranularidade
+
+from ..models import DimIntervaloTemporal, FactIssue, Issue, IssueType, Project, StatusType, TimeLog
 
 logger = logging.getLogger(__name__)
 
@@ -13,36 +15,29 @@ FORMAT_DATE_MONTH = "%m/%Y"
 FORMAT_DATE_COMPLETE = "%d/%m/%Y"
 
 
-def _get_issues_per_month(project, all_status_types, issues_breakdown_months):
-    """Helper function to get issues per month breakdown"""
+def _get_issues_per_month(project, issues_breakdown_months):
+    """Helper function to get issues per month breakdown, with dynamic status fields."""
     issues_per_month = []
-    today = timezone.now()
+    interval_dict = DimIntervaloTemporalService.create_interval_retro(TipoGranularidade.MES, issues_breakdown_months)
 
-    for i in range(issues_breakdown_months - 1, -1, -1):
-        date_month = today - timedelta(days=30 * i)
-        month_start = date_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        month_end_day = monthrange(date_month.year, date_month.month)[1]
-        month_end = date_month.replace(day=month_end_day, hour=23, minute=59, second=59, microsecond=999999)
+    all_status_types = issues_type_svc.list_type_issues()
+    status_keys = [status["name"].lower().replace(" ", "_").replace("-", "_") for status in all_status_types]
+    status_dict_inited = {key: 0 for key in status_keys}
 
-        # Dictionary to hold counts for each status
-        month_data = {"date": date_month.strftime(FORMAT_DATE_MONTH)}
+    for key, interval in interval_dict.items():
+        start_date = interval["start_date"]
+        dim_interval = DimIntervaloTemporal.objects.filter(
+            granularity_type=TipoGranularidade.MES, start_date=start_date
+        ).first()
+        status_dict = status_dict_inited.copy()
+        month_data = {"date": start_date.strftime(FORMAT_DATE_MONTH), **status_dict}
 
-        # Count issues created in this month for each status type
-        for status in all_status_types:
-            count = Issue.objects.filter(
-                project=project, created_at__gte=month_start, created_at__lte=month_end, status=status
-            ).count()
+        if dim_interval:
+            fatos = FactIssue.objects.filter(worklog_interval=dim_interval, project=project).select_related("status")
 
-            status_key = status.key.lower().replace(" ", "_").replace("-", "_")
-            month_data[status_key] = count
-
-        # Count issues created in this month with no status
-        no_status_count = Issue.objects.filter(
-            project=project, created_at__gte=month_start, created_at__lte=month_end, status__isnull=True
-        ).count()
-        if no_status_count > 0:
-            month_data["no_status"] = no_status_count
-
+            for fato in fatos:
+                status_key = fato.status.key.lower().replace(" ", "_").replace("-", "_")
+                month_data[status_key] = month_data.get(status_key, 0) + (fato.total_issue or 0)
         issues_per_month.append(month_data)
 
     return issues_per_month
@@ -177,7 +172,7 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
     overview = {
         "project_id": project.id,
         "name": project.name,
-        "issues_per_month": _get_issues_per_month(project, all_status_types, issues_breakdown_months),
+        "issues_per_month": _get_issues_per_month(project, issues_breakdown_months),
         "issues_today": _get_issues_today(project, all_status_types),
         "burndown": _get_burndown_data(project, burndown_days),
         "total_worked_hours": _get_total_worked_hours(project),
