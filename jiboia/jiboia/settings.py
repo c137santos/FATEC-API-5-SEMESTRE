@@ -65,6 +65,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "jiboia.base.middlewares.CsrfTokenExemptionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -143,9 +144,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = config(
-    "DJANGO_STATIC_ROOT", default=os.path.join(BASE_DIR.parent, "static")
-)
+STATIC_ROOT = config("DJANGO_STATIC_ROOT", default=os.path.join(BASE_DIR.parent, "static"))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -177,17 +176,13 @@ LOGGING = {
     "formatters": {
         "verbose": DEFAULT_FORMATTER_CONFIG,
         "console": DEFAULT_FORMATTER_CONFIG,
-        "django":DEFAULT_FORMATTER_CONFIG,
+        "django": DEFAULT_FORMATTER_CONFIG,
     },
-
     "handlers": {
         "console": BASE_STREAM_HANDLER,
         "django": BASE_STREAM_HANDLER,
     },
-    "loggers": {
-        "": BASE_LOGGER_CONFIG,
-        "django.server": BASE_LOGGER_CONFIG
-    },
+    "loggers": {"": BASE_LOGGER_CONFIG, "django.server": BASE_LOGGER_CONFIG},
 }
 
 # Configurações da API do Jira
@@ -197,17 +192,87 @@ JIRA_API_URL = config("JIRA_API_URL", default="https://necto.atlassian.net")
 
 # Configuração do django-crontab
 
-# Cron jobs configuration
 CRONJOBS = [
-    # Healthcheck at midnight (existing)
-    ('0 0 * * *', 'jiboia.core.cron.jira_healthcheck', 
-     '>> /tmp/jira_healthcheck.log 2>&1', {}, 'jira_daily_healthcheck'),
-    # New: Sync issues for all projects at 3 AM (separate flow)
-    ('0 3 * * *', 'jiboia.core.cron.jira_sync_issues_all_projects',
-     '>> /tmp/jira_sync_issues.log 2>&1', {}, 'jira_sync_issues_all_projects'),
-    ('0 1 * * *', 'jiboia.core.cron.jira_project', 
-     '>> /tmp/jira_project.log 2>&1', {}, 'jira_daily_project')
+    # Verificação de saúde do JIRA
+    (
+        "0 0 * * *",  # 00:00 todos os dias
+        "jiboia.core.cron.jira_healthcheck",
+        f">> {BASE_DIR}/logs/jira_healthcheck.log 2>&1",
+        {},
+        "jira_daily_healthcheck",
+    ),
+    # Sincronização diária de issues
+    (
+        "0 1 * * *",  # 01:00 todos os dias
+        "jiboia.core.cron.jira_sync_issues_all_projects",
+        f">> {BASE_DIR}/logs/jira_sync_issues.log 2>&1",
+        {},
+        "jira_sync_issues_all_projects",
+    ),
+    # Atualização de projetos
+    (
+        "0 2 * * *",  # 02:00 todos os dias
+        "jiboia.core.cron.jira_project",
+        f">> {BASE_DIR}/logs/jira_project.log 2>&1",
+        {},
+        "jira_daily_project",
+    ),
+    # Carga dimensional diária
+    (
+        "0 3 * * *",  # 03:00 todos os dias
+        "jiboia.core.cron.dimensional_load_daily",
+        f">> {BASE_DIR}/logs/dimensional_load_daily.log 2>&1",
+        {},
+        "load_dimensional_daily",
+    ),
+    # Carga semanal (domingo às 04:00)
+    (
+        "0 4 * * 0",
+        "jiboia.core.cron.load_dimensional_weekly",
+        f">> {BASE_DIR}/logs/load_dimensional_weekly.log 2>&1",
+        {},
+        "load_dimensional_weekly",
+    ),
+    # Carga mensal (dia 1 às 05:00)
+    (
+        "0 5 1 * *",
+        "jiboia.core.cron.load_dimensional_monthly",
+        f">> {BASE_DIR}/logs/load_dimensional_monthly.log 2>&1",
+        {},
+        "load_dimensional_monthly",
+    ),
+    # Carga trimestral (dia 1 de jan, abr, jul, out às 06:00)
+    (
+        "0 6 1 1,4,7,10 *",
+        "jiboia.core.cron.load_dimensional_quarterly",
+        f">> {BASE_DIR}/logs/load_dimensional_quarterly.log 2>&1",
+        {},
+        "load_dimensional_quarterly",
+    ),
+    # Carga semestral (1 jan e 1 jul às 07:00)
+    (
+        "0 7 1 1,7 *",
+        "jiboia.core.cron.load_dimensional_semester",
+        f">> {BASE_DIR}/logs/load_dimensional_semester.log 2>&1",
+        {},
+        "load_dimensional_semester",
+    ),
+    # Carga anual (1 jan às 08:00)
+    (
+        "0 8 1 1 *",
+        "jiboia.core.cron.load_dimensional_yearly",
+        f">> {BASE_DIR}/logs/load_dimensional_yearly.log 2>&1",
+        {},
+        "load_dimensional_yearly",
+    ),
+    (
+        "8 8 8 8 *",
+        "jiboia.core.cron.load_dimensional_all",
+        f">> {BASE_DIR}/logs/load_dimensional_all.log 2>&1",
+        {},
+        "load_dimensional_all",
+    ),
 ]
 
 
-CRONTAB_COMMAND_PREFIX = 'DJANGO_SETTINGS_MODULE=jiboia.jiboia.settings'
+CRONTAB_COMMAND_PREFIX = "DJANGO_SETTINGS_MODULE=jiboia.jiboia.settings"

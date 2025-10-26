@@ -52,13 +52,20 @@ filterwarnings = [
 
 [tool.ruff]
 line-length = 120
+
 exclude = [
     ".git",
     ".venv",
     "__pycache__",
-    "migrations",
+    "**/migrations/**",
     "build",
     "dist",
 ]
 [tool.ruff.lint]
 select = ["E", "F", "I", "C90"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

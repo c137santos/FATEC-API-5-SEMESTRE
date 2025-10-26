@@ -10,10 +10,15 @@ export const dateDiffInDays = (str1, str2) => {
 }
 
 export const toISODate = (dateStr) => {
-  const [day, month, year] = dateStr.split("/");
 	try {
-		return new Date(year, month - 1, day).toISOString().split("T")[0];
+		const [day, month, year] = dateStr.split("/");
+		const date = new Date(year, month - 1, day);
+		
+		return date.toISOString().split("T")[0];
 	} catch {
-		return new Date(dateStr)
+		const parsedDate = new Date(dateStr);
+		return Number.isNaN(parsedDate.getTime())
+			? null
+			: parsedDate.toISOString().split("T")[0]
 	}
 }

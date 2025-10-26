@@ -34,12 +34,12 @@ app.post("/api/accounts/logout", accounts.logout);
 app.get("/api/accounts/whoami", accounts.whoami);
 
 // Issues
-app.get("/api/core/issues/list", core.find);
-app.post("/api/core/issues/add", core.add);
+app.get("/api/core/projects/:id/issues", core.find);
 
 // Projects
 app.get('/api/core/projects/overview', projects.overview)
 app.get('/api/core/projects/:id', projects.byProject)
+app.get('/api/core/projects/:id/desenvolvedores', projects.developers)
 
 app.listen(PORT, () => {
   console.log(

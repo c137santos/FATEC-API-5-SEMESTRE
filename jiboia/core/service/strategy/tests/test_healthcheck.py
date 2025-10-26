@@ -5,14 +5,14 @@ from unittest.mock import patch
 from jiboia.core.service.strategy.healthcheck import ProjectsHealthCheckStrategy
 
 
-@patch('jiboia.core.service.strategy.base.requests.get')
+@patch("jiboia.core.service.strategy.base.requests.get")
 def test_projects_healthcheck_success(mock_get, mock_response, projects_data):
     """Test successful projects healthcheck."""
     mock_response.status_code = 200
     mock_response.json.return_value = projects_data
     mock_get.return_value = mock_response
 
-    strategy = ProjectsHealthCheckStrategy('test@example.com', 'token123', 'https://jira.example.com')
+    strategy = ProjectsHealthCheckStrategy("test@example.com", "token123", "https://jira.example.com")
     success, message = strategy.execute()
 
     assert success is True
@@ -20,14 +20,14 @@ def test_projects_healthcheck_success(mock_get, mock_response, projects_data):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.strategy.base.requests.get')
+@patch("jiboia.core.service.strategy.base.requests.get")
 def test_projects_healthcheck_empty_response(mock_get, mock_response):
     """Test projects healthcheck with empty response."""
     mock_response.status_code = 200
     mock_response.json.return_value = []
     mock_get.return_value = mock_response
 
-    strategy = ProjectsHealthCheckStrategy('test@example.com', 'token123', 'https://jira.example.com')
+    strategy = ProjectsHealthCheckStrategy("test@example.com", "token123", "https://jira.example.com")
     success, message = strategy.execute()
 
     assert success is True
@@ -35,14 +35,14 @@ def test_projects_healthcheck_empty_response(mock_get, mock_response):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.strategy.base.requests.get')
+@patch("jiboia.core.service.strategy.base.requests.get")
 def test_projects_healthcheck_http_error(mock_get, mock_response):
     """Test projects healthcheck with HTTP error."""
     mock_response.status_code = 401
     mock_response.text = "Unauthorized"
     mock_get.return_value = mock_response
 
-    strategy = ProjectsHealthCheckStrategy('test@example.com', 'token123', 'https://jira.example.com')
+    strategy = ProjectsHealthCheckStrategy("test@example.com", "token123", "https://jira.example.com")
     success, message = strategy.execute()
 
     assert success is False
@@ -50,12 +50,12 @@ def test_projects_healthcheck_http_error(mock_get, mock_response):
     mock_get.assert_called_once()
 
 
-@patch('jiboia.core.service.strategy.base.requests.get')
+@patch("jiboia.core.service.strategy.base.requests.get")
 def test_projects_healthcheck_exception(mock_get):
     """Test projects healthcheck with exception."""
     mock_get.side_effect = Exception("Connection error")
 
-    strategy = ProjectsHealthCheckStrategy('test@example.com', 'token123', 'https://jira.example.com')
+    strategy = ProjectsHealthCheckStrategy("test@example.com", "token123", "https://jira.example.com")
     success, message = strategy.execute()
 
     assert success is False

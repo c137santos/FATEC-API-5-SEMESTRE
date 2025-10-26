@@ -8,6 +8,7 @@ from ..models import Issue, Project, StatusType, TimeLog
 
 logger = logging.getLogger(__name__)
 
+
 def save_projects(projects_data):
     """
     Save or update a list of projects in the database.
@@ -27,51 +28,49 @@ def save_projects(projects_data):
                 "uuid": proj.get("uuid"),
                 "jira_id": proj.get("jira_id"),
                 "projectTypeKey": proj.get("projectTypeKey"),
-            }
+            },
         )
+
 
 def calc_start_date(issue_breakdown_months: int) -> date:
     today = date.today()
     return today.replace(day=1) - relativedelta(months=issue_breakdown_months - 1)
 
+
 def build_issues_per_month(issues_qs, start_date: date, months: int):
     issues_per_month = []
     statuses = list(StatusType.objects.all())
-    
+
     for i in range(months):
         month_date = start_date + relativedelta(months=i)
         month_label = month_date.isoformat()
-        month_issues = issues_qs.filter(
-            created_at__year=month_date.year,
-            created_at__month=month_date.month
-        )
+        month_issues = issues_qs.filter(created_at__year=month_date.year, created_at__month=month_date.month)
 
         status_counts = {}
         for status in statuses:
             count = month_issues.filter(status__name=status.name).count()
             status_counts[status.name] = count
 
-        issues_per_month.append({
-            "date": month_label,
-            **status_counts,
-        })
+        issues_per_month.append(
+            {
+                "date": month_label,
+                **status_counts,
+            }
+        )
     return issues_per_month
 
+
 def serialize_project(project, project_issues):
-    total_seconds = TimeLog.objects.filter(
-        id_issue__in=project_issues
-    ).aggregate(total=Sum("seconds"))["total"] or 0
+    total_seconds = TimeLog.objects.filter(id_issue__in=project_issues).aggregate(total=Sum("seconds"))["total"] or 0
 
     total_hours = total_seconds / 3600 if total_seconds else 0
-    
+
     total_issues = project_issues.count()
-    
+
     dev_hours = (
         TimeLog.objects.filter(id_issue__in=project_issues)
         .values("id_user_id", "id_user__username")
-        .annotate(
-            hours=Sum(F("seconds") * 1.0) / 3600
-        )
+        .annotate(hours=Sum(F("seconds") * 1.0) / 3600)
     )
     dev_hours_list = [
         {
@@ -89,6 +88,51 @@ def serialize_project(project, project_issues):
         "dev_hours": dev_hours_list,
     }
 
+
+def get_project_developers(project_id):
+    dev_time_data = (
+        TimeLog.objects.filter(id_issue__project__id=project_id, id_user__isnull=False)
+        .values("id_user", "id_user__username", "id_user__first_name", "id_user__last_name", "id_user__valor_hora")
+        .annotate(total_seconds=Sum("seconds"))
+    )
+
+    if not dev_time_data:
+        return []
+
+    developers = []
+
+    for data in dev_time_data:
+        user_id = data["id_user"]
+        total_seconds = data["total_seconds"] or 0
+        hours_worked = round(total_seconds / 3600) if total_seconds else 0
+
+        first_name = data.get("id_user__first_name", "").strip()
+        last_name = data.get("id_user__last_name", "").strip()
+        full_name = f"{first_name} {last_name}".strip()
+        nome = full_name if full_name else data.get("id_user__username", "")
+
+        valor_hora = None
+        raw_valor_hora = data.get("id_user__valor_hora")
+        if raw_valor_hora is not None:
+            try:
+                valor_hora = float(raw_valor_hora)
+            except (ValueError, TypeError) as e:
+                logger.warning(f"Could not convert valor_hora for user {user_id}: {e}")
+
+        developers.append(
+            {
+                "id": user_id,
+                "nome": nome,
+                "horasTrabalhadas": hours_worked,
+                "valorHora": valor_hora,
+            }
+        )
+
+    developers.sort(key=lambda dev: dev["horasTrabalhadas"], reverse=True)
+
+    return developers
+
+
 def list_projects_general(issue_breakdown_months: int):
     logger.info("Service list projects")
     start_date = calc_start_date(issue_breakdown_months)
@@ -96,9 +140,7 @@ def list_projects_general(issue_breakdown_months: int):
 
     issues_per_month = build_issues_per_month(issues_qs, start_date, issue_breakdown_months)
 
-    projects = Project.objects.filter(
-        issue__in=issues_qs 
-    ).distinct().order_by("-start_date_project")
+    projects = Project.objects.filter(issue__in=issues_qs).distinct().order_by("-start_date_project")
 
     projects_list = []
     for project in projects:
@@ -106,3 +148,54 @@ def list_projects_general(issue_breakdown_months: int):
         projects_list.append(serialize_project(project, project_issues))
 
     return {"issues_per_month": issues_per_month, "projects": projects_list}
+
+
+def list_all_projects():
+    projects = Project.objects.all()
+    projects_list = []
+    for project in projects:
+        projects_list.append(
+            {
+                "project_id": project.id,
+                "key": project.key,
+                "name": project.name,
+                "description": project.description,
+                "start_date_project": project.start_date_project,
+                "end_date_project": project.end_date_project,
+                "uuid": project.uuid,
+                "jira_id": project.jira_id,
+                "projectTypeKey": project.projectTypeKey,
+            }
+        )
+    return projects_list
+
+
+def update_developer_hour_value(project_id, user_id, valor_hora):
+    from jiboia.accounts.models import User
+
+    # Validate that the project exists
+    project = Project.objects.get(id=project_id)
+    user = User.objects.get(id=user_id)
+
+    user.valor_hora = valor_hora
+    user.save()
+
+    logger.info(f"Updated valor_hora for user {user_id} to {valor_hora}")
+
+    # Return updated developer info
+    total_seconds = (
+        TimeLog.objects.filter(id_issue__project=project, id_user=user).aggregate(total=Sum("seconds"))["total"] or 0
+    )
+    hours_worked = round(total_seconds / 3600) if total_seconds else 0
+
+    first_name = user.first_name.strip()
+    last_name = user.last_name.strip()
+    full_name = f"{first_name} {last_name}".strip()
+    nome = full_name if full_name else user.username
+
+    return {
+        "id": user.id,
+        "nome": nome,
+        "horasTrabalhadas": hours_worked,
+        "valorHora": float(valor_hora) if valor_hora is not None else None,
+    }

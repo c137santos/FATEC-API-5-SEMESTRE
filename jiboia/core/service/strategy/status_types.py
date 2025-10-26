@@ -6,13 +6,15 @@ from .base import JiraStrategy
 
 logger = logging.getLogger(__name__)
 
+
 class SyncStatusTypesStrategy(JiraStrategy[int]):
     """
     Synchronizes all Jira Status Types with the local database.
     """
+
     _ENDPOINT = "/rest/api/3/status"
 
-    def execute(self) -> int:
+    def execute(self, project_key: str) -> int:
         """
         Executes the synchronization process for status types.
         """
