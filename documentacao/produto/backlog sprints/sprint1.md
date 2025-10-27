@@ -3,14 +3,20 @@
 | **Meta da Sprint:**                           | User Stories de rank 1, rank 2, rank 3 (total de *14 Story Points*) |
 | **Previsão da Sprint (extras, sem compromisso de entrega):** | User Story de rank 4 (*3 Story Points*) |
 
+### Requisitos
+
+[Requisitos Relacionados](../../../README.md#requisitos)
+
 # Backlog da Sprint 1
-## Backlog
-| Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
-| :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
+
+| Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) | Sprint |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | [1], [7] | 3 | 1 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | [1], [8] | 3 | 1 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | [1], [2], [7], [8], [9] | 8 | 1 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [1], [2], [7] | 3 | 2 |
+
+---
 
 ## User Story 1 (Rank 1 - 3 SP)
 **Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim.**
@@ -57,7 +63,7 @@
 - E as horas devem ser calculadas somando `timeSpentSeconds/3600` de todas as issues
 
 **CA2.3 - Dados Específicos dos Projetos da Necto**
-- DADO os projetos 
+- DADO os projetos
 - QUANDO visualizo a lista
 - ENTÃO devo ver:
   - SM2: aproximadamente 82 issues com horas registradas
@@ -108,7 +114,7 @@
 - QUANDO visualizo o dashboard
 - ENTÃO devo ver a distribuição:
   - "Tarefas pendentes: X issues"
-  - "Em andamento: X issues" 
+  - "Em andamento: X issues"
   - "MR: X issues"
   - "Concluído: X issues"
 - E deve usar os status reais da Necto confirmados nos testes
