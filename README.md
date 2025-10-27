@@ -10,6 +10,7 @@
 <p align="center">
   | <a href ="#desafio"> Desafio</a>  |
   <a href ="#solucao"> Solução</a>  |
+  <a href ="#requisitos"> Requisitos do Cliente</a>  |
   <a href ="#backlog"> Backlog do Produto</a>  |
   <a href ="#dor">DoR</a>  |
   <a href ="#dod">DoD</a>  |
@@ -39,23 +40,47 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 
 ---
 
+## 🧩 Requisitos do Cliente <a id="requisitos"></a>
+
+[1] O sistema deve apresentar as informações de projetos e issues em tempo hábil.
+
+[2] O carregamento dos dashboards (de projetos e de issues) deve ser otimizado, mesmo com grande volume de dados.
+
+[3] Operações de filtro e busca devem ser processadas de forma eficiente, sem travamentos ou lentidão perceptível ao usuário.
+
+[4] A aplicação deve suportar o aumento no número de usuários, projetos e issues sem degradação significativa do desempenho.
+
+[5] O sistema deve possuir autenticação e autorização baseadas nos três níveis de acesso: gerente de projetos, líder de equipe e membro de equipe.
+
+[6] Cada usuário deve ter acesso apenas às informações compatíveis com seu nível de permissão.
+
+[7] A interface deve ser intuitiva e de fácil navegação, permitindo que um novo usuário compreenda suas principais funcionalidades sem treinamento
+extenso.
+
+[8] Dashboards devem apresentar informações de forma clara, com gráficos e indicadores visuais que facilitem a leitura dos dados.
+
+[9] O design deve ser responsivo, permitindo uso tanto em desktop quanto em dispositivos móveis.
+
+[10] O sistema deve estar disponível 24 horas por dia, 7 dias por semana, com tempo de indisponibilidade mínimo.
+
+[11] O sistema deve permitir integração futura com APIs externas além do Jira (ex.: GitLab, Trello).
+
 ## 📋 Backlog do Produto <a id="backlog"></a>
 
-## Backlog
-| Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
-| :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
-| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 2 |
-| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto | 8| 2 |
-| 7 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 2 |
-| 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 2 |
-| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. |5| 3 |
-| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | 3| 3 |
-| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | 3| 3 |
-| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | 5| 3 |
+| Rank | Prioridade | User Story | Requisito Relacionado | Estimativa (Story Points) | Sprint |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | [1] | 3 | 1 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | [1], [2] | 3 | 1 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | [2], [8] | 8 | 1 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [7], [8] | 3 | 2 |
+| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | [1], [2] | 2 | 2 |
+| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | [8] | 8 | 2 |
+| 7 | Alta | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [4], [8] | 3 | 2 |
+| 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [3] | 5 | 2 |
+| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. | [5] | 5 | 3 |
+| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [2], [8] | 3 | 3 |
+| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | [3] | 3 | 3 |
+| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | [8] | 5 | 3 |
 
 ---
 
@@ -64,7 +89,7 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) | [Sprint 2 entrega](https://drive.google.com/file/d/1ts-Tc75Hhq3WGDdZoDllG1HI9AAI6o32/view?usp=sharing) |
-| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |  |
+| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) |  |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
 ## 📅 Board de priorização  <a id="sprint"></a>
