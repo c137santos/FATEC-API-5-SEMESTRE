@@ -97,7 +97,7 @@ jobs:
             # Atualiza o código
             echo "📥 Pulling latest code..."
             git fetch origin
-            git reset --hard origin/dev
+            git reset --hard origin/${{ github.ref_name }}
 
             # Exporta variável para docker-compose
             export GITHUB_REPOSITORY_OWNER=$GITHUB_REPOSITORY_OWNER
