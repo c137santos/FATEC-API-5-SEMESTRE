@@ -1,7 +1,7 @@
 | **Capacidade estimada da Equipe por Sprint:** | 16 Story Points |
 |-----------------------------------------------|-----------------|
 | **Meta da Sprint:** | User Stories de rank 9, rank 10, rank 11 (total de *16 Story Points*) |
-| **Previsão da Sprint (extras, sem compromisso de entrega):** | User Story de rank 12 (*5 Story Points*) |
+| **Previsão da Sprint (extras, sem compromisso de entrega):** | User Story de rank 12 e 13 (*3 e 5 Story Points*) |
 
 ### Requisitos
 
@@ -14,7 +14,8 @@
 | 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | [5] | 8 | 3 |
 | 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | [5], [6] | 3 | 3 |
 | 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [1], [2], [8] | 5 | 3 |
-| 12 | Baixa | Como gestor, quero visualizar no dashboard de projeto específico a quantidade de membros ativos e as horas trabalhadas por cada um. | [1], [2], [8] | 5 | 3 |
+| 12 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [1], [3], [7] | 3 | 3 |
+| 13 | Baixa | Como gestor, quero visualizar no dashboard de projeto específico a quantidade de membros ativos e as horas trabalhadas por cada um. | [1], [2], [8] | 5 | 3 |
 
 ---
 
@@ -124,7 +125,47 @@
 
 ---
 
-## User Story 12 (Rank 12 - 5 SP - Extra)
+## User Story 12 (Rank 12 - 5 SP)
+**Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues.**
+
+### Critérios de Aceitação
+
+**CA12.1 - Exibição dos Filtros**
+- DADO que sou um Líder de Equipe logado
+- QUANDO acesso o dashboard de issues
+- ENTÃO devo visualizar os filtros disponíveis para:
+    - Intervalo de Datas de Criação (com campos “Data Inicial” e “Data Final”)
+    - Membro Responsável (dropdown com a lista de membros da equipe)
+
+**CA12.2 - Aplicação de Filtro por Intervalo de Datas**
+- DADO que estou no dashboard de issues
+- QUANDO seleciono um intervalo de datas de criação válido
+- ENTÃO o dashboard deve exibir apenas as issues criadas dentro desse intervalo e deve atualizar automaticamente os gráficos e listas correspondentes.
+
+**CA12.3 - Aplicação de Filtro por Membro**
+- DADO que estou no dashboard de issues
+- QUANDO seleciono um membro específico no filtro de “Membro Responsável”
+- ENTÃO o dashboard deve exibir apenas as issues atribuídas a esse membro e atualizar as métricas e gráficos relacionados.
+
+**CA12.4 - Combinação de Filtros**
+- DADO que selecionei tanto um intervalo de datas quanto um membro
+- QUANDO aplico os filtros
+- ENTÃO o dashboard deve exibir apenas as issues que atendam a ambos os critérios simultaneamente.
+
+**CA12.5 - Limpeza dos Filtros**
+- DADO que há filtros aplicados
+- QUANDO clico em “Limpar Filtros”
+- ENTÃO todos os campos de filtro devem ser resetados e o dashboard deve voltar a exibir todas as issues sem filtragem.
+
+**CA12.6 - Validação de Intervalo Inválido**
+- DADO que inseri uma “Data Inicial” posterior à “Data Final”
+- QUANDO tento aplicar o filtro
+- ENTÃO o sistema deve exibir uma mensagem de erro:
+    - “O intervalo de datas é inválido. Verifique os valores informados.” E os filtros não devem ser aplicados até correção.
+
+---
+
+## User Story 13 (Rank 13 - 5 SP - Extra)
 **Como gestor, quero visualizar no dashboard de projeto específico a quantidade de membros ativos e as horas trabalhadas por cada um.**
 
 ### Critérios de Aceitação:
