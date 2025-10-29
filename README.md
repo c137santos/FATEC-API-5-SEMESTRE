@@ -67,19 +67,19 @@ extenso.
 
 ## 📋 Backlog do Produto <a id="backlog"></a>
 
-| Rank | Prioridade | User Story | Requisito Relacionado | Estimativa (Story Points) | Sprint |
+| Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | [1] | 3 | 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | [1], [2] | 3 | 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | [2], [8] | 8 | 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [7], [8] | 3 | 2 |
-| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | [1], [2] | 2 | 2 |
-| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | [8] | 8 | 2 |
-| 7 | Alta | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [4], [8] | 3 | 2 |
-| 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [3] | 5 | 2 |
-| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. | [5] | 5 | 3 |
-| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [2], [8] | 3 | 3 |
-| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | [3] | 3 | 3 |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | [1], [7] | 3 | 1 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | [1], [8] | 3 | 1 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | [1], [2], [7], [8], [9] | 8 | 1 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [1], [2], [7] | 3 | 2 |
+| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | [1], [7], [8] | 5 | 2 |
+| 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | [5], [6], [7] | 5 | 2 |
+| 7 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [1], [2], [8] | 3 | 3 |
+| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [1], [3], [7] | 3 | 3 |
+| 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | [5] | 8 | 3 |
+| 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | [5], [6] | 3 | 3 |
+| 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [1], [2], [8] | 5 | 3 |
 | 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | [8] | 5 | 3 |
 
 ---
