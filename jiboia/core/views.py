@@ -105,6 +105,7 @@ def project_developers(request, project_id):
     return JsonResponse(developers, safe=False)
 
 
+@csrf_exempt
 @require_http_methods(["PATCH"])
 def update_developer_hour_value(request, project_id, user_id):
     """
