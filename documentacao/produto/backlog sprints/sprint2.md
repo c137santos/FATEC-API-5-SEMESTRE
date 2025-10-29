@@ -11,11 +11,14 @@
 
 | Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [1], [2], [7] | 3 | 2 |
-| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | [1], [7], [8] | 5 | 2 |
-| 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | [5], [6], [7] | 5 | 2 |
-| 7 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [1], [2], [8] | 3 | 3 |
-| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [1], [3], [7] | 3 | 3 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#2">[2]</a>, <a href="../../../README.md#7">[7]</a> | 3 | 2 |
+| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | <a href="#1">[1]</a>, <a href="#7">[7]</a>, <a href="#8">[8]</a> | 5 | 2 |
+| 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | <a href="../../../README.md#5">[5]</a>, <a href="../../../README.md#6">[6]</a>, <a href="../../../README.md#7">[7]</a> | 5 | 2 |
+| 7 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#2">[2]</a>, <a href="../../../README.md#8">[8]</a> | 3 | 3 |
+| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#3">[3]</a>, <a href="../../../README.md#7">[7]</a> | 3 | 3 |
+
+### 🔗 Referências
+Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](../requisitos.md)
 
 ---
 
