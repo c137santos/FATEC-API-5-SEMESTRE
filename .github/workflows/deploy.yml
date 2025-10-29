@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build-and-push:
-    if: ${{ secrets.SSH_PRIVATE_KEY != '' }}
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     permissions:
