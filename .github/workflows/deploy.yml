@@ -1,76 +1,140 @@
-version: '3.8'
+name: Deploy to Production
 
-services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: jiboia-postgres
-    ports:
-      - "15432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - .env
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - jiboia-network
+on:
+  push:
+    branches:
+      - '*'
 
-  backend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-c137santos}/fatec-api-5-semestre-backend:${IMAGE_TAG:-latest}
-    container_name: jiboia-backend
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      JIRA_API_URL: ${JIRA_API_URL}
-      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
-      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
-    depends_on:
-      postgres:
-        condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - jiboia-network
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-  frontend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-c137santos}/fatec-api-5-semestre-frontend:${IMAGE_TAG:-latest}
-    container_name: jiboia-frontend
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    depends_on:
-      - backend
-    restart: unless-stopped
-    networks:
-      - jiboia-network
+jobs:
+  build-and-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
 
-  nginx:
-    image: nginx:latest
-    container_name: jiboia-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./docker/nginx/default_prod:/etc/nginx/conf.d/default.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-    depends_on:
-      - backend
-      - frontend
-    restart: unless-stopped
-    networks:
-      - jiboia-network
+    permissions:
+      contents: read
+      packages: write
 
-volumes:
-  postgres_data:
-    name: jiboia-postgres-data
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-networks:
-  jiboia-network:
-    name: jiboia-network
-    driver: bridge
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-backend
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-backend:latest
+          cache-to: type=inline
+
+      - name: Extract metadata for Frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-frontend
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-frontend:latest
+          cache-to: type=inline
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: GITHUB_REPOSITORY_OWNER
+          script: |
+            set -e
+
+            echo "🚀 Starting deployment..."
+
+            cd /home/ubuntu/FATEC-API-5-SEMESTRE
+
+            echo "📥 Pulling latest code..."
+            git fetch origin
+            git reset --hard origin/${{ github.ref_name }}
+
+            export GITHUB_REPOSITORY_OWNER=$GITHUB_REPOSITORY_OWNER
+
+            echo "🐳 Pulling Docker images..."
+            docker-compose -f docker-compose.prod.yml pull
+
+            echo "🛑 Stopping containers..."
+            docker-compose -f docker-compose.prod.yml down
+
+            echo "🚀 Starting containers..."
+            docker-compose -f docker-compose.prod.yml up -d
+
+            echo "⏳ Waiting for containers..."
+            sleep 30
+
+            echo "🧹 Cleaning up..."
+            docker system prune -f
+
+            echo "✅ Deployment completed!"
+
+      - name: Health Check
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🏥 Running health check..."
+            sleep 5
+
+            if curl -f -s -o /dev/null -w "%{http_code}" https://jiboia.app/ | grep -q "200\|301\|302"; then
+              echo "✅ Application is healthy!"
+              exit 0
+            else
+              echo "❌ Health check failed!"
+              exit 1
+            fi
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Deploy failed! Check the logs above."
