@@ -4,6 +4,7 @@ import logging
 import threading
 
 from django.http import JsonResponse
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
@@ -40,6 +41,7 @@ def add_issue(request):
     return JsonResponse(new_issue, status=201)
 
 
+@cache_control
 @require_http_methods(["GET"])
 def list_paginable_issues(request, project_id):
     """List Issues in pages"""
@@ -60,6 +62,7 @@ def list_paginable_issues(request, project_id):
     return JsonResponse(issues_data)
 
 
+@cache_control
 @require_http_methods(["GET"])
 def project_overview(request, project_id):
     """
@@ -88,6 +91,7 @@ def project_overview(request, project_id):
     return JsonResponse(overview_data)
 
 
+@cache_control
 @require_http_methods(["GET"])
 def list_projects_general(request):
     logger.info("API list projects")
