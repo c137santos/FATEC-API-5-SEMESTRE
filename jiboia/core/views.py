@@ -41,7 +41,7 @@ def add_issue(request):
     return JsonResponse(new_issue, status=201)
 
 
-@cache_control
+@cache_control()
 @require_http_methods(["GET"])
 def list_paginable_issues(request, project_id):
     """List Issues in pages"""
@@ -62,7 +62,7 @@ def list_paginable_issues(request, project_id):
     return JsonResponse(issues_data)
 
 
-@cache_control
+@cache_control()
 @require_http_methods(["GET"])
 def project_overview(request, project_id):
     """
@@ -91,7 +91,7 @@ def project_overview(request, project_id):
     return JsonResponse(overview_data)
 
 
-@cache_control
+@cache_control()
 @require_http_methods(["GET"])
 def list_projects_general(request):
     logger.info("API list projects")
