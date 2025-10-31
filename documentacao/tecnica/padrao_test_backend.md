@@ -65,3 +65,17 @@ Ao testar uma nova funcionalidade, você deve ir além do "caminho feliz" (o cen
 * Casos de Borda (Boundary Values): Teste os valores extremos. Isso é crucial, pois muitos bugs acontecem nos limites do que é permitido. Exemplo: Para um campo que aceita de 1 a 100, teste com os valores 0, 1, 100 e 101.
 
 * Casos Negativos: Simule situações em que uma ação deveria falhar ou ser rejeitada. Exemplo: Um usuário tenta acessar uma funcionalidade sem ter a permissão necessária.
+
+
+#### Coverage
+
+O uso do **coverage** é fundamental para garantir que os testes realmente exercitam o código relevante do backend. Recomenda-se:
+
+- Execute os testes sempre utilizando o comando `coverage run -m pytest` para medir a cobertura de código.
+- Após a execução, utilize `coverage report` para visualizar no terminal quais arquivos e linhas foram cobertos pelos testes.
+- Gere relatórios HTML com `coverage html` para uma visualização detalhada e interativa das áreas cobertas e não cobertas.
+- Para gerar o `coverage xml` para aferir a percentagem de cobertura do código rodando comando no terminal `coverage run -m pytest && coverage xml && coverage report --fail-under=80`
+- Busque manter uma cobertura alta, especialmente nos módulos críticos, mas priorize qualidade dos testes sobre quantidade.
+- É exigido pelo menos mais de 80% de cobertura de testes
+- Analise linhas não cobertas e avalie se são casos relevantes a serem testados ou código morto/passível de remoção.
+- Inclua a análise de cobertura no pipeline de CI/CD para garantir que novas features mantenham ou aumentem a cobertura existente.
