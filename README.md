@@ -10,6 +10,7 @@
 <p align="center">
   | <a href ="#desafio"> Desafio</a>  |
   <a href ="#solucao"> Solução</a>  |
+  <a href ="#requisitos"> Requisitos do Cliente</a>  |
   <a href ="#backlog"> Backlog do Produto</a>  |
   <a href ="#dor">DoR</a>  |
   <a href ="#dod">DoD</a>  |
@@ -39,32 +40,50 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 
 ---
 
-## 📋 Backlog do Produto <a id="backlog"></a>
+## 🧩 Requisitos do Cliente <a id="requisitos"></a>
 
-## Backlog
-| Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
-| :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
-| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 2 |
-| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto | 8| 2 |
-| 7 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 2 |
-| 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 2 |
-| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. |5| 3 |
-| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | 3| 3 |
-| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | 3| 3 |
-| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | 5| 3 |
+Esta seção define os requisitos que são referenciados nas User Stories. Cada número entre colchetes (`[#]`) serve como âncora para rastreabilidade.
+
+### 📝 Requisitos
+
+* **<a id="1">[1]</a>** O sistema deve apresentar as informações de projetos e issues em tempo hábil.
+* **<a id="2">[2]</a>** O carregamento dos dashboards (de projetos e de issues) deve ser otimizado, mesmo com grande volume de dados.
+* **<a id="3">[3]</a>** Operações de filtro e busca devem ser processadas de forma eficiente, sem travamentos ou lentidão perceptível ao usuário.
+* **<a id="4">[4]</a>** A visualização de informações do Jira deve ser realizada via integração API.
+* **<a id="5">[5]</a>** O sistema deve prover um módulo seguro para cadastro e gestão de usuários e permissões.
+* **<a id="6">[6]</a>** Os dados de custo e valor de hora/dev devem ser protegidos por controle de acesso baseado em cargo (Gerente).
+* **<a id="7">[7]</a>** A interface do usuário deve ser intuitiva e responsiva em diferentes dispositivos.
+* **<a id="8">[8]</a>** Todos os cálculos de tempo, custo e métricas devem ser precisos e auditáveis.
+* **<a id="9">[9]</a>** O dashboard inicial deve ser o ponto de entrada para o usuário após o login.
+
+### 🔗 Referências
+Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentacao/produto/requisitos.md)
 
 ---
+
+## 📋 Backlog do Produto <a id="backlog"></a>
+
+| Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) | Sprint |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | <a href="#1">[1]</a>, <a href="#7">[7]</a> | 3 | 1 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | <a href="#1">[1]</a>, <a href="#8">[8]</a> | 3 | 1 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#7">[7]</a>, <a href="#8">[8]</a>, <a href="#9">[9]</a> | 8 | 1 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#7">[7]</a> | 3 | 2 |
+| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | <a href="#1">[1]</a>, <a href="#7">[7]</a>, <a href="#8">[8]</a> | 5 | 2 |
+| 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | <a href="#5">[5]</a>, <a href="#6">[6]</a>, <a href="#7">[7]</a> | 5 | 2 |
+| 7 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#8">[8]</a> | 3 | 3 |
+| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | <a href="#1">[1]</a>, <a href="#3">[3]</a>, <a href="#7">[7]</a> | 3 | 3 |
+| 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | <a href="#5">[5]</a> | 8 | 3 |
+| 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | <a href="#5">[5]</a>, <a href="#6">[6]</a> | 3 | 3 |
+| 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#8">[8]</a> | 5 | 3 |
+| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | <a href="#8">[8]</a> | 5 | 3 |
 
 ## 📅 Cronograma de Sprints <a id="sprint"></a>
 | Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) | [Sprint 2 entrega](https://drive.google.com/file/d/1ts-Tc75Hhq3WGDdZoDllG1HI9AAI6o32/view?usp=sharing) |
-| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |  |
+| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) |  |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
 ## 📅 Board de priorização  <a id="sprint"></a>
@@ -114,6 +133,24 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
       <th>Linkedin</th>
     </tr>
     <tr>
+      <td>Jean Rodrigues</td>
+      <td>Scrum Master</td>
+      <td><a href="https://github.com/JeanRodrigues1"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/jean-rodrigues-0569a0251/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Paloma Soares</td>
+      <td>Product Owner</td>
+      <td><a href="https://github.com/PalomaSoaresR"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/paloma-soares-rocha/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Isaque de Souza</td>
+      <td>Desenvolvedor</td>
+      <td><a href="https://github.com/Isaque-BD"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/isaque-souza-6760b8270/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
       <td>Marília Moraes</td>
       <td>Desenvolvedora</td>
       <td><a href="https://github.com/marilia-borgo"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
@@ -126,16 +163,22 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
       <td><a href="https://www.linkedin.com/in/c137santos/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
-      <td>Yan Yamim</td>
-      <td>Product Owner</td>
-      <td><a href="https://github.com/YanYamim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/yan-yamim-185220278/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+      <td>Ricardo Campos</td>
+      <td>Desenvolvedor</td>
+      <td><a href="https://github.com/r1cardvs"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/ricardo-campos-ba56091b5/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
-      <td>Jean Rodrigues</td>
-      <td>Scrum Master</td>
-      <td><a href="https://github.com/JeanRodrigues1"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/jean-rodrigues-0569a0251/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+      <td>Vinícius Monteiro</td>
+      <td>Desenvolvedor</td>
+      <td><a href="https://github.com/viniciusvasmonteiro"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/viniciusvasm/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Yan Yamim</td>
+      <td>Desenvolvedor</td>
+      <td><a href="https://github.com/YanYamim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/yan-yamim-185220278/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
   </table>
 </div>
