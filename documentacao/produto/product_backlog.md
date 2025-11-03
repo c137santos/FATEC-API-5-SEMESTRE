@@ -8,20 +8,21 @@ compartilhado entre o Product Owner, equipe técnica e stakeholders.
 Além disso, nesse documento estão mapeadas as definitions of ready (DOR) e a definitions of done (DOD).
 
 ## Backlog
-| Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
+
+| Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
-| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 2 |
-| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto | 8| 2 |
-| 7 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 2 |
-| 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 2 |
-| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. |5| 3 |
-| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | 3| 3 |
-| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | 3| 3 |
-| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | 5| 3 |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | <a href="#1">[1]</a>, <a href="#7">[7]</a> | 3 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | <a href="#1">[1]</a>, <a href="#8">[8]</a> | 3 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#7">[7]</a>, <a href="#8">[8]</a>, <a href="#9">[9]</a> | 8 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#7">[7]</a> | 3 |
+| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | <a href="#1">[1]</a>, <a href="#7">[7]</a>, <a href="#8">[8]</a> | 5 |
+| 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | <a href="#5">[5]</a>, <a href="#6">[6]</a>, <a href="#7">[7]</a> | 5 |
+| 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | <a href="#5">[5]</a> | 8 |
+| 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | <a href="#5">[5]</a>, <a href="#6">[6]</a> | 3 |
+| 7 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#8">[8]</a> | 3 |
+| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | <a href="#1">[1]</a>, <a href="#3">[3]</a>, <a href="#7">[7]</a> | 3 |
+| 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | <a href="#1">[1]</a>, <a href="#2">[2]</a>, <a href="#8">[8]</a> | 5 |
+| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | <a href="#8">[8]</a> | 5 |
 
 ## Definition of Ready (DoR)
 Para que uma User Story seja considerada pronta para a sprint, todos os critérios abaixo devem ser atendidos:
