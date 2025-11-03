@@ -5,13 +5,17 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function getUser(username) {
-  const user = data.users.find((user) => user.username === username);
-  if (!user) {
-    console.log("login invalido: ", username);
-    return;
+function getUsers(username) {
+  if (username) {
+    const user = data.users.find((user) => user.username === username);
+    if (!user) {
+      console.log("login invalido: ", username);
+      return;
+    }
+    return user;
+  } else {
+    return data.users;
   }
-  return user;
 }
 
 function getUserBySessionId(sessionid) {
@@ -27,7 +31,7 @@ module.exports = {
   login: (req, res) => {
     const { username, password } = req.body;
     sleep(800).then(() => {
-      let user = getUser(username);
+      let user = getUsers(username);
       if (!user || !password) {
         console.log("3");
         res.status(200).end();
@@ -74,5 +78,14 @@ module.exports = {
     }
     console.log("recuperando sessão de ", loggedUser.username);
     return loggedUser;
+  },
+
+  getUsers: (req, res) => {
+    const users = getUsers();
+    res.json({
+      users: users,
+      total_items: users.length,
+      success: true
+    });
   },
 };

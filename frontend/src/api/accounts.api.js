@@ -17,4 +17,9 @@ export default {
     const response = await api.post("/api/accounts/logout")
     return response.data
   },
+
+  getUsers: async () => {
+    const response = await api.get("/api/accounts/users")
+    return response.data
+  }
 }
