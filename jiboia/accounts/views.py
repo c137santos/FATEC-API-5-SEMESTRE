@@ -1,11 +1,13 @@
 # coding: utf-8
+
 import json
 import logging
 
 from django.contrib import auth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .services import create_user as create_user_service
+
+from jiboia.accounts.services import create_user as create_user_service
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +56,7 @@ def whoami(request):
     logger.info("API whoami")
     return JsonResponse(user_data)
 
+
 @csrf_exempt
 def create_user(request):
     logger.info("API create_user")
@@ -62,7 +65,7 @@ def create_user(request):
     password = body["password"]
     email = body["email"]
     permissions = body.get("permissions", {})
-    
+
     try:
         user_dict = create_user_service(name, password, email, permissions)
         logger.info("API create_user success")
