@@ -24,6 +24,7 @@ jobs:
               'lista.*projeto': 'RF1-PROJ-LIST',
               'detalhe.*projeto': 'RF1-PROJ-DETAIL',
 
+              // RF2 - Issues
               'issue': 'RF2-ISSUE',
               'tarefa': 'RF2-ISSUE',
               'card': 'RF2-ISSUE',
@@ -63,10 +64,45 @@ jobs:
               // RNF3 - Usabilidade
               'usabilidade': 'RNF3-UX',
               'ux': 'RNF3-UX',
-              'interface': 'RNF3-UX-LEARN',
-              'navegação': 'RNF3-UX-LEARN',
               'design': 'RNF3-UX-RESP',
-              'responsivo': 'RNF3-UX-RESP'
+              'responsivo': 'RNF3-UX-RESP',
+
+              // RNF4 - Manutenibilidade
+              'manutenibilidade': 'RNF4-MAIN',
+              'manutenção': 'RNF4-MAIN',
+              'código.*limpo': 'RNF4-MAIN-CODE',
+              'clean.*code': 'RNF4-MAIN-CODE',
+              'teste': 'RNF4-MAIN-CODE',
+              'test.*coverage': 'RNF4-MAIN-CODE',
+              'arquitetura': 'RNF4-MAIN-ARCH',
+              'modular': 'RNF4-MAIN-ARCH',
+              'microserviço': 'RNF4-MAIN-ARCH',
+              'log': 'RNF4-MAIN-LOGS',
+              'monitoramento': 'RNF4-MAIN-LOGS',
+              'erro': 'RNF4-MAIN-LOGS',
+              'debug': 'RNF4-MAIN-LOGS',
+
+              // RNF5 - Disponibilidade
+              'disponibilidade': 'RNF5-AVAIL',
+              'uptime': 'RNF5-AVAIL-UPTIME',
+              'tempo.*atividade': 'RNF5-AVAIL-UPTIME',
+              '24.*7': 'RNF5-AVAIL-UPTIME',
+              'notificação': 'RNF5-AVAIL-NOTIFY',
+              'manutenção.*programada': 'RNF5-AVAIL-NOTIFY',
+              'indisponibilidade': 'RNF5-AVAIL-NOTIFY'
+
+              // RNF6 - Portabilidade
+              'portabilidade': 'RNF6-PORT',
+              'compatibilidade': 'RNF6-PORT-BROWSER',
+              'navegador': 'RNF6-PORT-BROWSER',
+              'browser': 'RNF6-PORT-BROWSER',
+              'docker': 'RNF6-PORT-DOCKER',
+              'container': 'RNF6-PORT-DOCKER',
+              'api.*externa': 'RNF6-PORT-API',
+              'integração': 'RNF6-PORT-API',
+              'swagger': 'RNF6-PORT-API',
+              'openapi': 'RNF6-PORT-API',
+              'documentação.*api': 'RNF6-PORT-API'
             };
 
             let detectedRequirements = [];
@@ -96,39 +132,39 @@ jobs:
 
               // Cria comentário com sugestão de template
               const template = `
-                    **Auto Traceability**
+                **Auto Traceability**
 
-                    Detectei que esta issue pode estar relacionada ao requisito: **${primaryRequirement}**
+                Detectei que esta issue pode estar relacionada ao requisito: **${primaryRequirement}**
 
-                    **Sugestão de template para o corpo da issue:**
+                **Sugestão de template para o corpo da issue:**
 
-                    \`\`\`markdown
-                    **Requisito:** ${primaryRequirement}-${issue.number.toString().padStart(3, '0')}
-                    **Atende a:** ${primaryRequirement} - [Ver documento completo](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/requisitos.md)
+                \`\`\`markdown
+                **Requisito:** ${primaryRequirement}-${issue.number.toString().padStart(3, '0')}
+                **Atende a:** ${primaryRequirement} - [Ver documento completo](/documentacao/produto/requisitos.md)
 
-                    ## Descrição
-                    ${body}
+                ## Descrição
+                ${body}
 
-                    ## Critérios de Aceite
-                    - [ ] [Descreva o primeiro critério]
-                    - [ ] [Descreva o segundo critério]
+                ## Critérios de Aceite
+                - [ ] [Descreva o primeiro critério]
+                - [ ] [Descreva o segundo critério]
 
-                    ---
+                ---
 
-                    *Classificação automática - Revisar e ajustar se necessário*
-                    \`\`\`
+                *Classificação automática - Revisar e ajustar se necessário*
+                \`\`\`
 
-                    _Mantenha a descrição original e adicione as informações de traceability acima._
-                                `;
+                _Mantenha a descrição original e adicione as informações de traceability acima._
+                              `;
 
-                                await github.rest.issues.createComment({
-                                    owner: context.repo.owner,
-                                    repo: context.repo.repo,
-                                    issue_number: issue.number,
-                                    body: template
-                                });
+                              await github.rest.issues.createComment({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                issue_number: issue.number,
+                                body: template
+                              });
 
-                                console.log(`Issue #${issue.number} classificada como: ${primaryRequirement}`);
-                                } else {
-                                console.log(`Nenhum requisito detectado para issue #${issue.number}`);
-                                }
+                              console.log(`Issue #${issue.number} classificada como: ${primaryRequirement}`);
+                            } else {
+                              console.log(`Nenhum requisito detectado para issue #${issue.number}`);
+                            }
