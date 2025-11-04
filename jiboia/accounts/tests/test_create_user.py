@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth import get_user_model
+
 from jiboia.accounts.services import create_user
 
 User = get_user_model()
@@ -7,19 +8,14 @@ User = get_user_model()
 
 @pytest.mark.django_db
 class TestCreateUser:
-
     def test_create_user_successfully(self):
-        permissions = {
-            "PROJECT_MANAGER": True,
-            "TEAM_LEADER": False,
-            "TEAM_MEMBER": False
-        }
+        permissions = {"PROJECT_MANAGER": True, "TEAM_LEADER": False, "TEAM_MEMBER": False}
 
         user_data = {
             "name": "John Doe",
             "email": "john@example.com",
             "password": "securepassword123",
-            "permissions": permissions
+            "permissions": permissions,
         }
 
         user_dict = create_user(**user_data)
@@ -40,11 +36,12 @@ class TestCreateUser:
 
     def test_no_permissions(self):
         with pytest.raises(ValueError, match="At least one permission must be granted"):
-            create_user("User", "123", "user@example.com", {
-                "PROJECT_MANAGER": False,
-                "TEAM_LEADER": False,
-                "TEAM_MEMBER": False
-            })
+            create_user(
+                "User",
+                "123",
+                "user@example.com",
+                {"PROJECT_MANAGER": False, "TEAM_LEADER": False, "TEAM_MEMBER": False},
+            )
 
     def test_duplicate_email(self):
         permissions = {"TEAM_MEMBER": True}
