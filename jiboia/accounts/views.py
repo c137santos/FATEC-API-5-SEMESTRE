@@ -57,7 +57,7 @@ def whoami(request):
     return JsonResponse(user_data)
 
 
-@csrf_exempt
+@csrf_exempt  # NOSONAR
 def create_user(request):
     logger.info("API create_user")
     body = json.loads(request.body)

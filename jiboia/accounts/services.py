@@ -13,7 +13,7 @@ def create_user(name, password, email, permissions):
     if not any(permissions.values()):
         raise ValueError("At least one permission must be granted to the user.")
 
-    if email and User.objects.filter(email=email).exists():
+    if User.objects.filter(email=email).exists():
         raise ValueError("A user with this email already exists.")
 
     user = User(
