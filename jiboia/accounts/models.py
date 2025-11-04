@@ -13,6 +13,10 @@ class User(AbstractUser):
         help_text="Valor cobrado por hora de trabalho",
     )
     jira_id = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=150, null=False, blank=True)
+    project_manager = models.BooleanField(default=False)
+    team_leader = models.BooleanField(default=False)
+    team_member = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.username)
@@ -30,5 +34,18 @@ class User(AbstractUser):
             "permissions": {
                 "ADMIN": self.is_superuser,
                 "STAFF": self.is_staff,
+            },
+        }
+
+    def to_dict_json_user(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "password": self.password,
+            "permissions": {
+                "PROJECT_MANAGER": self.project_manager,
+                "TEAM_LEADER": self.team_leader,
+                "TEAM_MEMBER": self.team_member,
             },
         }

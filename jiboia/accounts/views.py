@@ -5,6 +5,7 @@ import logging
 from django.contrib import auth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from .services import create_user as create_user_service
 
 logger = logging.getLogger(__name__)
 
@@ -52,3 +53,20 @@ def whoami(request):
 
     logger.info("API whoami")
     return JsonResponse(user_data)
+
+@csrf_exempt
+def create_user(request):
+    logger.info("API create_user")
+    body = json.loads(request.body)
+    name = body["name"]
+    password = body["password"]
+    email = body["email"]
+    permissions = body.get("permissions", {})
+    
+    try:
+        user_dict = create_user_service(name, password, email, permissions)
+        logger.info("API create_user success")
+        return JsonResponse(user_dict, safe=False, status=201)
+    except ValueError as e:
+        logger.error(f"API create_user error: {str(e)}")
+        return JsonResponse({"message": str(e)}, safe=False, status=400)
