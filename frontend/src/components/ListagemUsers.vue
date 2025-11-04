@@ -1,7 +1,17 @@
 <template>
-  <div class="text-h2 ma-2 pa-2">Users</div>
+  <v-container>
+    <div class="d-flex justify-space-between align-center mb-4">
+      <div class="text-h2 ma-2 pa-2">Users</div>
 
-  <v-container class="d-flex justify-center align-center">
+      <v-btn
+        color="blue-darken-4"
+        prepend-icon="mdi-account-plus"
+        @click="formCadastro"
+      >
+        Cadastrar novo usuário
+      </v-btn>
+    </div>
+
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
@@ -10,7 +20,6 @@
       :loading="loading"
       @update:options="loadUsers"
     >
-
       <template v-slot:item.actions="{ item }">
         <v-btn
           icon
@@ -35,9 +44,9 @@
         <div class="text-center pa-4">Nenhum usuário encontrado.</div>
       </template>
     </v-data-table-server>
-
   </v-container>
 </template>
+
 
 <script setup>
 import { ref, onMounted } from "vue";
@@ -59,6 +68,10 @@ const totalUsers = ref(0);
 const loading = ref(true);
 const dialogAberto = ref(false);
 const userSelecionado = ref(null);
+
+const formCadastro = () => {
+  route.push();
+};
 
 const abrirEdit = (user) => {
   userSelecionado.value = user;
