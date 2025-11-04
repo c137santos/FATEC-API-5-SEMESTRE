@@ -1,0 +1,134 @@
+name: Auto Traceability
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  auto-traceability:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Analyze issue and auto-classify
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title;
+            const body = issue.body || '';
+
+            const requirementMap = {
+              // RF1 - Projetos
+              'projeto': 'RF1-PROJ',
+              'project': 'RF1-PROJ',
+              'lista.*projeto': 'RF1-PROJ-LIST',
+              'detalhe.*projeto': 'RF1-PROJ-DETAIL',
+
+              'issue': 'RF2-ISSUE',
+              'tarefa': 'RF2-ISSUE',
+              'card': 'RF2-ISSUE',
+              'lista.*issue': 'RF2-ISSUE-LIST',
+              'detalhe.*issue': 'RF2-ISSUE-DETAIL',
+
+              // RF3 - Usuários
+              'usuário': 'RF3-USER',
+              'user': 'RF3-USER',
+              'perfil': 'RF3-USER',
+              'acesso': 'RF3-USER-MANAGE',
+              'permissão': 'RF3-USER-MANAGE',
+              'gerenciar.*usuário': 'RF3-USER-MANAGE',
+
+              // RF4 - Dashboards
+              'dashboard': 'RF4-DASH',
+              'relatório': 'RF4-DASH',
+              'métrica': 'RF4-DASH',
+              'gráfico': 'RF4-DASH',
+              'dashboard.*projeto': 'RF4-DASH-PROJ',
+              'dashboard.*issue': 'RF4-DASH-ISSUE',
+
+              // RNF1 - Desempenho
+              'desempenho': 'RNF1-PERF',
+              'performance': 'RNF1-PERF',
+              'tempo.*resposta': 'RNF1-PERF-RESPONSE',
+              'escalabilidade': 'RNF1-PERF-SCALE',
+
+              // RNF2 - Segurança
+              'segurança': 'RNF2-SEC',
+              'security': 'RNF2-SEC',
+              'autenticação': 'RNF2-SEC-AUTH',
+              'login': 'RNF2-SEC-AUTH',
+              'acesso.*controle': 'RNF2-SEC-ACCESS',
+              'permissão': 'RNF2-SEC-ACCESS',
+
+              // RNF3 - Usabilidade
+              'usabilidade': 'RNF3-UX',
+              'ux': 'RNF3-UX',
+              'interface': 'RNF3-UX-LEARN',
+              'navegação': 'RNF3-UX-LEARN',
+              'design': 'RNF3-UX-RESP',
+              'responsivo': 'RNF3-UX-RESP'
+            };
+
+            let detectedRequirements = [];
+            const searchText = (title + ' ' + body).toLowerCase();
+
+            // Busca por palavras-chave
+            for (const [pattern, requirement] of Object.entries(requirementMap)) {
+              const regex = new RegExp(pattern, 'i');
+              if (regex.test(searchText)) {
+                detectedRequirements.push(requirement);
+              }
+            }
+
+            // Remove duplicatas e pega o primeiro requisito detectado
+            const uniqueReqs = [...new Set(detectedRequirements)];
+
+            if (uniqueReqs.length > 0) {
+              const primaryRequirement = uniqueReqs[0];
+
+              // Adiciona label do requisito
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: [primaryRequirement, 'auto-classified']
+              });
+
+              // Cria comentário com sugestão de template
+              const template = `
+                    **Auto Traceability**
+
+                    Detectei que esta issue pode estar relacionada ao requisito: **${primaryRequirement}**
+
+                    **Sugestão de template para o corpo da issue:**
+
+                    \`\`\`markdown
+                    **Requisito:** ${primaryRequirement}-${issue.number.toString().padStart(3, '0')}
+                    **Atende a:** ${primaryRequirement} - [Ver documento completo](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/requisitos.md)
+
+                    ## Descrição
+                    ${body}
+
+                    ## Critérios de Aceite
+                    - [ ] [Descreva o primeiro critério]
+                    - [ ] [Descreva o segundo critério]
+
+                    ---
+
+                    *Classificação automática - Revisar e ajustar se necessário*
+                    \`\`\`
+
+                    _Mantenha a descrição original e adicione as informações de traceability acima._
+                                `;
+
+                                await github.rest.issues.createComment({
+                                    owner: context.repo.owner,
+                                    repo: context.repo.repo,
+                                    issue_number: issue.number,
+                                    body: template
+                                });
+
+                                console.log(`Issue #${issue.number} classificada como: ${primaryRequirement}`);
+                                } else {
+                                console.log(`Nenhum requisito detectado para issue #${issue.number}`);
+                                }
