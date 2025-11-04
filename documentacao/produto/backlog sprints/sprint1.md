@@ -11,10 +11,10 @@
 
 | Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#7">[7]</a> | 3 | 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#8">[8]</a> | 3 | 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#2">[2]</a>, <a href="../../../README.md#7">[7]</a>, <a href="../../../README.md#8">[8]</a>, <a href="../../../README.md#9">[9]</a> | 8 | 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#2">[2]</a>, <a href="../../../README.md#7">[7]</a> | 3 | 2 |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | [`RF1-PROJ-LIST`](/documentacao/produto/requisitos.md#rf1-proj-list---listagem-de-projetos) | 3 | 1 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | [`RF1-PROJ-LIST`](/documentacao/produto/requisitos.md#rf1-proj-list---listagem-de-projetos) | 3 | 1 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | [`RF4-DASH-PROJ`](/documentacao/produto/requisitos.md#rf4-dash-proj---dashboard-de-projetos) | 8 | 1 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [`RF2-ISSUE-LIST`](/documentacao/produto/requisitos.md#rf2-issue-list---listagem-de-issues) | 3 | 2 |
 
 ### 🔗 Referências
 Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](../requisitos.md)
