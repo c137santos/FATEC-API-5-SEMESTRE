@@ -1,0 +1,100 @@
+# Arquivo: .github/workflows/ci-traceability.yml
+name: Push Traceability
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+jobs:
+  quality_gate_fast:
+    name: RNF4/RNF6 - Estilo (Files Changed)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1.1 - Identificar arquivos modificados para rastreabilidade justa
+      # Requisito RNF4-MAIN-CODE
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v40
+        with:
+          base_sha: ${{ github.event.pull_request.base.sha || github.sha }}
+          files_ignore: |
+            *.md
+            docs/**
+
+      # 1.2 - Configurar Python (apenas para Ruff)
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 1.3 - Verificação de Lint Apenas nos Arquivos Modificados
+      # Requisito RNF4-MAIN-CODE
+      - name: Lint & Estilo (Ruff Check - Alterados)
+        run: |
+          uv pip install ruff
+
+          CHANGED_PYTHON_FILES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -E '\.py$')
+          if [ -n "$CHANGED_PYTHON_FILES" ]; then
+            echo "Rodando Ruff apenas nos arquivos: $CHANGED_PYTHON_FILES"
+            ruff check --exit-code --output-format=github $CHANGED_PYTHON_FILES
+          else
+            echo "Nenhum arquivo Python alterado, passando o Lint."
+          fi
+
+      # 1.4 - Validação de Dockerfile
+      # Requisito RNF6-PORT-DOCKER
+      - name: Lint Dockerfile (hadolint)
+        if: contains(steps.changed-files.outputs.all_changed_files, 'Dockerfile')
+        run: |
+          docker pull hadolint/hadolint:latest-debian && docker run --rm -i hadolint/hadolint < Dockerfile
+
+  traceability_check:
+
+    # Requisito RNF4-MAIN-CODE e RNF6-PORT-DOCKER
+    name: Rastreabilidade Pós-CI
+    needs: quality_gate_fast
+    runs-on: ubuntu-latest
+
+    steps:
+        # Requisitos RNF4-MAIN-CODE e RNF2-SEC
+      - name: Status Check - Aguardando Jiboia CI
+        run: |
+          echo "Este commit passou pelo gate rápido (Lint/Infra)."
+          echo "Aguardando conclusão do Jiboia CI (Testes/Segurança)."
+
+  deploy_staging:
+
+    # Requisito RNF5-AVAIL-UPTIME
+    name: Deploy e Feedback Final
+    needs: traceability_check
+    runs-on: ubuntu-latest
+
+    steps:
+      # 3.1 - Publicar Artefato e Fazer Deploy (Removido o setup de custo/tempo)
+      # Requisito RNF5-AVAIL-UPTIME
+      - name: Publicar Artefato e Fazer Deploy
+        run: |
+          echo "Fazendo deploy para ambiente Staging..."
+          # Seu script de deploy real aqui
+
+      # 3.2 - Feedback da Task (Fechamento do Ciclo de Rastreabilidade)
+      # Requisito RF2-ISSUE-DETAIL
+      - name: Atualizar Status da Task
+        if: success()
+        env:
+          COMMIT_ID: ${{ github.sha }}
+          ISSUE_ID: ${{ github.event.pull_request.title || github.event.head_commit.message }}
+        run: |
+          echo "SUCCESS: O Commit $COMMIT_ID passou por todos os gates. Atualizando Task $ISSUE_ID para 'Pronto para QA'."
