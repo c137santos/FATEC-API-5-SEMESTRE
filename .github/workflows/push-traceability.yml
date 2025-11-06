@@ -43,12 +43,20 @@ jobs:
       # Requisito RNF4-MAIN-CODE
       - name: Lint & Estilo (Ruff Check - Alterados)
         run: |
-          uv pip install ruff
+          uv add ruff
 
-          CHANGED_PYTHON_FILES=$(echo "${{ steps.changed-files.outputs.all_changed_files }}" | grep -E '\.py$')
-          if [ -n "$CHANGED_PYTHON_FILES" ]; then
-            echo "Rodando Ruff apenas nos arquivos: $CHANGED_PYTHON_FILES"
-            ruff check --exit-code --output-format=github $CHANGED_PYTHON_FILES
+          CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          PYTHON_FILES=()
+
+          for file in $CHANGED_FILES; do
+            if [[ "$file" == *.py ]]; then
+              PYTHON_FILES+=("$file")
+            fi
+          done
+
+          if [ ${#PYTHON_FILES[@]} -gt 0 ]; then
+            echo "Rodando Ruff nos arquivos: ${PYTHON_FILES[*]}"
+            ruff check --exit-code --output-format=github "${PYTHON_FILES[@]}"
           else
             echo "Nenhum arquivo Python alterado, passando o Lint."
           fi
