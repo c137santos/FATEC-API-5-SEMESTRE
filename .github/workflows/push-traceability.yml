@@ -39,6 +39,18 @@ jobs:
         with:
           python-version: "3.11"
 
+      # 1.2.1 - Instalar UV
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      # 1.3 - Verificação de Lint Apenas nos Arquivos Modificados
+      # Requisito RNF4-MAIN-CODE
+      - name: Lint & Estilo (Ruff Check - Alterados)
+        run: |
+          uv add ruff
+
       # 1.3 - Verificação de Lint Apenas nos Arquivos Modificados
       # Requisito RNF4-MAIN-CODE
       - name: Lint & Estilo (Ruff Check - Alterados)
