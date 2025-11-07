@@ -12,6 +12,63 @@ Optamos pela utilização nativa do GitHub para implementação de rastreabilida
 
 ---
 
+# 🔗 GitHub: Eixo Central da Rastreabilidade e DevOps
+
+O **GitHub** é a **fonte única de metadados** que conecta código, *issues*, *builds* e *deploys*, estabelecendo-se como o **eixo central de rastreabilidade** em nosso fluxo de trabalho. Serve como a Fonte Primária de Metadados e o Destino Final da Correlação.
+
+---
+
+## 🔑 Rastreabilidade Baseada no SHA do Commit
+
+O **SHA do commit** identifica unicamente uma versão do código e cria a ligação essencial: **código → build → imagem Docker → deploy**.
+
+### 1. GitHub Actions como Veículo de Dados
+
+* As **GitHub Actions** (*workflows* em `.github/workflows/`) atuam como o **veículo de injeção de dados**.
+* Elas propagam o `COMMIT_SHA` (definido via `COMMIT_SHA=${{ github.sha }}`) e outras variáveis de ambiente durante os processos de *build* e *deploy*.
+* O Actions injeta metadados diretamente em métricas, logs e *tags* de imagens Docker.
+
+### 2. Criação da Trilha Completa
+
+| Etapa | Mecanismo |
+| :--- | :--- |
+| **Requisito → Código** | *Workflow auto-traceability* anota *issues* (RF\*) e PRs com *labels* e comentários, ligando requisito → PR → commit. |
+| **Código → Imagem** | Imagens Docker são *taggeadas* com `COMMIT_SHA` e número de *build*. |
+| **Ambiente → Evidência** | O *deploy* registra *tag*/commit como metadado. O *endpoint* `/api/version` (ou `/api/health`) expõe o `commit/build`. |
+| **Observabilidade** | Logs estruturados e métricas (ex: Prometheus) incluem a *label* `release=COMMIT_SHA`, permitindo correlação. |
+
+---
+
+## 💡 Benefícios e Vantagem Estratégica
+
+A adoção do GitHub é uma **decisão estratégica** que maximiza a eficiência operacional:
+
+* **Redução do Tempo Médio de Reparo (MTTR):** Ao detectar um pico de erro no Prometheus, a equipe correlaciona o erro diretamente ao `COMMIT_SHA`. Isso permite ir imediatamente à interface do GitHub (código exato, histórico do PR), eliminando a busca por "qual versão está rodando".
+* **Liderança de Mercado:** Sendo a **maior plataforma de hospedagem de código-fonte**, o GitHub recebe **prioridade de integração** de ferramentas de monitoramento e rastreabilidade (como o Prometheus), facilitando a especialização de ferramentas de terceiros.
+* **Flexibilidade e Custo:** O **GitHub Actions** favorece a modularidade em relação ao modelo integrado do GitLab. Além disso, o GitHub costuma ser mais competitivo em custo (Ex: Enterprise $21/usuário vs. GitLab Premium $29/usuário).
+
+---
+
+## ✅ Boas Práticas Adotadas
+
+| Área | Boa Prática |
+| :--- | :--- |
+| **Workflows** | Definir `COMMIT_SHA=${{ github.sha }}` e usá-lo para *taggear* imagens. |
+| **Aplicação** | Expor `commit/build` no *endpoint* `/api/version` (ou `/api/health`). |
+| **Observabilidade**| Incluir a *label* `release=COMMIT_SHA` em logs e métricas. |
+| **Auditoria** | Usar o *workflow auto-traceability* para anotar *issues*/PRs. |
+| **Segurança** | Controlar permissões das Actions e o uso de *secrets/PATs*. **Jamais** remover autenticação ou usar `csrf_exempt` em produção. |
+
+---
+
+## 🧪 Como Testar a Rastreabilidade
+
+1.  Commit e push (`dev`/`main`) disparam o Action de *build*.
+2.  Verificar imagem no registry com a tag `COMMIT_SHA`.
+3.  Fazer o *deploy* e checar se `GET /api/version` retorna o mesmo `COMMIT_SHA`.
+4.  Simular erro/alerta e confirmar se logs/métricas mostram o `COMMIT_SHA` para correlação.
+5.  Verificar se *issue*/PR foi anotada pelo *workflow* (*label* + comentário).
+
 ## 📈 Análise de Custos
 
 ### Custo GitHub Organizations
