@@ -18,8 +18,14 @@ export default {
     return response.data
   },
 
-  getUsers: async () => {
-    const response = await api.get("/api/accounts/users")
-    return response.data
+  getUsers: async (page, limit, sortBy) => {
+    const params = {};
+
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    if (sortBy && sortBy.length > 0) params.sortBy = sortBy.join(",");
+
+    const response = await api.get("/api/accounts/users", { params });
+    return response.data;
   }
 }

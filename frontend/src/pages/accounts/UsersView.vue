@@ -12,9 +12,3 @@ export default {
   components: { ListagemUsers },
 }
 </script>
-
-<style scoped>
-.done {
-  text-decoration: line-through;
-}
-</style>

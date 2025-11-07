@@ -70,7 +70,7 @@ const dialogAberto = ref(false);
 const userSelecionado = ref(null);
 
 const formCadastro = () => {
-  route.push();
+  route.push('/accounts/users/create');
 };
 
 const abrirEdit = (user) => {
@@ -81,10 +81,6 @@ const abrirEdit = (user) => {
 const abrirDelete = (user) => {
   userSelecionado.value = user;
   dialogAberto.value = true;
-};
-
-const loadUsers = async ({ page, itemsPerPage, sortBy }) => {
-  await searchUsers(page, itemsPerPage, sortBy);
 };
 
 const searchUsers = async (page = 1, limit = itemsPerPage.value, sortBy = []) => {
@@ -100,9 +96,13 @@ const searchUsers = async (page = 1, limit = itemsPerPage.value, sortBy = []) =>
   } finally {
     loading.value = false;
   }
-}
+};
+
+const loadUsers = async ({ page, itemsPerPage, sortBy }) => {
+  await searchUsers(page, itemsPerPage, sortBy);
+};
 
 onMounted(async () => {
-  loadUsers();
+  await loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
 });
 </script>
