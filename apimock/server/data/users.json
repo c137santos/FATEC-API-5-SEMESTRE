@@ -10,30 +10,30 @@
   },
   {
     "id": 2,
-    "name": "John Doe",
-    "username": "john",
+    "name": "admin",
+    "username": "admin",
     "email": "jd@example.com",
     "first_name": "John",
     "last_name": "Doe",
-    "permissions": { "ADMIN": false, "STAFF": false }
+    "permissions": { "ADMIN": false, "STAFF": false, "PROJECT_ADMIN": true, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 3,
-    "name": "Vasco da Gama",
-    "username": "vasco",
+    "name": "manager",
+    "username": "manager",
     "email": "vasco@daGama.com",
     "first_name": "Vasco",
     "last_name": "Da Gama",
-    "permissions": { "GESTOR": false, "STAFF": false }
+    "permissions": { "GESTOR": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": true, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 4,
-    "name": "Nico Robin",
-    "username": "robin",
+    "name": "member",
+    "username": "member",
     "email": "robin@example.com",
     "first_name": "Nico",
     "last_name": "Robin",
-    "permissions": { "ADMIN": false, "STAFF": false }
+    "permissions": { "ADMIN": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": true }
   },
   {
     "id": 5,
@@ -42,7 +42,7 @@
     "email": "ana@example.com",
     "first_name": "Ana",
     "last_name": "Castela",
-    "permissions": { "DEV": false, "STAFF": false }
+    "permissions": { "DEV": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 6,
@@ -51,7 +51,7 @@
     "email": "lilVinicin@example.com",
     "first_name": "Vini",
     "last_name": "Cin",
-    "permissions": { "GESTOR": false, "STAFF": false }
+    "permissions": { "GESTOR": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 7,
@@ -60,7 +60,7 @@
     "email": "bruce@batman.com",
     "first_name": "Bruce",
     "last_name": "Wayne",
-    "permissions": { "ADMIN": false, "STAFF": false }
+    "permissions": { "ADMIN": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 8,
@@ -69,7 +69,7 @@
     "email": "nami@example.com",
     "first_name": "Nami",
     "last_name": "Tangerinas",
-    "permissions": { "DEV": false, "STAFF": false }
+    "permissions": { "DEV": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 9,
@@ -78,7 +78,7 @@
     "email": "misaki@another.com",
     "first_name": "Misaki",
     "last_name": "Mei",
-    "permissions": { "GESTOR": false, "STAFF": false }
+    "permissions": { "GESTOR": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   },
   {
     "id": 10,
@@ -87,6 +87,6 @@
     "email": "roberto@example.com",
     "first_name": "Roberto",
     "last_name": "Carlos",
-    "permissions": { "ADMIN": false, "STAFF": false }
+    "permissions": { "ADMIN": false, "STAFF": false, "PROJECT_ADMIN": false, "PROJECT_MANAGER": false, "TEAM_LEADER": false, "TEAM_MEMBER": false }
   }
 ]
