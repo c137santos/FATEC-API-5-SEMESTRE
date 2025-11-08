@@ -159,7 +159,7 @@ def test_list_paginable_issues_with_invalid_page_parameter_string(client):
 @pytest.mark.django_db
 def test_list_paginable_issues_empty_database(client):
     """
-    Tests if the endpoint returns 200 when there are no issues (apenas o projeto existe).
+    Tests if the endpoint returns 200 when there are no issues
     """
     Project.objects.create(id=TEST_PROJECT_ID, name="Projeto Vazio", description="", jira_id=1)
 

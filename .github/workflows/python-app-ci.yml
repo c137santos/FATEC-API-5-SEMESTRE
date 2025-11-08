@@ -58,4 +58,12 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:db_test_pwd_ci@localhost:5432/db_test
         run: |
-          pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing
+          pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing --cov-fail-under=80
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.python.coverage.reportPaths=coverage.xml

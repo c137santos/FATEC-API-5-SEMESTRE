@@ -15,3 +15,4 @@ ipython==8.28.0
 # CORS (para quando o frontend está em domínio diferente)
 pre-commit>=3.0.0
 gitlint>=0.19.0
+gunicorn==21.2.0

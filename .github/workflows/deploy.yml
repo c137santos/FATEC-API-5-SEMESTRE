@@ -1,0 +1,140 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-backend
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-backend:latest
+          cache-to: type=inline
+
+      - name: Extract metadata for Frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-frontend
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix={{branch}}-
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/fatec-api-5-semestre-frontend:latest
+          cache-to: type=inline
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        env:
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: GITHUB_REPOSITORY_OWNER
+          script: |
+            set -e
+
+            echo "🚀 Starting deployment..."
+
+            cd /home/ubuntu/FATEC-API-5-SEMESTRE
+
+            echo "📥 Pulling latest code..."
+            git fetch origin
+            git reset --hard origin/${{ github.ref_name }}
+
+            export GITHUB_REPOSITORY_OWNER=$GITHUB_REPOSITORY_OWNER
+
+            echo "🐳 Pulling Docker images..."
+            docker-compose -f docker-compose.prod.yml pull
+
+            echo "🛑 Stopping containers..."
+            docker-compose -f docker-compose.prod.yml down
+
+            echo "🚀 Starting containers..."
+            docker-compose -f docker-compose.prod.yml up -d
+
+            echo "⏳ Waiting for containers..."
+            sleep 30
+
+            echo "🧹 Cleaning up..."
+            docker system prune -f
+
+            echo "✅ Deployment completed!"
+
+      - name: Health Check
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            echo "🏥 Running health check..."
+            sleep 5
+
+            if curl -f -s -o /dev/null -w "%{http_code}" https://jiboia.app/ | grep -q "200\|301\|302"; then
+              echo "✅ Application is healthy!"
+              exit 0
+            else
+              echo "❌ Health check failed!"
+              exit 1
+            fi
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Deploy failed! Check the logs above."
