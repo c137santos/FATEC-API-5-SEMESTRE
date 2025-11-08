@@ -492,6 +492,7 @@ class DimStatusTypeService:
                 "id_status_jiba": dim_status_type.id_status_jiba,
                 "id_status_jira": dim_status_type.id_status_jira,
                 "status_name": dim_status_type.status_name,
+                "key": dim_status_type.key,
             }
             filtros.append(filtro)
 
@@ -502,9 +503,7 @@ class DimStatusTypeService:
         dim_status, _ = DimStatus.objects.update_or_create(
             id_status_jira=status["jira_id"],
             id_status_jiba=status["statustype_id"],
-            defaults={
-                "status_name": status["name"],
-            },
+            defaults={"status_name": status["name"], "key": status["key"]},
         )
         return dim_status
 

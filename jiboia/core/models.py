@@ -167,6 +167,7 @@ class DimStatus(models.Model):
     id = models.AutoField(primary_key=True, help_text="ID Natural do Status")
     id_status_jira = models.IntegerField(db_index=True, help_text="ID do Status no jira")
     id_status_jiba = models.IntegerField(db_index=True, help_text="ID do Status no jiboia")
+    key = models.CharField(max_length=100, help_text="Key da status")
     status_name = models.CharField(max_length=100)
 
     class Meta:
@@ -249,6 +250,10 @@ class FactIssue(models.Model):
         indexes = [
             models.Index(fields=["project", "worklog_interval"]),
         ]
+
+    @property
+    def normalize_name(self):
+        return self.issue_type.name_type.lower().replace(" ", "_").replace("-", "_")
 
 
 class FactProjectSnapshot(models.Model):

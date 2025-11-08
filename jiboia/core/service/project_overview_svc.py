@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta
 
-from django.db.models import Sum
+from django.db.models import Count, Sum
 from django.utils import timezone
 
 from jiboia.core.service import issues_type_svc
@@ -43,23 +43,25 @@ def _get_issues_per_month(project, issues_breakdown_months):
     return issues_per_month
 
 
-def _get_issues_today(project, all_status_types):
+def _get_issues_today(project):
     """Helper function to get current issues breakdown"""
     today = timezone.now()
     issues_today = {"date": today.strftime(FORMAT_DATE_MONTH)}
 
-    # Count current issues for each status type
-    for status in all_status_types:
-        count = Issue.objects.filter(project=project, status=status).count()
+    issues_by_status = (
+        Issue.objects.filter(project=project, status__isnull=False)
+        .values("status__key")
+        .annotate(total_issues=Count("id"))
+        .order_by("status__key")
+    )
 
-        status_key = status.key.lower().replace(" ", "_").replace("-", "_")
-        issues_today[status_key] = count
+    for fato_issue in issues_by_status:
+        issues_today[fato_issue["status__key"]] = fato_issue["total_issues"]
 
-    # Add count for issues with no status
     no_status_count = Issue.objects.filter(project=project, status__isnull=True).count()
     if no_status_count > 0:
         issues_today["no_status"] = no_status_count
-
+    print(issues_today)
     return issues_today
 
 
@@ -71,9 +73,7 @@ def _get_burndown_data(project, burndown_days):
         "pending_per_day": [],
     }
 
-    # Get pending status (assuming 'new', 'open', 'pending' keys)
-    pending_statuses = StatusType.objects.filter(key__in=["new", "open", "pending", "todo", "backlog"])
-
+    pending_statuses = StatusType.objects.exclude(key__in=["done"])
     # Get total pending issues count
     total_pending = Issue.objects.filter(project=project, status__in=pending_statuses).count()
 
@@ -120,7 +120,6 @@ def _get_dev_hours(project):
     """Helper function to get developer hours for a project"""
     dev_hours = []
 
-    # Get time logs grouped by user
     time_logs_by_user = (
         TimeLog.objects.filter(id_issue__project=project, id_user__isnull=False)
         .values("id_user", "id_user__username", "id_user__first_name", "id_user__last_name")
@@ -165,15 +164,12 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
         logger.error(f"Project with ID {project_id} not found")
         return None
 
-    # Get all status types from the database
-    all_status_types = StatusType.objects.all()
-
     # Build overview data
     overview = {
         "project_id": project.id,
         "name": project.name,
         "issues_per_month": _get_issues_per_month(project, issues_breakdown_months),
-        "issues_today": _get_issues_today(project, all_status_types),
+        "issues_today": _get_issues_today(project),
         "burndown": _get_burndown_data(project, burndown_days),
         "total_worked_hours": _get_total_worked_hours(project),
         "issues_status": _get_issues_by_type(project),
