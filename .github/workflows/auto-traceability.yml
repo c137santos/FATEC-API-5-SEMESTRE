@@ -87,9 +87,6 @@ jobs:
               'uptime': 'RNF5-AVAIL-UPTIME',
               'tempo.*atividade': 'RNF5-AVAIL-UPTIME',
               '24.*7': 'RNF5-AVAIL-UPTIME',
-              'notificação': 'RNF5-AVAIL-NOTIFY',
-              'manutenção.*programada': 'RNF5-AVAIL-NOTIFY',
-              'indisponibilidade': 'RNF5-AVAIL-NOTIFY'
 
               // RNF6 - Portabilidade
               'portabilidade': 'RNF6-PORT',
