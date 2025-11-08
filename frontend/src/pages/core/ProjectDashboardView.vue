@@ -45,7 +45,14 @@
 						</v-card>
 						<v-card class="d-flex flex-column ga-2 pa-4">
 							<h3 class="d-flex justify-center">Gasto por hora (R$)</h3>
-							<span class="text-h4 d-flex justify-center">{{ workedHours * hourValue }}</span>
+							<span class="text-h4 d-flex justify-center">
+								<template v-if="hasProjectPermission">
+									{{ formatCurrency(workedHours * hourValue) }}
+								</template>
+								<template v-else>
+									<v-icon size="22">mdi-lock</v-icon>
+								</template>
+							</span>
 						</v-card>
 					</div>
 				</v-col>
@@ -81,15 +88,26 @@
 							class="elevation-1"
 						>
 							<template v-slot:item.actions="{ item }">
-								<v-btn
-									icon="mdi-pencil"
-									size="small"
-									variant="text"
-									@click="editDeveloper(item)"
-								></v-btn>
+								<!-- show edit only for users with project permissions, otherwise show lock -->
+								<template v-if="hasProjectPermission">
+									<v-btn
+										icon="mdi-pencil"
+										size="small"
+										variant="text"
+										@click="editDeveloper(item)"
+									></v-btn>
+								</template>
+								<template v-else>
+									<v-icon size="18">mdi-lock</v-icon>
+								</template>
 							</template>
 							<template v-slot:item.valorHora="{ item }">
-								{{ formatCurrency(item.valorHora) }}
+								<template v-if="hasProjectPermission">
+									{{ formatCurrency(item.valorHora) }}
+								</template>
+								<template v-else>
+									<v-icon size="18">mdi-lock</v-icon>
+								</template>
 							</template>
 						</v-data-table>
 					</v-card>
@@ -195,6 +213,7 @@ import DashboardLayout from '@/layouts/default/DashboardLayout.vue';
 import StatusBreakdownGraph from '@/components/StatusBreakdownGraph.vue'
 import { chartColors } from '@/utils/chart-utils';
 import { useRoute, useRouter } from 'vue-router';
+import { useAccountsStore } from '@/stores/accountsStore.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -205,6 +224,13 @@ const name = ref('')
 const developersTableData = ref([])
 
 const hourValue = ref(0)
+
+const accountsStore = useAccountsStore()
+const hasProjectPermission = computed(() => {
+	const perms = accountsStore.loggedUser?.permissions || {}
+	return Boolean(perms.PROJECT_ADMIN) || Boolean(perms.PROJECT_MANAGER)
+})
+console.log(accountsStore.loggedUser?.permissions)
 
 const developersTableHeaders = [
 	{ title: 'Desenvolvedor', key: 'nome', align: 'start' },
@@ -338,6 +364,8 @@ const editingDeveloper = ref(null)
 const newHourValue = ref(0)
 
 const editDeveloper = (item) => {
+ 	if (!hasProjectPermission.value) return
+
 	editingDeveloper.value = item
 	newHourValue.value = item.valorHora
 	editDialogVisible.value = true
@@ -383,6 +411,10 @@ const loadDevelopers = async () => {
 }
 
 onMounted(async () => {
+	if (!accountsStore.loggedUser) {
+		await accountsStore.whoAmI()
+	}
+
 	const data = await projectsApi.dashboard(route.params.id)
 	name.value = data.name
 	dataRef.value = data
