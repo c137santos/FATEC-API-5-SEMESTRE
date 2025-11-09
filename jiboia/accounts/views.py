@@ -63,14 +63,14 @@ def create_user(request):
         json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({"error": "JSON inválido"}, status=400)
-    
+
     logger.info("API create_user")
     body = json.loads(request.body)
     name = body["username"]
     password = body["password"]
     email = body["email"]
     permissions = body.get("permissions", {})
-    
+
     if not any(permissions.values()):
         return JsonResponse(
             {"error": "Pelo menos uma permissão deve ser True"},
