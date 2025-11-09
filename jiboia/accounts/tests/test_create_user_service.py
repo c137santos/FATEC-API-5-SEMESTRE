@@ -9,10 +9,10 @@ User = get_user_model()
 @pytest.mark.django_db
 class TestCreateUser:
     def test_create_user_successfully(self):
-        permissions = {"PROJECT_MANAGER": True, "TEAM_LEADER": False, "TEAM_MEMBER": False}
+        permissions = {"PROJECT_MANAGER": True, "TEAM_LEADER": False, "TEAM_MEMBER": False, "PROJECT_ADMIN": False}
 
         user_data = {
-            "name": "John Doe",
+            "username": "John Doe",
             "email": "john@example.com",
             "password": "securepassword123",
             "permissions": permissions,
@@ -22,7 +22,7 @@ class TestCreateUser:
 
         user = User.objects.get(email="john@example.com")
         assert user is not None
-        assert user.name == "John Doe"
+        assert user.username == "John Doe"
         assert user.project_manager is True
         assert user.team_leader is False
         assert user.team_member is False
@@ -40,7 +40,7 @@ class TestCreateUser:
                 "User",
                 "123",
                 "user@example.com",
-                {"PROJECT_MANAGER": False, "TEAM_LEADER": False, "TEAM_MEMBER": False},
+                {"PROJECT_MANAGER": False, "TEAM_LEADER": False, "TEAM_MEMBER": False, "PROJECT_ADMIN": False},
             )
 
     def test_duplicate_email(self):

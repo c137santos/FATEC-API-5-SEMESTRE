@@ -59,17 +59,28 @@ def whoami(request):
 
 @csrf_exempt  # NOSONAR
 def create_user(request):
+    try:
+        json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "JSON inválido"}, status=400)
+    
     logger.info("API create_user")
     body = json.loads(request.body)
-    name = body["name"]
+    name = body["username"]
     password = body["password"]
     email = body["email"]
     permissions = body.get("permissions", {})
+    
+    if not any(permissions.values()):
+        return JsonResponse(
+            {"error": "Pelo menos uma permissão deve ser True"},
+            status=400,
+        )
 
     try:
-        user_dict = create_user_service(name, password, email, permissions)
+        create_user_service(name, password, email, permissions)
         logger.info("API create_user success")
-        return JsonResponse(user_dict, safe=False, status=201)
+        return JsonResponse("Usuário criado com sucesso", safe=False, status=201)
     except ValueError as e:
         logger.error(f"API create_user error: {str(e)}")
         return JsonResponse({"message": str(e)}, safe=False, status=400)
