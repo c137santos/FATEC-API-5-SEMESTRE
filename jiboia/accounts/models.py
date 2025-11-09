@@ -29,7 +29,6 @@ class User(AbstractUser):
             "first_name": getattr(self, "first_name", None),
             "last_name": getattr(self, "last_name", None),
             "email": self.email,
-            "password": self.password,
             "valor_hora": 0.0 if getattr(self, "valor_hora", None) is None else float(self.valor_hora),
             "jira_id": getattr(self, "jira_id", None),
             "permissions": {
