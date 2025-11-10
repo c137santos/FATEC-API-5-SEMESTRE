@@ -42,7 +42,7 @@
               v-model="tipoAcesso"
               clearable
               label="Tipo de Acesso"
-              :items="['Administrador', 'Usuário']"
+              :items="['Administrador', 'Gestor', 'Desenvolvedor']"
               :rules="[v => !!v || 'Tipo de acesso é obrigatório']"
               required
             />
