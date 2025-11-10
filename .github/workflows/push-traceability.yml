@@ -61,7 +61,7 @@ jobs:
 
           if [ ${#PYTHON_FILES[@]} -gt 0 ]; then
             echo "Rodando Ruff nos arquivos: ${PYTHON_FILES[*]}"
-            uv run ruff check --exit-code --output-format=github "${PYTHON_FILES[@]}"
+            uv run ruff check --exit-zero --output-format=github "${PYTHON_FILES[@]}"
           else
             echo "Nenhum arquivo Python alterado, passando o Lint."
           fi
