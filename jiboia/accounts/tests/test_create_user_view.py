@@ -35,7 +35,7 @@ def test_create_user_success(mock_service):
     }
 
     response = client.post(
-        "/api/accounts/users/create_user",  
+        "/api/accounts/users",
         data=json.dumps(payload),
         content_type="application/json",
     )
@@ -68,7 +68,7 @@ def test_create_user_no_true_permission(mock_service):
     }
 
     response = client.post(
-        "/api/accounts/users/create_user",
+        "/api/accounts/users",
         data=json.dumps(payload),
         content_type="application/json",
     )
@@ -97,7 +97,7 @@ def test_create_user_service_value_error(mock_service):
     }
 
     response = client.post(
-        "/api/accounts/users/create_user",
+        "/api/accounts/users",
         data=json.dumps(payload),
         content_type="application/json",
     )
@@ -117,7 +117,7 @@ def test_create_user_invalid_json():
     client = Client()
 
     response = client.post(
-        "/api/accounts/users/create_user",
+        "/api/accounts/users",
         data="username=Pedro",
         content_type="application/json",
     )
