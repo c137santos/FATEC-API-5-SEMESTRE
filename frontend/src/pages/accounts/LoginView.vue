@@ -86,7 +86,7 @@ export default {
       this.showIssues()
     },
     showIssues() {
-      this.$router.push({ name: "issues-list" })
+      this.$router.push({ path: "/projects/overview" })
       console.log("--> issues")
     },
   },
