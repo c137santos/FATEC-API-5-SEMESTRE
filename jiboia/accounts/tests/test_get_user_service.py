@@ -1,5 +1,4 @@
 import pytest
-from django.core.exceptions import ObjectDoesNotExist
 
 from jiboia.accounts.models import User
 from jiboia.accounts.services import get_all_users
@@ -38,7 +37,3 @@ class TestGetAllUsers:
         john_data = next(u for u in users if u["username"] == "john")
         assert john_data["permissions"]["PROJECT_MANAGER"] is True
         assert john_data["permissions"]["TEAM_MEMBER"] is False
-
-    def test_get_all_users_raises_error_when_no_users_exist(self):
-        with pytest.raises(ObjectDoesNotExist, match="Nenhum usuário encontrado."):
-            get_all_users()

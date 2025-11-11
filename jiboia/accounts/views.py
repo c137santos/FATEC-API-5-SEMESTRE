@@ -94,7 +94,11 @@ def create_user(request):
 @require_http_methods(["GET"])
 def get_all_users(request):
     page = request.GET.get("page", 1)
-    page_size = request.GET.get("page_size", 10)
+    try:
+        page_size = int(request.GET.get("page_size", 10))
+        page_size = min(max(page_size, 1), 100)
+    except ValueError:
+        page_size = 10
 
     users = User.objects.all().order_by("id")
 
