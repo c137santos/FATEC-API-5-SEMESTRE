@@ -129,7 +129,7 @@ const valid = computed(() => {
          senha.value &&
          confirmSenha.value &&
          senha.value === confirmSenha.value &&
-         senha.value.length >= 3;
+         senha.value.length >= 6;
 });
 
 const salvarUser = async () => {

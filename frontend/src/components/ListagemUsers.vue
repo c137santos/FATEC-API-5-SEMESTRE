@@ -46,7 +46,7 @@
     </v-data-table-server>
 
     <v-dialog v-model="dialogCadastro" max-width="800" persistent>
-      <CasdastrarUser
+      <CadastrarUser
         @close="fecharCadastro"
         @saved="onUsuarioSalvo"
       />
@@ -57,7 +57,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import accountsApi from "@/api/accounts.api";
-import CasdastrarUser from "./CasdastrarUser.vue";
+import CadastrarUser from "./CadastrarUser.vue";
 
 const headers = ref([
   { title: "Id", key: "id", align: "start" },
