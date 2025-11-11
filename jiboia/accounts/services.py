@@ -1,9 +1,20 @@
+from django.core.exceptions import ObjectDoesNotExist
+
 from jiboia.accounts.models import User
 
 
 def list_users():
     users = User.objects.all()
     return [user.to_dict_json() for user in users]
+
+
+def get_all_users():
+    users = User.objects.all()
+
+    if not users.exists():
+        raise ObjectDoesNotExist("Nenhum usuário encontrado.")
+
+    return [user.to_get_user_json() for user in users]
 
 
 def create_user(username, password, email, permissions):

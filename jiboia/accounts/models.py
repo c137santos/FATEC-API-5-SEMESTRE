@@ -40,3 +40,16 @@ class User(AbstractUser):
                 "TEAM_MEMBER": getattr(self, "team_member", False),
             },
         }
+
+    def to_get_user_json(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "permissions": {
+                "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                "TEAM_LEADER": getattr(self, "team_leader", False),
+                "TEAM_MEMBER": getattr(self, "team_member", False),
+            },
+        }

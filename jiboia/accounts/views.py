@@ -4,10 +4,12 @@ import json
 import logging
 
 from django.contrib import auth
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
+from jiboia.accounts.models import User
 from jiboia.accounts.services import create_user as create_user_service
 
 logger = logging.getLogger(__name__)
@@ -86,3 +88,42 @@ def create_user(request):
     except ValueError as e:
         logger.error(f"API create_user error: {str(e)}")
         return JsonResponse({"message": str(e)}, safe=False, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_all_users(request):
+    page = request.GET.get("page", 1)
+    page_size = request.GET.get("page_size", 10)
+
+    users = User.objects.all().order_by("id")
+
+    if not users.exists():
+        return JsonResponse({"message": "Nenhum usuário encontrado."}, status=404)
+
+    paginator = Paginator(users, page_size)
+
+    try:
+        users_page = paginator.page(page)
+    except PageNotAnInteger:
+        users_page = paginator.page(1)
+    except EmptyPage:
+        users_page = paginator.page(paginator.num_pages)
+
+    data = {
+        "count": paginator.count,
+        "total_pages": paginator.num_pages,
+        "current_page": users_page.number,
+        "results": [user.to_get_user_json() for user in users_page],
+    }
+
+    return JsonResponse(data, safe=False, status=200)
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def users_view(request):
+    if request.method == "GET":
+        return get_all_users(request)
+    elif request.method == "POST":
+        return create_user(request)

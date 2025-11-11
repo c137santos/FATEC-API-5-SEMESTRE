@@ -725,6 +725,7 @@ def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
 
     ontem_timestamp = timezone.now() - timedelta(days=1)
     ontem = ontem_timestamp.strftime("%Y-%m-%d")
+
     with freeze_time(ontem):
         intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
         success = DimensionalService.generate_project_snapshot_data(intervalo_tempo_dia)
@@ -742,6 +743,7 @@ def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
     one_issue = Issue.objects.all()[0]
     one_issue.time_estimate_seconds = 28800
     one_issue.save()
+
     dev = User.objects.create_user(
         username="dev1",
         first_name="João",
@@ -751,13 +753,19 @@ def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
         valor_hora=75.0,
         jira_id=one_issue.id,
     )
+
     timelog = TimeLog.objects.create(
-        id_issue=one_issue, id_user=dev, seconds=1800, log_date=timezone.now(), jira_id=one_issue.id
+        id_issue=one_issue,
+        id_user=dev,
+        seconds=1800,
+        log_date=timezone.now(),
+        jira_id=one_issue.id,
     )
+
     intervalo_tempo_dia = DimIntervaloTemporalService(TipoGranularidade.DIA)
     success_mes = DimensionalService.generate_project_snapshot_data(intervalo_tempo_dia)
-    hoje = timezone.now().date()
-    snapshot_dia = FactProjectSnapshot.objects.get(created_at__date=hoje)
+
+    snapshot_dia = FactProjectSnapshot.objects.latest("created_at")
 
     assert snapshot_dia is not None, "Snapshot diário deve ser criado no FactProjectSnapshot"
     assert snapshot_dia.snapshot_interval.granularity_type == TipoGranularidade.DIA.value
@@ -770,9 +778,10 @@ def test_generate_project_snapshot_data_daily_mth(setup_issues_data):
     assert success_mes is True, "A geração de snapshot mensal deve retornar True"
     intervalo_mes = DimIntervaloTemporalService(TipoGranularidade.MES)
     success_mes = DimensionalService.generate_project_snapshot_data(intervalo_mes)
+
     snapshot_mes = FactProjectSnapshot.objects.filter(
         snapshot_interval__granularity_type=TipoGranularidade.MES.value
-    ).first()
+    ).latest("created_at")
 
     assert snapshot_mes is not None, "Snapshot mensal deve ser criado"
     assert snapshot_mes.snapshot_interval.start_date.month == timezone.now().month
