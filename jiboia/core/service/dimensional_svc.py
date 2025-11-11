@@ -103,7 +103,6 @@ class DimensionalService:
                         type_issue__jira_id=issue_type["id_type_jira"],
                         status__jira_id=status["id_status_jira"],
                     ).count()
-                    # garantir que sem status sejam no_status
 
                     FactIssue.objects.create(
                         project=projeto["project"],

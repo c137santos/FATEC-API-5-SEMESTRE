@@ -219,7 +219,7 @@ def test_generate_fact_worlog():
         id_status_jira=status_type_open.jira_id,
         id_status_jiba=status_type_open.id,
         status_name=status_type_open.name,
-        key=status_type_open,
+        key=status_type_open.key,
     )
     projeto = Project.objects.create(
         key="PRJ1",
