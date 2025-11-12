@@ -60,7 +60,6 @@ class Migration(migrations.Migration):
                 ('id_status_jira', models.IntegerField(db_index=True, help_text='ID do Status no jira')),
                 ('id_status_jiba', models.IntegerField(db_index=True, help_text='ID do Status no jiboia')),
                 ('status_name', models.CharField(max_length=100)),
-                ('key', models.CharField(max_length=100, help_text='Key da status'))
             ],
             options={
                 'verbose_name': 'Dimensão Status',

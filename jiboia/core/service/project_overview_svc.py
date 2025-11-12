@@ -26,17 +26,22 @@ def _get_issues_per_month(project, issues_breakdown_months):
 
     for key, interval in interval_dict.items():
         start_date = interval["start_date"]
+        finish_date = interval["end_date"]
         dim_interval = DimIntervaloTemporal.objects.filter(
-            granularity_type=TipoGranularidade.MES, start_date=start_date
+            granularity_type=TipoGranularidade.MES.value, start_date__gte=start_date, end_date__lte=finish_date
         ).first()
         status_dict = status_dict_inited.copy()
         month_data = {"date": start_date.strftime(FORMAT_DATE_MONTH), **status_dict}
 
         if dim_interval:
-            fatos = FactIssue.objects.filter(worklog_interval=dim_interval, project=project).select_related("status")
+            fatos = (
+                FactIssue.objects.filter(worklog_interval=dim_interval, project__id_project_jiba=project.id)
+                .select_related("status")
+                .all()
+            )
 
             for fato in fatos:
-                status_key = fato.status.key.lower().replace(" ", "_").replace("-", "_")
+                status_key = fato.status.status_name
                 month_data[status_key] = month_data.get(status_key, 0) + (fato.total_issue or 0)
         issues_per_month.append(month_data)
 

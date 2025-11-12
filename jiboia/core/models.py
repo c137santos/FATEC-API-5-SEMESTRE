@@ -167,7 +167,7 @@ class DimStatus(models.Model):
     id = models.AutoField(primary_key=True, help_text="ID Natural do Status")
     id_status_jira = models.IntegerField(db_index=True, help_text="ID do Status no jira")
     id_status_jiba = models.IntegerField(db_index=True, help_text="ID do Status no jiboia")
-    key = models.CharField(max_length=100, help_text="Key da status")
+    key = models.CharField(max_length=100, help_text="Key da status", null=True)
     status_name = models.CharField(max_length=100)
 
     class Meta:

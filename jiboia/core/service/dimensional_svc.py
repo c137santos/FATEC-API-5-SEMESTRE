@@ -102,6 +102,7 @@ class DimensionalService:
                         project__jira_id=projeto["id_project_jira"],
                         type_issue__jira_id=issue_type["id_type_jira"],
                         status__jira_id=status["id_status_jira"],
+                        end_date=None,
                     ).count()
 
                     FactIssue.objects.create(
@@ -110,13 +111,6 @@ class DimensionalService:
                         status=status["dimstatus"],
                         total_issue=total_issue if total_issue else 0,
                         worklog_interval=intervalo_tempo.dimtemporal,
-                    )
-                    logger.debug(
-                        "[DIM LOAD]: FactIssue criado. Projeto: %s, Tipo: %s, Status: %s, Total: %s",
-                        projeto["project"],
-                        issue_type["issue_type"],
-                        status["dimstatus"],
-                        total_issue,
                     )
         logger.info("[DIM LOAD]: FactIssue salvo com sucesso para o intervalo: %s", intervalo_tempo.dimtemporal)
         return True
