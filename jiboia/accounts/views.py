@@ -7,7 +7,6 @@ from django.contrib import auth
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 
 from jiboia.accounts.models import User
@@ -60,6 +59,7 @@ def whoami(request):
     logger.info("API whoami")
     return JsonResponse(user_data)
 
+
 def create_user(request):
     try:
         json.loads(request.body)
@@ -86,6 +86,7 @@ def create_user(request):
     except ValueError as e:
         logger.error(f"API create_user error: {str(e)}")
         return JsonResponse({"message": str(e)}, safe=False, status=400)
+
 
 def get_all_users(request):
     page = request.GET.get("page", 1)
@@ -118,9 +119,12 @@ def get_all_users(request):
 
     return JsonResponse(data, safe=False, status=200)
 
+
 # This view intentionally allows both GET (safe) and POST (unsafe) methods
 # to handle user listing and creation in one endpoint.
 # CSRF protection is disabled because this is a JSON API authenticated by token.
+
+
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def users_view(request):
