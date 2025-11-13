@@ -51,6 +51,14 @@
         @saved="onUsuarioSalvo"
       />
     </v-dialog>
+
+    <v-dialog v-model="dialogDelete" max-width="600" persistent>
+      <DeleteUser
+        :user-to-delete="userToDelete"
+        @close="fecharDelete"
+        @deleted="onUsuarioDeletado"
+      />
+    </v-dialog>
   </v-container>
 </template>
 
@@ -58,6 +66,7 @@
 import { ref, onMounted } from "vue";
 import accountsApi from "@/api/accounts.api";
 import CadastrarUser from "./CadastrarUser.vue";
+import DeleteUser from "./DeleteUser.vue";
 
 const headers = ref([
   { title: "Id", key: "id", align: "start" },
@@ -72,6 +81,8 @@ const itemsPerPage = ref(10);
 const totalUsers = ref(0);
 const loading = ref(true);
 const dialogCadastro = ref(false);
+const dialogDelete = ref(false);
+const userToDelete = ref(null);
 
 const abrirCadastro = () => {
   dialogCadastro.value = true;
@@ -81,17 +92,29 @@ const fecharCadastro = () => {
   dialogCadastro.value = false;
 };
 
+const abrirDelete = (user) => {
+  console.log('Deletar usuário:', user);
+  userToDelete.value = user;
+  dialogDelete.value = true;
+};
+
+const fecharDelete = () => {
+  dialogDelete.value = false;
+  userToDelete.value = null;
+};
+
 const onUsuarioSalvo = () => {
   fecharCadastro();
   loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
 };
 
-const abrirEdit = (user) => {
-  console.log('Editar usuário:', user);
+const onUsuarioDeletado = () => {
+  fecharDelete();
+  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
 };
 
-const abrirDelete = (user) => {
-  console.log('Deletar usuário:', user);
+const abrirEdit = (user) => {
+  console.log('Editar usuário:', user);
 };
 
 const searchUsers = async (page = 1, limit = itemsPerPage.value, sortBy = []) => {
