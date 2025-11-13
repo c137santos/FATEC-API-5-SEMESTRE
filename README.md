@@ -57,10 +57,10 @@ Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentac
 | 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [`RF2-ISSUE-LIST`](/documentacao/produto/requisitos.md#rf2-issue-list---listagem-de-issues) | 3 |
 | 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | [`RF2-ISSUE-DETAIL`](/documentacao/produto/requisitos.md#rf2-issue-detail---detalhes-da-issue) | 5 |
 | 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | [`RF1-PROJ-DETAIL`](/documentacao/produto/requisitos.md#rf1-proj-detail---detalhes-do-projeto), [`RNF2-SEC-ACCESS`](/documentacao/produto/requisitos.md#rnf2-sec-access---controle-de-acesso) | 5 |
-| 7 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [`RF4-DASH-PROJ`](/documentacao/produto/requisitos.md#rf4-dash-proj---dashboard-de-projetos) | 3 |
-| 8 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 3 |
-| 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | [`RF3-USER-MANAGE`](/documentacao/produto/requisitos.md#rf3-user-manage---gestão-de-usuários) | 8 |
-| 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | [`RNF2-SEC-AUTH`](/documentacao/produto/requisitos.md#rnf2-sec-auth---autenticação), [`RNF2-SEC-ACCESS`](/documentacao/produto/requisitos.md#rnf2-sec-access---controle-de-acesso) | 3 |
+| 7 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | [`RF3-USER-MANAGE`](/documentacao/produto/requisitos.md#rf3-user-manage---gestão-de-usuários) | 8 |
+| 8 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | [`RNF2-SEC-AUTH`](/documentacao/produto/requisitos.md#rnf2-sec-auth---autenticação), [`RNF2-SEC-ACCESS`](/documentacao/produto/requisitos.md#rnf2-sec-access---controle-de-acesso) | 3 |
+| 9 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [`RF4-DASH-PROJ`](/documentacao/produto/requisitos.md#rf4-dash-proj---dashboard-de-projetos) | 3 |
+| 10 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 3 |
 | 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 5 |
 | 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | [`RF1-PROJ-DETAIL`](/documentacao/produto/requisitos.md#rf1-proj-detail---detalhes-do-projeto) | 5 |
 
@@ -69,7 +69,7 @@ Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentac
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) | [Sprint 2 entrega](https://drive.google.com/file/d/1ts-Tc75Hhq3WGDdZoDllG1HI9AAI6o32/view?usp=sharing) |
-| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) |  |
+| 🔖 **SPRINT 3** | 03/11 - 23/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) |  |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
 ## 📅 Board de priorização  <a id="sprint"></a>
@@ -100,7 +100,7 @@ Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentac
 [Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
 
 ## 📦 Product Backlog -> DOR e DOD  <a id="pb"></a>
-[Product backlog](./documentacao/tecnica/estrutura_de_branchs.md)
+[Product backlog](./documentacao/produto/product_backlog.md)
 
 ## 📖 Manual do usuário  <a id="manual_usuario"></a>
 [Manual do usuário](./documentacao/produto/manual_do_usuario.md)
