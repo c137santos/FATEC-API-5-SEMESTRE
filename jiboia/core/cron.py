@@ -213,8 +213,9 @@ def load_dimensional_yearly():
     return dimensional_load(intervalo_tempo)
 
 
-def load_dimensional_all():
-    start_time = datetime.now()
+def load_dimensional_all(start_time=None):
+    if not start_time:
+        start_time = datetime.now()
     logger.info(f"[CRON] Iniciando carga dimensional completa {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
     try:
         i = 0

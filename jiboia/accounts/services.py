@@ -6,6 +6,11 @@ def list_users():
     return [user.to_dict_json() for user in users]
 
 
+def get_all_users():
+    users = User.objects.all()
+    return [user.to_get_user_json() for user in users]
+
+
 def create_user(username, password, email, permissions):
     if not username or not password or not email:
         raise ValueError("Name, password, and email are required to create a user.")
