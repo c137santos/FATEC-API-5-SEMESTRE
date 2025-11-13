@@ -6,7 +6,7 @@
       <v-btn
         color="blue-darken-4"
         prepend-icon="mdi-account-plus"
-        @click="formCadastro"
+        @click="abrirCadastro"
       >
         Cadastrar novo usuário
       </v-btn>
@@ -44,14 +44,20 @@
         <div class="text-center pa-4">Nenhum usuário encontrado.</div>
       </template>
     </v-data-table-server>
+
+    <v-dialog v-model="dialogCadastro" max-width="800" persistent>
+      <CadastrarUser
+        @close="fecharCadastro"
+        @saved="onUsuarioSalvo"
+      />
+    </v-dialog>
   </v-container>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
 import accountsApi from "@/api/accounts.api";
+import CadastrarUser from "./CadastrarUser.vue";
 
 const headers = ref([
   { title: "Id", key: "id", align: "start" },
@@ -61,26 +67,31 @@ const headers = ref([
   { key: "actions", align: "center", sortable: false },
 ]);
 
-const route = useRoute();
 const users = ref([]);
 const itemsPerPage = ref(10);
 const totalUsers = ref(0);
 const loading = ref(true);
-const dialogAberto = ref(false);
-const userSelecionado = ref(null);
+const dialogCadastro = ref(false);
 
-const formCadastro = () => {
-  route.push('/accounts/users/create');
+const abrirCadastro = () => {
+  dialogCadastro.value = true;
+};
+
+const fecharCadastro = () => {
+  dialogCadastro.value = false;
+};
+
+const onUsuarioSalvo = () => {
+  fecharCadastro();
+  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
 };
 
 const abrirEdit = (user) => {
-  userSelecionado.value = user;
-  dialogAberto.value = true;
+  console.log('Editar usuário:', user);
 };
 
 const abrirDelete = (user) => {
-  userSelecionado.value = user;
-  dialogAberto.value = true;
+  console.log('Deletar usuário:', user);
 };
 
 const searchUsers = async (page = 1, limit = itemsPerPage.value, sortBy = []) => {
