@@ -7,6 +7,8 @@
       <v-form
         :disabled="loading"
         @submit.prevent="salvarEditUser"
+        ref="form"
+        v-model="isValid"
       >
         <v-progress-linear
           v-if="loading"
@@ -19,6 +21,10 @@
             <v-text-field
               v-model="nome"
               label="Nome Completo"
+                :rules="[
+                v => !!v || 'Nome é obrigatório'
+              ]"
+              required
             />
           </v-col>
         </v-row>
@@ -62,7 +68,7 @@
 
           <v-btn
             type="submit"
-            :disabled="!valid || loading"
+            :disabled="!isValid || loading"
             color="green"
             :loading="loading"
           >
@@ -87,10 +93,12 @@ const props = defineProps({
   }
 });
 
-const nome = ref('')
-const email = ref('')
-const tipoAcesso = ref('')
-const loading = ref(false)
+const nome = ref('');
+const email = ref('');
+const tipoAcesso = ref('');
+const loading = ref(false);
+const form = ref(null);
+const isValid = ref(false);
 
 watch(() => props.userToEdit, (newUser) => {
   if (newUser) {
@@ -109,7 +117,7 @@ const valid = computed(() => {
 });
 
 const salvarEditUser = async () => {
-  if (!valid.value || loading.value || !props.userToEdit?.id) return;
+  if (!isValid.value || loading.value) return;
 
   const body = {
     id: props.userToEdit.id,
@@ -142,5 +150,5 @@ const limparFormulario = () => {
   nome.value = '';
   email.value = '';
   tipoAcesso.value = '';
-}
+};
 </script>

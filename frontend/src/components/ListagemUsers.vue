@@ -118,7 +118,7 @@ const abrirEdit = (user) => {
   console.log('Editar usuário:', user);
   userToEdit.value = user;
   dialogEdit.value = true;
-}
+};
 
 const fecharEdit = () => {
   dialogEdit.value = false;
