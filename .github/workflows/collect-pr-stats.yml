@@ -1,0 +1,32 @@
+name: Collect PR Stats on Dev
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - dev
+
+jobs:
+  collect-stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: "Calcular stats de reviewers"
+        id: pr_stats
+        uses: flowwer-dev/pull-request-stats@main
+        with:
+          period: 30
+          sortBy: "totalReviews"
+          stats: "totalReviews,timeToReview,totalComments"
+          charts: false
+          publishAs: "NONE"
+
+      - name: Salva PR stats em arquivo
+        run: echo '${{ steps.pr_stats.outputs.resultsJson }}' > pr-stats-data.json
+
+      - name: Save PR stats artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: pr-stats-data
+          path: pr-stats-data.json
