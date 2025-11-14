@@ -1,9 +1,6 @@
--- DROP SCHEMA public;
+--liquibase formatted sql
 
-CREATE SCHEMA public AUTHORIZATION pg_database_owner;
-
--- DROP SEQUENCE public.accounts_user_groups_id_seq;
-
+--changeset isaque:1
 CREATE SEQUENCE public.accounts_user_groups_id_seq
 	INCREMENT BY 1
 	MINVALUE 1
