@@ -26,7 +26,7 @@ jobs:
         run: echo '${{ steps.pr_stats.outputs.resultsJson }}' > pr-stats-data.json
 
       - name: Save PR stats artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pr-stats-data
           path: pr-stats-data.json
