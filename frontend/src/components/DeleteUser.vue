@@ -33,7 +33,7 @@
 
         <v-card-actions class="pa-0 pt-4 justify-end">
           <v-btn
-            color="red"
+            color="green"
             @click="cancelar"
             :disabled="loading"
             class="mr-2"
@@ -45,7 +45,7 @@
           <v-btn
             type="submit"
             :disabled="loading"
-            color="green"
+            color="red"
             :loading="loading"
           >
             <v-icon left>mdi-check</v-icon>
@@ -59,6 +59,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import accountsApi from "@/api/accounts.api";
 
 const props = defineProps({
   userToDelete: {
@@ -85,14 +86,14 @@ const deleteUser = async () => {
   try {
     console.log('Deletando usuário:', props.userToDelete);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await accountsApi.deleteUser(props.userToDelete.id);
 
     console.log('Usuário deletado com sucesso');
     emit('deleted');
 
   } catch (error) {
     console.error('Erro ao deletar usuário:', error);
-    errorMessage.value = error.message || 'Erro ao deletar usuário. Tente novamente.';
+    errorMessage.value = error.response?.data?.message || error.message || 'Erro ao deletar usuário. Tente novamente.';
   } finally {
     loading.value = false;
   }

@@ -27,5 +27,16 @@ export default {
 
     const response = await api.get("/api/accounts/users", { params });
     return response.data;
+  },
+
+  deleteUser: async (userId) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return {
+      success: true,
+      message: 'Usuário deletado com sucesso',
+      deletedId: userId,
+      timestamp: new Date().toISOString()
+    };
   }
 }
