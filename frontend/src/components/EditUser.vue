@@ -76,14 +76,31 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const emit = defineEmits(['close', 'saved']);
+
+const props = defineProps({
+  userToEdit: {
+    type: Object,
+    default: () => null
+  }
+});
 
 const nome = ref('')
 const email = ref('')
 const tipoAcesso = ref('')
 const loading = ref(false)
+
+watch(() => props.userToEdit, (newUser) => {
+  if (newUser) {
+    nome.value = newUser.name || '';
+    email.value = newUser.email || '';
+    tipoAcesso.value = newUser.permissions || '';
+  } else {
+    limparFormulario();
+  }
+}, { immediate: true });
 
 const valid = computed(() => {
   return nome.value &&
@@ -92,22 +109,21 @@ const valid = computed(() => {
 });
 
 const salvarEditUser = async () => {
-  if (!valid.value) return;
+  if (!valid.value || loading.value || !props.userToEdit?.id) return;
 
   const body = {
-    nome: nome.value,
+    id: props.userToEdit.id,
+    name: nome.value,
     email: email.value,
-    tipoAcesso: tipoAcesso.value,
+    permissions: tipoAcesso.value,
   }
 
   loading.value = true;
 
   try {
-    console.log('Salvando usuário:', body);
+    console.log('Atualizando usuário:', body);
 
     await new Promise(resolve => setTimeout(resolve, 1000));
-
-    limparFormulario();
 
     emit('saved');
 
@@ -119,7 +135,6 @@ const salvarEditUser = async () => {
 }
 
 const cancelar = () => {
-  limparFormulario();
   emit('close');
 }
 
