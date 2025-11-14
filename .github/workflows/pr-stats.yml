@@ -1,0 +1,22 @@
+name: PR Review Stats
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: "Calcular stats de reviewers"
+        uses: flowwer-dev/pull-request-stats@main
+        with:
+          period: 30
+          sortBy: "totalReviews"
+          stats: "totalReviews,timeToReview,totalComments"
+          charts: true
+          publishAs: "COMMENT"
