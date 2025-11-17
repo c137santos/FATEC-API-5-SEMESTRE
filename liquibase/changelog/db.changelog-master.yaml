@@ -1,3 +1,6 @@
 databaseChangeLog:
   - include:
       file: changes/001-baseline.sql
+
+  - include:
+      file: changes/002-create-tabela-produtos.sql

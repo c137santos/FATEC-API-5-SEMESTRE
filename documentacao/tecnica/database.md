@@ -1,31 +1,52 @@
 # Documentação de Banco de Dados
 
 ## 1. Visão Geral do Banco de Dados
-Este documento fornece uma visão geral do banco de dados utilizado no sistema, incluindo sua estrutura, tabelas principais, relacionamentos.
+Este documento visa mostrar como é tratado a parte de alteração do banco de dados utilizando migrations.
 
-## Vantagens Técnicas do Flyway
+## 2. Estrutura de pasta
+A estrutura de pasta do nosso código foi divida em 2 partes para um melhor controle na hora do desenvolvimento, a primeira pasta se encontra a entidade de usuários, tudo que está relacionado a permissões de usuário, o caminho se encontra aqui:
 
-### 1.Tabela de histórico confiável
-Registra:
-- versão
-- checksum
-- autor
-- data
-- status
+_\FATEC-API-5-SEMESTRE\jiboia\accounts_
 
-📌 Impacto técnico: auditoria completa; detecção de alterações ilegais em scripts.
+Suas entidades e relacionamentos são essas:
+![alt text](image-1.png)
 
-### 2. Multi-banco e independente da linguagem
+Já a segunda parte onde fica o _core business_ do nosso projeto
+fica situado:
 
-Suporta PostgreSQL.
-Suporte com a linguagem Django.
+_\FATEC-API-5-SEMESTRE\jiboia\core_
 
-### 3. Ideal para CI/CD
-Ele consegue integrar com o Github Actions, que é algo que é utilizado no projeto.
+Suas entidades e relacionamento são essas:
 
-📌 Impacto técnico: automatiza migrações, elimina erros humanos e garante deploy previsível.
+[Detalhes da tabela](https://github.com/c137santos/FATEC-API-5-SEMESTRE/wiki)
+![alt text](image-2.png)
+[Detalhes Snowflake](dimensional_db_doc.md)
+![alt text](image-3.png)
 
-### 4. Fácil integração com Docker.
-Flyway pode ser facilmente integrado em contêineres Docker, permitindo que as migrações de banco de dados sejam executadas automaticamente durante o processo de construção e implantação do contêiner.
+## 3. Desafios técnicos
 
-📌 Impacto técnico: simplifica o gerenciamento de banco de dados em ambientes conteinerizados, garantindo consistência entre desenvolvimento, teste e produção.
+Atualmente a equipe utiliza Django migrations para realizar as alterações de banco, porém ela tem algumas desvantagens que podem acabar atrapalhando no fluxo do desenvolvimento:
+
+1. **Falta de Controle de Versão**: Os frameworks ORM não fornecem controle de versão integrado para alterações no esquema do banco de dados. Isso dificulta o rastreamento e o gerenciamento das mudanças ao longo do tempo.
+
+2. **Migrações Imperativas**: Mudanças de esquema são gerenciadas imperativamente por meio de modificações nas classes de entidade, que podem ser opacas e difíceis de rastrear.
+
+3. **Ambientes Inconsistentes**: Atualizações automáticas de esquemas podem levar a inconsistências em diferentes ambientes (desenvolvimento, testes, produção).
+
+4. **Desafios Reversão**: A reversão das alterações não é simples e geralmente requer intervenção manual ou scripts personalizados.
+
+5. **Migrações Complexas**: As ferramentas ORM lutam com migrações complexas envolvendo transformações de dados, armazenamento de procedures e triggers.
+
+Como solução para esses problemas, optamos por utilizar uma ferramenta externa, o **Liquibase**, que lida muito bem com esses problemas e tem muito mais recursos performaticos:
+Segue suas vantagens técnicas:
+
+1. **Controle de Versão para Esquema de Banco de Dados**
+    A ferramenta fornece controle de versão para alterações no esquema do banco de dados. Cada mudança é registrada como um script de migração, garantindo um histórico claro de modificações.
+
+2. **Migrações Declarativas**
+    As migrações são definidas declarativamente usando formatos SQL, XML, YAML ou JSON. Isso torna as mudanças explícitas e fáceis de entender.
+
+3. **Trilha de Auditoria Detalhada**
+    Contém uma trilha de auditoria detalhada de todas as mudanças de esquema, facilitando o rastreamento do que foi alterado, quando e por quem.
+
+### 4. Regras de implemntação de uma Migration
