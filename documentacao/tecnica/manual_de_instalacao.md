@@ -56,6 +56,17 @@ Após iniciar todos os containers, o sistema estará disponível em:
 - **Frontend**: http://localhost
 - **Backend API**: http://localhost/api/
 
+### Passo 5 : Crie um superusuário
+
+Acesse a interface de comando do docker e rode o seguinte comando:
+
+```bash
+python3 manage.py createsuperuser
+```
+
+Ele irá criar um superusuário que permitirá o acesso em toda a plataforma.
+
+
 ## Ambiente de Desenvolvimento com API Mockada
 
 Para desenvolvimento frontend sem necessidade do backend Django completo, você pode utilizar a API mockada.
