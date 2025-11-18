@@ -46,14 +46,14 @@ def setup_project_data(db):
 
 
 @pytest.mark.django_db
-def test_project_overview_view_success(client, setup_project_data):
+def test_project_overview_view_success(authenticated_client, setup_project_data):
     """
     Testa se a view de project_overview retorna 200 e os dados corretos
     """
     project = setup_project_data
 
     url = reverse("project_overview", kwargs={"project_id": project.id})
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 200
 
@@ -66,14 +66,14 @@ def test_project_overview_view_success(client, setup_project_data):
 
 
 @pytest.mark.django_db
-def test_project_overview_view_with_parameters(client, setup_project_data):
+def test_project_overview_view_with_parameters(authenticated_client, setup_project_data):
     """
     Testa se a view de project_overview aceita e processa os parâmetros
     """
     project = setup_project_data
 
     url = reverse("project_overview", kwargs={"project_id": project.id})
-    response = client.get(f"{url}?issues_breakdown_months=3&burdown_days=2")
+    response = authenticated_client.get(f"{url}?issues_breakdown_months=3&burdown_days=2")
 
     assert response.status_code == 200
 
@@ -83,14 +83,14 @@ def test_project_overview_view_with_parameters(client, setup_project_data):
 
 
 @pytest.mark.django_db
-def test_project_overview_view_invalid_parameters(client, setup_project_data):
+def test_project_overview_view_invalid_parameters(authenticated_client, setup_project_data):
     """
     Testa se a view de project_overview valida corretamente os parâmetros
     """
     project = setup_project_data
 
     url = reverse("project_overview", kwargs={"project_id": project.id})
-    response = client.get(f"{url}?issues_breakdown_months=abc&burdown_days=xyz")
+    response = authenticated_client.get(f"{url}?issues_breakdown_months=abc&burdown_days=xyz")
 
     assert response.status_code == 400
 
@@ -99,12 +99,12 @@ def test_project_overview_view_invalid_parameters(client, setup_project_data):
 
 
 @pytest.mark.django_db
-def test_project_overview_view_project_not_found(client):
+def test_project_overview_view_project_not_found(authenticated_client):
     """
     Testa se a view de project_overview retorna 404 quando o projeto não existe
     """
     url = reverse("project_overview", kwargs={"project_id": 9999})
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 404
 
