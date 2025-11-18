@@ -1,0 +1,52 @@
+name: CI - Run Liquibase
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }}"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Liquibase
+        run: |
+          curl -sLo liquibase.tar.gz https://download.liquibase.com/download/liquibase-4.29.2.tar.gz
+          tar -xzf liquibase.tar.gz
+          sudo mv liquibase /usr/local/bin/liquibase
+          liquibase --version
+
+      - name: Run Liquibase migrations
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+        run: |
+          liquibase \
+            --url="jdbc:postgresql://$DB_HOST:$DB_PORT/$DB_NAME" \
+            --username="$DB_USER" \
+            --password="$DB_PASS" \
+            --changeLogFile=liquibase/db.changelog-master.xml \
+            update

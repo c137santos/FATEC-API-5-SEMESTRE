@@ -49,4 +49,16 @@ Segue suas vantagens técnicas:
 3. **Trilha de Auditoria Detalhada**
     Contém uma trilha de auditoria detalhada de todas as mudanças de esquema, facilitando o rastreamento do que foi alterado, quando e por quem.
 
-### 4. Regras de implemntação de uma Migration
+4. **Integração com Git Actions**
+    Pode ser facilmente integrado em pipelines CI/CD, permitindo que as migrações sejam aplicadas automaticamente durante o processo de implantação.
+
+### 4. Implementação de uma Migration
+1. Primeiro passo é criar o arquivo de migration na pasta liquibase/changes, seguindo o padrão já existente, exemplo:
+**002-create-products-table.sql**,
+se caso for uma correção de algo já existente, criar uma pasta nova chamada Migration_data_fix e colocar o arquivo lá dentro, isso permite uma melhor visão da evolução do banco e uma melhor rastreabilidade. E por fim, adicionar o arquivo no db.changelog-master.yaml conforme o exemplo abaixo:
+```yaml
+   - include:
+       file: changes/002-create-products-table.sql
+   - include:
+       file: Migration_data_fix/001-fix_create_table.sql
+```
