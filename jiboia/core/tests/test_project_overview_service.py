@@ -4,7 +4,9 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
 from django.utils import timezone
+from freezegun import freeze_time
 
+from jiboia.core import cron
 from jiboia.core.models import Issue, IssueType, Project, StatusType, TimeLog
 from jiboia.core.service.project_overview_svc import get_project_overview
 
@@ -28,6 +30,8 @@ def setup_test_data(db):
     user1 = User.objects.create_user(username="user1", email="user1@example.com", password="password")
     user2 = User.objects.create_user(username="user2", email="user2@example.com", password="password")
 
+    today = timezone.now()
+
     project = Project.objects.create(
         key="TEST",
         name="Projeto de Teste",
@@ -35,13 +39,17 @@ def setup_test_data(db):
         jira_id=301,
         uuid="test-uuid",
         projectTypeKey="software",
+        start_date_project=today.date(),
     )
+    datas = []
 
-    today = timezone.now()
+    jira_id = 0
 
     for i in range(5):
+        jira_id += 1
         Issue.objects.create(
             description=f"Issue pendente {i}",
+            jira_id=300 + jira_id,
             project=project,
             status=pending_status,
             type_issue=task_type if i % 3 == 0 else (bug_type if i % 3 == 1 else story_type),
@@ -49,9 +57,11 @@ def setup_test_data(db):
         )
 
     for i in range(3):
+        jira_id += 1
         issue = Issue.objects.create(
             description=f"Issue em progresso {i}",
             project=project,
+            jira_id=400 + jira_id,
             status=in_progress_status,
             type_issue=task_type if i % 3 == 0 else (bug_type if i % 3 == 1 else story_type),
             created_at=today - timedelta(days=i * 3),
@@ -67,7 +77,9 @@ def setup_test_data(db):
         )
 
     for i in range(2):
+        jira_id += 1
         Issue.objects.create(
+            jira_id=500 + jira_id,
             description=f"Issue em revisão {i}",
             project=project,
             status=review_status,
@@ -77,7 +89,9 @@ def setup_test_data(db):
         )
 
     for i in range(4):
+        jira_id += 1
         issue = Issue.objects.create(
+            jira_id=600 + jira_id,
             description=f"Issue concluída {i}",
             project=project,
             status=done_status,
@@ -87,16 +101,18 @@ def setup_test_data(db):
             end_date=today - timedelta(days=13 + i),
         )
 
-        if i < 2:
-            TimeLog.objects.create(
-                id_issue=issue,
-                id_user=user2 if i % 2 == 0 else user1,
-                seconds=1800 * (i + 1),  # 0.5, 1 hora em segundos
-                description_log=f"Finalizando issue {i}",
-                jira_id=500 + i,
-            )
+        with freeze_time(today - timedelta(days=15 + i)):
+            if i < 2:
+                TimeLog.objects.create(
+                    id_issue=issue,
+                    id_user=user2 if i % 2 == 0 else user1,
+                    seconds=1800 * (i + 1),  # 0.5, 1 hora em segundos
+                    description_log=f"Finalizando issue {i}",
+                    jira_id=500 + i,
+                )
 
     Issue.objects.create(
+        jira_id=700 + jira_id,
         description="Issue sem status",
         project=project,
         status=None,
@@ -111,6 +127,16 @@ def setup_test_data(db):
         jira_id=302,
         uuid="empty-uuid",
         projectTypeKey="business",
+        start_date_project=today.date(),
+    )
+    datas.extend(
+        [
+            today - timedelta(days=15 + i),
+            today - timedelta(days=10 + i),
+            today - timedelta(days=i * 2),
+            today - timedelta(days=i * 3),
+            today - timedelta(days=i * 5),
+        ]
     )
 
     return {
@@ -119,17 +145,25 @@ def setup_test_data(db):
         "issue_types": [task_type, bug_type, story_type],
         "users": [user1, user2],
         "today": today,
+        "datas": datas,
     }
 
 
+@pytest.fixture
+def setup_dimensional_dim(setup_test_data):
+    for data in setup_test_data["datas"]:
+        cron.load_dimensional_all(start_time=data)
+    return setup_test_data
+
+
 @pytest.mark.django_db
-def test_get_project_overview_returns_all_expected_fields(setup_test_data):
+def test_get_project_overview_returns_all_expected_fields(setup_dimensional_dim):
     """
     Verifica se get_project_overview retorna todos os campos esperados
     """
-    data = setup_test_data
+    data = setup_dimensional_dim
     project = data["project"]
-
+    cron.load_dimensional_all()
     overview = get_project_overview(project.id)
 
     assert overview is not None
@@ -144,11 +178,11 @@ def test_get_project_overview_returns_all_expected_fields(setup_test_data):
 
 
 @pytest.mark.django_db
-def test_get_project_overview_status_counts(setup_test_data):
+def test_get_project_overview_status_counts(setup_dimensional_dim):
     """
     Verifica se get_project_overview conta corretamente as issues por status
     """
-    data = setup_test_data
+    data = setup_dimensional_dim
     project = data["project"]
 
     overview = get_project_overview(project.id)
@@ -167,11 +201,11 @@ def test_get_project_overview_status_counts(setup_test_data):
 
 
 @pytest.mark.django_db
-def test_get_project_overview_burndown(setup_test_data):
+def test_get_project_overview_burndown(setup_dimensional_dim):
     """
     Verifica o cálculo do burndown
     """
-    data = setup_test_data
+    data = setup_dimensional_dim
     project = data["project"]
 
     overview = get_project_overview(project.id, burndown_days=3)
@@ -187,11 +221,11 @@ def test_get_project_overview_burndown(setup_test_data):
 
 
 @pytest.mark.django_db
-def test_get_project_overview_time_logs(setup_test_data):
+def test_get_project_overview_time_logs(setup_dimensional_dim):
     """
     Verifica se os logs de tempo são contabilizados corretamente
     """
-    data = setup_test_data
+    data = setup_dimensional_dim
     project = data["project"]
 
     overview = get_project_overview(project.id)
@@ -216,11 +250,11 @@ def test_get_project_overview_time_logs(setup_test_data):
 
 
 @pytest.mark.django_db
-def test_get_project_overview_by_issue_type(setup_test_data):
+def test_get_project_overview_by_issue_type(setup_dimensional_dim):
     """
     Verifica se as contagens por tipo de issue estão corretas
     """
-    data = setup_test_data
+    data = setup_dimensional_dim
     project = data["project"]
 
     overview = get_project_overview(project.id)

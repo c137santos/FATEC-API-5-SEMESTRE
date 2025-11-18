@@ -11,11 +11,11 @@
 
 | Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) | Sprint |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | <a href="../../../README.md#5">[5]</a> | 8 | 3 |
-| 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | <a href="../../../README.md#5">[5]</a>, <a href="../../../README.md#6">[6]</a> | 3 | 3 |
-| 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#2">[2]</a>, <a href="../../../README.md#8">[8]</a> | 5 | 3 |
-| 12 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#3">[3]</a>, <a href="../../../README.md#7">[7]</a> | 3 | 3 |
-| 13 | Baixa | Como gestor, quero visualizar no dashboard de projeto específico a quantidade de membros ativos e as horas trabalhadas por cada um. | <a href="../../../README.md#1">[1]</a>, <a href="../../../README.md#2">[2]</a>, <a href="../../../README.md#8">[8]</a> | 5 | 3 |
+| 9 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | [`RF3-USER-MANAGE`](/documentacao/produto/requisitos.md#rf3-user-manage---gestão-de-usuários) | 8 | 3 |
+| 10 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | [`RNF2-SEC-AUTH`](/documentacao/produto/requisitos.md#rnf2-sec-auth---autenticação), [`RNF2-SEC-ACCESS`](/documentacao/produto/requisitos.md#rnf2-sec-access---controle-de-acesso) | 3 | 3 |
+| 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 5 | 3 |
+| 12 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 3 | 3 |
+| 13 | Baixa | Como gestor, quero visualizar no dashboard de projeto específico a quantidade de membros ativos e as horas trabalhadas por cada um. | [`RF4-DASH-PROJ`](/documentacao/produto/requisitos.md#rf4-dash-proj---dashboard-de-projetos) | 5 | 3 |
 
 ### 🔗 Referências
 Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](../requisitos.md)

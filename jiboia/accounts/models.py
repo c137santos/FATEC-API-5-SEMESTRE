@@ -13,6 +13,10 @@ class User(AbstractUser):
         help_text="Valor cobrado por hora de trabalho",
     )
     jira_id = models.CharField(max_length=100, null=True, blank=True)
+    project_admin = models.BooleanField(default=False)
+    project_manager = models.BooleanField(default=False)
+    team_leader = models.BooleanField(default=False)
+    team_member = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.username)
@@ -21,14 +25,31 @@ class User(AbstractUser):
         return {
             "id": self.id,
             "name": self.get_full_name(),
-            "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
+            "username": getattr(self, "username", None),
+            "first_name": getattr(self, "first_name", None),
+            "last_name": getattr(self, "last_name", None),
             "email": self.email,
-            "valor_hora": 0.0 if self.valor_hora is None else float(self.valor_hora),
-            "jira_id": self.jira_id,
+            "valor_hora": 0.0 if getattr(self, "valor_hora", None) is None else float(self.valor_hora),
+            "jira_id": getattr(self, "jira_id", None),
             "permissions": {
-                "ADMIN": self.is_superuser,
-                "STAFF": self.is_staff,
+                "ADMIN": getattr(self, "is_superuser", False),
+                "STAFF": getattr(self, "is_staff", False),
+                "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                "TEAM_LEADER": getattr(self, "team_leader", False),
+                "TEAM_MEMBER": getattr(self, "team_member", False),
+            },
+        }
+
+    def to_get_user_json(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "email": self.email,
+            "permissions": {
+                "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                "TEAM_LEADER": getattr(self, "team_leader", False),
+                "TEAM_MEMBER": getattr(self, "team_member", False),
             },
         }
