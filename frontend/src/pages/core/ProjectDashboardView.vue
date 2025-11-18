@@ -355,44 +355,49 @@ const activeIssues = computed(() => dataRef.value ? (() => {
 const concludedIssues = computed(() => dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
 
 const averageIssueTimeHours = computed(() => {
+	if (!dataRef.value) {
+		return 0
+	}
+	if (!dataRef.value.concluded_issues) {
+		return 0
+	}
+	if (dataRef.value.concluded_issues.length === 0) {
+		return 0
+	}
 
-    if (!dataRef.value) {
-        return 0
-    }
+	const filteredIssues = dataRef.value.concluded_issues.filter(issue => issue.timespent && issue.timespent > 0)
 
-    if (!dataRef.value.concluded_issues) {
-        return 0
-    }
+	if (filteredIssues.length === 0) {
+		return 0
+	}
 
-    if (dataRef.value.concluded_issues.length === 0) {
-        return 0
-    }
+	const totalHours = filteredIssues.reduce((total, issue) => {
+		const timeSpentSeconds = issue.timespent || 0
+		const timeSpentHours = timeSpentSeconds / 3600
+		return total + timeSpentHours
+	}, 0)
 
-    const concludedIssues = dataRef.value.concluded_issues
-
-    const totalHours = concludedIssues.reduce((total, issue) => {
-        const timeSpentSeconds = issue.timespent || 0
-        const timeSpentHours = timeSpentSeconds / 3600
-        return total + timeSpentHours
-    }, 0)
-
-    const averageHours = totalHours / concludedIssues.length
-    return averageHours
+	const averageHours = totalHours / filteredIssues.length
+	return averageHours
 })
 
 const formatAverageTime = computed(() => {
-    const avgHours = averageIssueTimeHours.value
+	const avgHours = averageIssueTimeHours.value
 
-    if (avgHours === 0) return '0h'
+	switch (true) {
+		case avgHours === 0:
+			return '0h'
 
-    if (avgHours < 1) {
-        const minutes = Math.round(avgHours * 60)
-        return `${minutes}m`
-    } else if (avgHours < 10) {
-        return `${avgHours.toFixed(1)}h`
-    } else {
-        return `${Math.round(avgHours)}h`
-    }
+		case avgHours < 1:
+			const minutes = Math.round(avgHours * 60)
+			return `${minutes}m`
+
+		case avgHours < 10:
+			return `${avgHours.toFixed(1)}h`
+
+		default:
+			return `${Math.round(avgHours)}h`
+	}
 })
 
 const issuesTotal = computed(() => dataRef.value ? (() => {
