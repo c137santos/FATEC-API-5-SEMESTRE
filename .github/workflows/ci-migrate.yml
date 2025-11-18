@@ -35,8 +35,9 @@ jobs:
       - name: Install Liquibase
         run: |
           curl -sLo liquibase.zip https://github.com/liquibase/liquibase/releases/download/v4.29.2/liquibase-4.29.2.zip
-          unzip liquibase.zip -d liquibase-cli
-          sudo mv liquibase-cli/liquibase /usr/local/bin/liquibase
+          unzip liquibase.zip
+          sudo mv liquibase-4.29.2 /opt/liquibase
+          sudo ln -s /opt/liquibase/liquibase /usr/local/bin/liquibase
           liquibase --version
 
       - name: Run Liquibase migrations
