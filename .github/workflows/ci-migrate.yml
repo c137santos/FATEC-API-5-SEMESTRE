@@ -20,7 +20,7 @@ jobs:
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_PASSWORD: ${{ secrets.DB_PASS }}
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }}"
+          --health-cmd="pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=10
@@ -38,8 +38,8 @@ jobs:
 
       - name: Run Liquibase migrations
         env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_HOST: localhost
+          DB_PORT: 5432
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
