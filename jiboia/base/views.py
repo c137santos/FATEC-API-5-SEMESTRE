@@ -3,6 +3,7 @@ import os
 from django.db import connection
 from django.http import JsonResponse
 
+from ..commons.django_views_utils import ajax_login_required
 from .exceptions import BusinessError
 
 
@@ -15,6 +16,7 @@ def dapau(error: str = None):
     raise ValueError("break on purpose")
 
 
+@ajax_login_required
 def status(request):
     """
     Retorna o estado atual da aplicação

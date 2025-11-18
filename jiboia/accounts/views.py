@@ -6,6 +6,8 @@ from django.contrib import auth
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+from ..commons.django_views_utils import ajax_login_required
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,6 +32,7 @@ def login(request):
     return JsonResponse(user_dict, safe=False, status=201)
 
 
+@ajax_login_required
 def logout(request):
     """
     Encerra sessão do usuário
@@ -41,6 +44,7 @@ def logout(request):
     return JsonResponse({})
 
 
+@ajax_login_required
 def whoami(request):
     """
     Retorna dados do usuário logado
