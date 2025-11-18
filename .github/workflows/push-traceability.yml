@@ -47,19 +47,13 @@ jobs:
         run: |
           CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
           PYTHON_FILES=()
-          DOCKER_FILES=()
           YAML_FILES=()
-          JSON_FILES=()
 
           for file in $CHANGED_FILES; do
             if [[ "$file" == *.py ]]; then
               PYTHON_FILES+=("$file")
-            elif [[ "$file" == Dockerfile* ]]; then
-              DOCKER_FILES+=("$file")
             elif [[ "$file" == *.yml || "$file" == *.yaml ]]; then
               YAML_FILES+=("$file")
-            elif [[ "$file" == *.json ]]; then
-              JSON_FILES+=("$file")
             fi
           done
 
@@ -78,11 +72,11 @@ jobs:
 
             # 1.4.2 - Lint de Importação
             echo "Lint de Importação (I)"
-            uv run ruff check --select=I --output-format=github "${PYTHON_FILES[@]}" || true
+            uv run ruff check --select=I --output-format=github "${PYTHON_FILES[@]}"
 
             # 1.4.3 - Lint de Nomenclatura
             echo "Lint de Nomenclatura (N)"
-            uv run ruff check --select=N --output-format=github "${PYTHON_FILES[@]}" || true
+            uv run ruff check --select=N --output-format=github "${PYTHON_FILES[@]}"
 
             # 1.4.4 - Lint de Documentação
             echo "Lint de Documentação (D)"
@@ -90,15 +84,15 @@ jobs:
 
             # 1.4.5 - Lint de Anotações de Tipo
             echo "Lint de Anotações de Tipo (ANN)"
-            uv run ruff check --select=ANN --output-format=github "${PYTHON_FILES[@]}" || true
+            uv run ruff check --select=ANN --output-format=github "${PYTHON_FILES[@]}"
 
             # 1.4.6 - Lint de Refatoração
             echo "Lint de Refatoração (RUF)"
-            uv run ruff check --select=RUF --output-format=github "${PYTHON_FILES[@]}" || true
+            uv run ruff check --select=RUF --output-format=github "${PYTHON_FILES[@]}"
 
             # 1.4.7 - Lint de Compatibilidade
             echo "Lint de Compatibilidade (COM)"
-            uv run ruff check --select=COM --output-format=github "${PYTHON_FILES[@]}" || true
+            uv run ruff check --select=COM --output-format=github "${PYTHON_FILES[@]}"
 
             # 1.4.8 - Lint de Complexidade
             echo "Lint de Complexidade (C90)"
@@ -112,10 +106,9 @@ jobs:
           # LINT PARA YAML
           if [ ${#YAML_FILES[@]} -gt 0 ]; then
             echo "::group::Lint YAML (${#YAML_FILES[@]} arquivos)"
-            uv tool install yamllint
             for yaml_file in "${YAML_FILES[@]}"; do
               echo "Analisando: $yaml_file"
-              uv run yamllint "$yaml_file" || true
+              uv run yamllint "$yaml_file" --format github || true
             done
             echo "::endgroup::"
           fi
