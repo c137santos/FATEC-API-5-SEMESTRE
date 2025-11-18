@@ -14,6 +14,8 @@ from jiboia.accounts.services import create_user as create_user_service
 from jiboia.accounts.services import delete_user as delete_user_service
 from jiboia.accounts.services import update_user_service
 
+from ..commons.django_views_utils import ajax_login_required
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,6 +40,7 @@ def login(request):
     return JsonResponse(user_dict, safe=False, status=201)
 
 
+@ajax_login_required
 def logout(request):
     """
     Encerra sessão do usuário
@@ -49,6 +52,7 @@ def logout(request):
     return JsonResponse({})
 
 
+@ajax_login_required
 def whoami(request):
     """
     Retorna dados do usuário logado

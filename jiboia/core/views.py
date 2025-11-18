@@ -43,6 +43,7 @@ def add_issue(request):
 
 @cache_control()
 @require_http_methods(["GET"])
+@ajax_login_required
 def list_paginable_issues(request, project_id):
     """List Issues in pages"""
     logger.info(f"API list issues for project {project_id}")
@@ -64,6 +65,7 @@ def list_paginable_issues(request, project_id):
 
 @cache_control()
 @require_http_methods(["GET"])
+@ajax_login_required
 def project_overview(request, project_id):
     """
     Get detailed overview of a specific project
@@ -93,6 +95,7 @@ def project_overview(request, project_id):
 
 @cache_control()
 @require_http_methods(["GET"])
+@ajax_login_required
 def list_projects_general(request):
     logger.info("API list projects")
 
@@ -103,6 +106,7 @@ def list_projects_general(request):
 
 
 @require_http_methods(["GET"])
+@ajax_login_required
 def project_developers(request, project_id):
     developers = projects_svc.get_project_developers(project_id)
 
@@ -111,6 +115,7 @@ def project_developers(request, project_id):
 
 @csrf_exempt
 @require_http_methods(["PATCH"])
+@ajax_login_required
 def update_developer_hour_value(request, project_id, user_id):
     """
     Update the hourly rate (valor_hora) for a specific developer in a project.
@@ -135,6 +140,7 @@ def update_developer_hour_value(request, project_id, user_id):
 
 @csrf_exempt
 @require_http_methods(["POST"])
+@ajax_login_required
 def trigger_jira_sync(request):
     if not jira_sync_lock.acquire(blocking=False):
         logger.warning("Uma sincronização já está em andamento. Nova requisição bloqueada.")
