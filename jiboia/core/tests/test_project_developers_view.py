@@ -98,11 +98,11 @@ def setup_developers_data():
 
 
 @pytest.mark.django_db
-def test_project_developers_success_200(client, setup_developers_data):
+def test_project_developers_success_200(authenticated_client, setup_developers_data):
     project = setup_developers_data
     url = reverse("project_developers", kwargs={"project_id": project.id})
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 200
 
@@ -111,11 +111,11 @@ def test_project_developers_success_200(client, setup_developers_data):
 
 
 @pytest.mark.django_db
-def test_project_developers_returns_correct_structure(client, setup_developers_data):
+def test_project_developers_returns_correct_structure(authenticated_client, setup_developers_data):
     project = setup_developers_data
     url = reverse("project_developers", kwargs={"project_id": project.id})
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
     data = json.loads(response.content)
 
     assert len(data) == 3
@@ -132,11 +132,11 @@ def test_project_developers_returns_correct_structure(client, setup_developers_d
 
 
 @pytest.mark.django_db
-def test_project_developers_sorted_by_hours_desc(client, setup_developers_data):
+def test_project_developers_sorted_by_hours_desc(authenticated_client, setup_developers_data):
     project = setup_developers_data
     url = reverse("project_developers", kwargs={"project_id": project.id})
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
     data = json.loads(response.content)
 
     assert len(data) == 3
@@ -152,11 +152,11 @@ def test_project_developers_sorted_by_hours_desc(client, setup_developers_data):
 
 
 @pytest.mark.django_db
-def test_project_developers_includes_valor_hora(client, setup_developers_data):
+def test_project_developers_includes_valor_hora(authenticated_client, setup_developers_data):
     project = setup_developers_data
     url = reverse("project_developers", kwargs={"project_id": project.id})
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
     data = json.loads(response.content)
 
     user = User.objects.first()
@@ -174,7 +174,7 @@ def test_project_developers_includes_valor_hora(client, setup_developers_data):
 
 
 @pytest.mark.django_db
-def test_project_developers_empty_project(client):
+def test_project_developers_empty_project(authenticated_client):
     project = Project.objects.create(
         key="EMPTY",
         name="Projeto Vazio",
@@ -185,7 +185,7 @@ def test_project_developers_empty_project(client):
     )
 
     url = reverse("project_developers", kwargs={"project_id": project.id})
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 200
 
@@ -194,7 +194,7 @@ def test_project_developers_empty_project(client):
 
 
 @pytest.mark.django_db
-def test_project_developers_project_without_assigned_users(client):
+def test_project_developers_project_without_assigned_users(authenticated_client):
     project = Project.objects.create(
         key="NOUSER",
         name="Projeto Sem User",
@@ -221,7 +221,7 @@ def test_project_developers_project_without_assigned_users(client):
     )
 
     url = reverse("project_developers", kwargs={"project_id": project.id})
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 200
 
