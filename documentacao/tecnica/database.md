@@ -19,8 +19,11 @@ _\FATEC-API-5-SEMESTRE\jiboia\core_
 Suas entidades e relacionamento são essas:
 
 [Detalhes da tabela](https://github.com/c137santos/FATEC-API-5-SEMESTRE/wiki)
+
 ![alt text](image-2.png)
+
 [Detalhes Snowflake](dimensional_db_doc.md)
+
 ![alt text](image-3.png)
 
 ## 3. Desafios técnicos
