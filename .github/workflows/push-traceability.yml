@@ -66,37 +66,9 @@ jobs:
             echo "::group::Análise Python (${#PYTHON_FILES[@]} arquivos)"
             echo "Arquivos: ${PYTHON_FILES[*]}"
 
-            # 1.4.1 - Lint Básico (Erros e Warnings)
-            echo "Lint Básico (F, E, W)"
-            uv run ruff check --output-format=github "${PYTHON_FILES[@]}"
-
-            # 1.4.2 - Lint de Importação
-            echo "Lint de Importação (I)"
-            uv run ruff check --select=I --output-format=github "${PYTHON_FILES[@]}"
-
-            # 1.4.3 - Lint de Nomenclatura
-            echo "Lint de Nomenclatura (N)"
-            uv run ruff check --select=N --output-format=github "${PYTHON_FILES[@]}"
-
-            # 1.4.4 - Lint de Documentação
-            echo "Lint de Documentação (D)"
-            uv run ruff check --select=D --output-format=github "${PYTHON_FILES[@]}" || true
-
-            # 1.4.5 - Lint de Anotações de Tipo
-            echo "Lint de Anotações de Tipo (ANN)"
-            uv run ruff check --select=ANN --output-format=github "${PYTHON_FILES[@]}"
-
-            # 1.4.6 - Lint de Refatoração
-            echo "Lint de Refatoração (RUF)"
-            uv run ruff check --select=RUF --output-format=github "${PYTHON_FILES[@]}"
-
-            # 1.4.7 - Lint de Compatibilidade
-            echo "Lint de Compatibilidade (COM)"
-            uv run ruff check --select=COM --output-format=github "${PYTHON_FILES[@]}"
-
-            # 1.4.8 - Lint de Complexidade
-            echo "Lint de Complexidade (C90)"
-            uv run ruff check --select=C90 --output-format=github "${PYTHON_FILES[@]}" || true
+            # Executa TODAS as verificações de uma vez (linha única)
+            uv run ruff check --output-format=github "${PYTHON_FILES[@]}" \
+              --select=F,E,W,I,N,D,ANN,RUF,COM,C90
 
             echo "::endgroup::"
           else
@@ -108,7 +80,7 @@ jobs:
             echo "::group::Lint YAML (${#YAML_FILES[@]} arquivos)"
             for yaml_file in "${YAML_FILES[@]}"; do
               echo "Analisando: $yaml_file"
-              uv run yamllint "$yaml_file" --format github || true
+              uv run yamllint "$yaml_file" --format github
             done
             echo "::endgroup::"
           fi
