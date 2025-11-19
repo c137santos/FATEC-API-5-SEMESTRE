@@ -60,6 +60,7 @@ def whoami(request):
     return JsonResponse(user_data)
 
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def create_user(request):
     try:
