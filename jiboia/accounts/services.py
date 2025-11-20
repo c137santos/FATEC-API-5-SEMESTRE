@@ -32,3 +32,12 @@ def create_user(username, password, email, permissions):
     user.set_password(password)
     user.save()
     return user.to_dict_json()
+
+
+def delete_user(user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        user.delete()
+        return True
+    except User.DoesNotExist:
+        return False
