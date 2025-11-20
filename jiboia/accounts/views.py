@@ -11,6 +11,7 @@ from django.views.decorators.http import require_http_methods
 
 from jiboia.accounts.models import User
 from jiboia.accounts.services import create_user as create_user_service
+from jiboia.accounts.services import delete_user as delete_user_service
 
 logger = logging.getLogger(__name__)
 
@@ -121,3 +122,18 @@ def get_all_users(request):
     }
 
     return JsonResponse(data, status=200)
+    return JsonResponse(data, safe=False, status=200)
+
+
+@require_http_methods(["DELETE"])
+def delete_user_view(request, user_id):
+    logger.info(f"API delete_user: {user_id}")
+
+    deleted = delete_user_service(user_id)
+
+    if deleted:
+        logger.info("API delete_user success")
+        return JsonResponse({"message": "Usuário deletado com sucesso"}, status=200)
+
+    logger.warning("API delete_user user not found")
+    return JsonResponse({"message": "Usuário não encontrado"}, status=404)
