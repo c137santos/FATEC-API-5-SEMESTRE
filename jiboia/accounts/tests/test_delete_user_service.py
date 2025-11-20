@@ -6,12 +6,15 @@ from jiboia.accounts.services import delete_user
 
 @pytest.mark.django_db
 def test_delete_user_success():
-    user = User.objects.create(username="test_user", email="test@example.com")
+    user = User.objects.create(username="test_user", email="test@example.com", is_active=True)
 
     result = delete_user(user.id)
 
     assert result is True
-    assert User.objects.filter(id=user.id).exists() is False
+
+    user.refresh_from_db()
+
+    assert user.is_active is not True
 
 
 @pytest.mark.django_db

@@ -36,8 +36,9 @@ def create_user(username, password, email, permissions):
 
 def delete_user(user_id):
     try:
-        user = User.objects.get(id=user_id)
-        user.delete()
+        user = User.objects.get(id=user_id, is_active=True)
+        user.is_active = False
+        user.save(update_fields=["is_active"])
         return True
     except User.DoesNotExist:
         return False

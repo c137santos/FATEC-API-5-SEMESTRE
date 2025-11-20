@@ -135,7 +135,6 @@ def users_view(request):
         return create_user(request)
 
 
-@csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_user_view(request, user_id):
     logger.info(f"API delete_user: {user_id}")
