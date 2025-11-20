@@ -138,6 +138,12 @@
 						<span class="text-h4 d-flex justify-center">{{ concludedIssues || 0}}</span>
 					</v-card>
 				</v-col>
+				<v-col>
+					<v-card class="d-flex flex-column ga-2 pa-4">
+						<h3 class="d-flex justify-center">Tempo médio Issue</h3>
+						<span class="text-h4 d-flex justify-center">{{ formatAverageTime }}</span>
+					</v-card>
+				</v-col>
 			</v-row>
 			<v-row justify="center">
 				<v-col>
@@ -345,7 +351,54 @@ const activeIssues = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
 	return Object.values(today).reduce((total, value) => total + value, 0) - today['Concluído']
 })() : 0)
+
 const concludedIssues = computed(() => dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
+
+const averageIssueTimeHours = computed(() => {
+	if (!dataRef.value) {
+		return 0
+	}
+	if (!dataRef.value.concluded_issues) {
+		return 0
+	}
+	if (dataRef.value.concluded_issues.length === 0) {
+		return 0
+	}
+
+	const filteredIssues = dataRef.value.concluded_issues.filter(issue => issue.timespent && issue.timespent > 0)
+
+	if (filteredIssues.length === 0) {
+		return 0
+	}
+
+	const totalHours = filteredIssues.reduce((total, issue) => {
+		const timeSpentSeconds = issue.timespent || 0
+		const timeSpentHours = timeSpentSeconds / 3600
+		return total + timeSpentHours
+	}, 0)
+
+	const averageHours = totalHours / filteredIssues.length
+	return averageHours
+})
+
+const formatAverageTime = computed(() => {
+	const avgHours = averageIssueTimeHours.value
+
+	switch (true) {
+		case avgHours === 0:
+			return '0h'
+
+		case avgHours < 1:
+			const minutes = Math.round(avgHours * 60)
+			return `${minutes}m`
+
+		case avgHours < 10:
+			return `${avgHours.toFixed(1)}h`
+
+		default:
+			return `${Math.round(avgHours)}h`
+	}
+})
 
 const issuesTotal = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
@@ -411,15 +464,16 @@ const loadDevelopers = async () => {
 }
 
 onMounted(async () => {
-	if (!accountsStore.loggedUser) {
-		await accountsStore.whoAmI()
-	}
+    if (!accountsStore.loggedUser) {
+        await accountsStore.whoAmI()
+    }
 
-	const data = await projectsApi.dashboard(route.params.id)
-	name.value = data.name
-	dataRef.value = data
-	issuesList.value = data.issues_per_month
-	await loadDevelopers()
+    const data = await projectsApi.dashboard(route.params.id)
+    name.value = data.name
+    dataRef.value = data
+    issuesList.value = data.issues_per_month || []
+    await loadDevelopers()
 })
+
 
 </script>
