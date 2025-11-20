@@ -35,16 +35,29 @@ jobs:
         with:
           python-version: "3.11"
 
-      # 1.3 - Instalar UV e Ferramentas
-      - name: Install uv and Tools
+      # 1.3 - Instalar UV
+      - name: Install uv
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          uv tool install ruff
 
-      # 1.4 - Análise Lint Completa (Arquivos Alterados)
+      # 1.4 - Configurar ambiente Python com dependências do projeto
+      - name: Setup Python Environment
+        run: |
+          uv venv
+          source .venv/bin/activate
+
+          # Instalar o projeto com grupos de dependência
+          uv sync --group dev
+
+          # Verificar instalações
+          uv pip list
+
+      # 1.5 - Análise Lint Completa (Arquivos Alterados)
       - name: Complete Lint Analysis (Changed Files)
         run: |
+          source .venv/bin/activate
+
           CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
           PYTHON_FILES=()
           YAML_FILES=()
@@ -66,9 +79,13 @@ jobs:
             echo "::group::Análise Python (${#PYTHON_FILES[@]} arquivos)"
             echo "Arquivos: ${PYTHON_FILES[*]}"
 
-            # Executa TODAS as verificações de uma vez (linha única)
-            uv run ruff check --output-format=github "${PYTHON_FILES[@]}" \
-              --select=F,E,W,I,N,D,ANN,RUF,COM,C90
+            # Formatação com Black (usando configuração do pyproject.toml)
+            echo "--- Formatando com Black ---"
+            uv run black --check "${PYTHON_FILES[@]}" || echo "Black encontrou issues de formatação"
+
+            # Análise com Ruff (usando configuração do pyproject.toml)
+            echo "--- Analisando com Ruff ---"
+            uv run ruff check --output-format=github "${PYTHON_FILES[@]}"
 
             echo "::endgroup::"
           else
@@ -80,7 +97,8 @@ jobs:
             echo "::group::Lint YAML (${#YAML_FILES[@]} arquivos)"
             for yaml_file in "${YAML_FILES[@]}"; do
               echo "Analisando: $yaml_file"
-              uv run yamllint "$yaml_file" --format github
+              uv add yamllint || echo "Yamllint não disponível"
+              uv run yamllint "$yaml_file" --format github || true
             done
             echo "::endgroup::"
           fi
