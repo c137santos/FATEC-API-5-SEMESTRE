@@ -1,5 +1,4 @@
 import pytest
-from django.test import Client
 
 from jiboia.accounts.models import User
 
@@ -17,9 +16,7 @@ def test_delete_user_view_success(client):
 
 
 @pytest.mark.django_db
-def test_delete_user_view_user_not_found():
-    client = Client()
-
+def test_delete_user_view_user_not_found(client):
     url = "/api/accounts/users/9999"
 
     response = client.delete(url)
