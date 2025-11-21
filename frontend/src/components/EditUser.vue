@@ -16,13 +16,21 @@
           class="mb-4"
         />
 
+        <v-alert
+          v-if="errorMessage"
+          type="error"
+          class="mb-4"
+        >
+          {{ errorMessage }}
+        </v-alert>
+
         <v-row>
           <v-col cols="12">
             <v-text-field
-              v-model="nome"
-              label="Nome Completo"
-                :rules="[
-                v => !!v || 'Nome é obrigatório'
+              v-model="username"
+              label="Nome de Usuário"
+              :rules="[
+                v => !!v || 'Nome de usuário é obrigatório'
               ]"
               required
             />
@@ -43,12 +51,14 @@
             />
           </v-col>
 
-          <v-col cols="12" md="6">
-            <v-combobox
-              v-model="tipoAcesso"
+         <v-col cols="12" md="6">
+            <v-select
+              v-model="permissaoSelecionada"
               clearable
               label="Tipo de Acesso"
-              :items="['Administrador', 'Gestor', 'Desenvolvedor']"
+              :items="permissionOptions"
+              item-title="text"
+              item-value="value"
               :rules="[v => !!v || 'Tipo de acesso é obrigatório']"
               required
             />
@@ -82,7 +92,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, watch } from "vue";
 
 const emit = defineEmits(['close', 'saved']);
 
@@ -93,50 +103,95 @@ const props = defineProps({
   }
 });
 
-const nome = ref('');
+const permissionOptions = [
+  { text: 'Administrador', value: 'PROJECT_ADMIN' },
+  { text: 'Gestor', value: 'PROJECT_MANAGER' },
+  { text: 'Líder de Equipe', value: 'TEAM_LEADER' },
+  { text: 'Membro de Equipe', value: 'TEAM_MEMBER' },
+];
+
+const username = ref('');
 const email = ref('');
-const tipoAcesso = ref('');
 const loading = ref(false);
-const form = ref(null);
 const isValid = ref(false);
+const errorMessage = ref('');
+const permissaoSelecionada = ref('');
 
 watch(() => props.userToEdit, (newUser) => {
   if (newUser) {
-    nome.value = newUser.name || '';
+    username.value = newUser.username || '';
     email.value = newUser.email || '';
-    tipoAcesso.value = newUser.permissions || '';
+
+    permissaoSelecionada.value = '';
+
+    for (const permission of permissionOptions) {
+      const hasPermission =
+        (newUser.permissions && newUser.permissions[permission.value]) ||
+        newUser[permission.value.toLowerCase()] ||
+        newUser[permission.value] ||
+        false;
+
+      if (hasPermission) {
+        permissaoSelecionada.value = permission.value;
+        break;
+      }
+    }
   } else {
     limparFormulario();
   }
 }, { immediate: true });
 
-const valid = computed(() => {
-  return nome.value &&
-         email.value &&
-         tipoAcesso.value
-});
+const getPermissionsObject = () => {
+  const permissionsObj = {
+    PROJECT_ADMIN: false,
+    PROJECT_MANAGER: false,
+    TEAM_LEADER: false,
+    TEAM_MEMBER: false
+  };
+
+  if (permissaoSelecionada.value && permissionsObj.hasOwnProperty(permissaoSelecionada.value)) {
+    permissionsObj[permissaoSelecionada.value] = true;
+  }
+
+  return permissionsObj;
+};
 
 const salvarEditUser = async () => {
   if (!isValid.value || loading.value) return;
 
-  const body = {
-    id: props.userToEdit.id,
-    name: nome.value,
+  const permissions = getPermissionsObject();
+
+  const requestBody = {
+    username: username.value,
     email: email.value,
-    permissions: tipoAcesso.value,
-  }
+    permissions: permissions
+  };
 
   loading.value = true;
+  errorMessage.value = '';
 
   try {
-    console.log('Atualizando usuário:', body);
+    const response = await fetch(`/api/accounts/users/edit/${props.userToEdit.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+      credentials: 'include'
+    });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+    }
 
     emit('saved');
+    emit('close');
 
   } catch (error) {
     console.error('Erro ao salvar usuário:', error);
+    errorMessage.value = error.message || 'Erro ao salvar usuário. Tente novamente.';
   } finally {
     loading.value = false;
   }
@@ -147,8 +202,9 @@ const cancelar = () => {
 }
 
 const limparFormulario = () => {
-  nome.value = '';
+  username.value = '';
   email.value = '';
-  tipoAcesso.value = '';
+  permissaoSelecionada.value = '';
+  errorMessage.value = '';
 };
 </script>
