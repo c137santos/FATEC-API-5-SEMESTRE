@@ -100,7 +100,7 @@ def get_all_users(request):
     except ValueError:
         page_size = 10
 
-    users = User.objects.all().order_by("id")
+    users = User.objects.filter(is_active=True).order_by("id")
 
     if not users.exists():
         return JsonResponse({"message": "Nenhum usuário encontrado."}, status=404)
@@ -122,9 +122,9 @@ def get_all_users(request):
     }
 
     return JsonResponse(data, status=200)
-    return JsonResponse(data, safe=False, status=200)
 
 
+@csrf_exempt
 @require_http_methods(["DELETE"])
 def delete_user_view(request, user_id):
     logger.info(f"API delete_user: {user_id}")

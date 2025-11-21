@@ -7,7 +7,7 @@ def list_users():
 
 
 def get_all_users():
-    users = User.objects.all()
+    users = User.objects.filter(is_active=True)
     return [user.to_get_user_json() for user in users]
 
 
