@@ -44,6 +44,14 @@ def delete_user(user_id):
         return False
 
 
+PERMISSION_MAP = {
+    "PROJECT_ADMIN": "project_admin",
+    "PROJECT_MANAGER": "project_manager",
+    "TEAM_LEADER": "team_leader",
+    "TEAM_MEMBER": "team_member",
+}
+
+
 def _ensure_user_exists(user_id):
     try:
         return User.objects.get(id=user_id)
@@ -73,13 +81,6 @@ def _validate_email(data, user_id):
 
 
 def _validate_permissions(data, user):
-    permission_fields = {
-        "PROJECT_ADMIN": "project_admin",
-        "PROJECT_MANAGER": "project_manager",
-        "TEAM_LEADER": "team_leader",
-        "TEAM_MEMBER": "team_member",
-    }
-
     if "permissions" not in data:
         return
 
@@ -87,7 +88,7 @@ def _validate_permissions(data, user):
 
     has_permission = any(
         bool(permissions.get(api_field, getattr(user, model_field)))
-        for api_field, model_field in permission_fields.items()
+        for api_field, model_field in PERMISSION_MAP.items()
     )
 
     if not has_permission:
@@ -102,16 +103,9 @@ def _apply_updates(user, data):
         user.email = data["email"]
 
     if "permissions" in data:
-        permission_map = {
-            "PROJECT_ADMIN": "project_admin",
-            "PROJECT_MANAGER": "project_manager",
-            "TEAM_LEADER": "team_leader",
-            "TEAM_MEMBER": "team_member",
-        }
-
         permissions = data["permissions"]
 
-        for api_field, model_field in permission_map.items():
+        for api_field, model_field in PERMISSION_MAP.items():
             if api_field in permissions:
                 setattr(user, model_field, bool(permissions[api_field]))
 
