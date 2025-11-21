@@ -8,4 +8,5 @@ urlpatterns = [
     path("whoami", views.whoami),
     path("users/", views.users_view),
     path("users/<int:user_id>", views.delete_user_view, name="delete_user"),
+    path("users/edit/<int:user_id>", views.update_user_view, name="update_user"),
 ]
