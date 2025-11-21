@@ -12,6 +12,7 @@ from django.views.decorators.http import require_http_methods
 from jiboia.accounts.models import User
 from jiboia.accounts.services import create_user as create_user_service
 from jiboia.accounts.services import delete_user as delete_user_service
+from jiboia.accounts.services import update_user_service
 
 logger = logging.getLogger(__name__)
 
@@ -137,3 +138,32 @@ def delete_user_view(request, user_id):
 
     logger.warning("API delete_user user not found")
     return JsonResponse({"message": "Usuário não encontrado"}, status=404)
+
+
+@require_http_methods(["PATCH"])
+def update_user_view(request, user_id):
+    logger.info(f"API update_user called with user_id={user_id}")
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        logger.error("API update_user: JSON inválido")
+        return JsonResponse({"message": "JSON inválido"}, status=400)
+
+    try:
+        user = update_user_service(user_id, data)
+    except ValueError as e:
+        logger.warning(f"API update_user validation error: {str(e)}")
+        return JsonResponse({"message": str(e)}, status=400)
+
+    if user is None:
+        logger.warning("API update_user: usuário não encontrado")
+        return JsonResponse({"message": "Usuário não encontrado"}, status=404)
+
+    logger.info(f"API update_user success for user_id={user_id}")
+    return JsonResponse(
+        {
+            "message": "Usuário atualizado com sucesso",
+        },
+        status=200,
+    )
