@@ -178,7 +178,7 @@ const salvarUser = async () => {
     PROJECT_ADMIN: permission.value === 'PROJECT_ADMIN',
     PROJECT_MANAGER: permission.value === 'PROJECT_MANAGER',
     TEAM_LEADER: permission.value === 'TEAM_LEADER',
-    TEAM_MEMBER: permission.value === 'TEAM_MEMBER' || true,
+    TEAM_MEMBER: permission.value === 'TEAM_MEMBER',
   };
 
   const body = {

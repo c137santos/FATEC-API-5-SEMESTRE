@@ -82,6 +82,9 @@ const userDisplayName = computed(() => {
 });
 
 const deleteUser = async () => {
+  loading.value = true;
+  errorMessage.value = '';
+
   try {
     const response = await fetch(`/api/accounts/users/${props.userToDelete.id}`, {
       method: 'DELETE',
@@ -90,6 +93,13 @@ const deleteUser = async () => {
       },
       credentials: 'include'
     });
+
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = null;
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

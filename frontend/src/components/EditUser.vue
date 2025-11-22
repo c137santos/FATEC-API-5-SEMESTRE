@@ -180,11 +180,16 @@ const salvarEditUser = async () => {
       credentials: 'include'
     });
 
-    const data = await response.json();
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = null;
+    }
 
     if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
-    }
+      const errorMessage = errorData?.message || `Erro ${response.status}: ${response.statusText}`;
+      throw new Error(errorMessage);    }
 
     emit('saved');
     emit('close');
