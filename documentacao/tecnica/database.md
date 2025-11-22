@@ -58,7 +58,7 @@ Segue suas vantagens técnicas:
 ### 4. Implementação de uma Migration
 Primeiro passo é criar o arquivo de migration na pasta liquibase/changes, seguindo o padrão já existente, exemplo:
 **002-create-products-table.sql**,
-se caso for uma correção de algo já existente, criar uma pasta nova chamada Migration_data_fix e colocar o arquivo lá dentro, isso permite uma melhor visão da evolução do banco e uma melhor rastreabilidade. E por fim, adicionar o arquivo no **db.changelog-master.yaml** conforme o exemplo abaixo:
+caso for uma correção de algo já existente, criar uma pasta nova chamada Migration_data_fix e colocar o arquivo lá dentro, isso permite uma melhor visão da evolução do banco e uma melhor rastreabilidade. E por fim, adicionar o arquivo no **db.changelog-master.yaml** conforme o exemplo abaixo:
 ```yaml
    - include:
        file: changes/002-create-products-table.sql

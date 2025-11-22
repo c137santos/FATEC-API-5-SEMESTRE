@@ -25,6 +25,8 @@ services:
       "
     ports:
       - 8000:8000
+    expose:
+      - "8000"
     volumes:
       - ./:/app
     depends_on:
@@ -37,6 +39,8 @@ services:
     image: postgres:15-alpine
     ports:
       - 15432:5432
+    expose:
+      - 15432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
@@ -77,6 +81,8 @@ services:
     hostname: front-jiboia
     ports:
       - 3000:3000
+    expose:
+      - "3000"
     env_file:
       - .env
     command: npm run dev -- --host

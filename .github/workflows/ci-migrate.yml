@@ -41,18 +41,15 @@ jobs:
           sudo chmod +x /usr/local/bin/liquibase
           liquibase --version
 
-      - name: Run Liquibase migrations
-        env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_NAME: liquibase_ci
-          DB_USER: liquibase
-          DB_PASS: liquibase_pwd
+      - name: Create liquibase.properties
         run: |
-          liquibase \
-            --url="jdbc:postgresql://$DB_HOST:$DB_PORT/$DB_NAME" \
-            --username="$DB_USER" \
-            --password="$DB_PASS" \
-            --changeLogFile=db.changelog-master.yaml \
-            --searchPath=liquibase/changelog \
-            update
+          cat <<EOF > liquibase.properties
+          url=jdbc:postgresql://localhost:5432/liquibase_ci
+          username=liquibase
+          password=liquibase_pwd
+          changeLogFile=db.changelog-master.yaml
+          searchPath=liquibase/changelog
+          EOF
+      - name: Run Liquibase migrations
+        run: |
+          liquibase update
