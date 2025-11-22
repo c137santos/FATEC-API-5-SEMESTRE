@@ -3,6 +3,7 @@ from unittest.mock import patch
 
 import pytest
 from django.test import Client
+from django.urls import reverse
 
 
 @pytest.mark.django_db
@@ -35,7 +36,7 @@ def test_create_user_success(mock_service):
     }
 
     response = client.post(
-        "/api/accounts/users/create/",
+        reverse("users_create"),
         data=json.dumps(payload),
         content_type="application/json",
     )
@@ -68,7 +69,7 @@ def test_create_user_no_true_permission(mock_service):
     }
 
     response = client.post(
-        "/api/accounts/users/create/",
+        reverse("users_create"),
         data=json.dumps(payload),
         content_type="application/json",
     )
@@ -97,7 +98,7 @@ def test_create_user_service_value_error(mock_service):
     }
 
     response = client.post(
-        "/api/accounts/users/create/",
+        reverse("users_create"),
         data=json.dumps(payload),
         content_type="application/json",
     )
@@ -117,7 +118,7 @@ def test_create_user_invalid_json():
     client = Client()
 
     response = client.post(
-        "/api/accounts/users/create/",
+        reverse("users_create"),
         data="username=Pedro",
         content_type="application/json",
     )
