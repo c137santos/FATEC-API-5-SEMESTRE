@@ -7,7 +7,7 @@ def list_users():
 
 
 def get_all_users():
-    users = User.objects.all()
+    users = User.objects.filter(is_active=True)
     return [user.to_get_user_json() for user in users]
 
 
@@ -32,3 +32,96 @@ def create_user(username, password, email, permissions):
     user.set_password(password)
     user.save()
     return user.to_dict_json()
+
+
+def delete_user(user_id):
+    try:
+        user = User.objects.get(id=user_id, is_active=True)
+        user.is_active = False
+        user.save(update_fields=["is_active"])
+        return True
+    except User.DoesNotExist:
+        return False
+
+
+PERMISSION_MAP = {
+    "PROJECT_ADMIN": "project_admin",
+    "PROJECT_MANAGER": "project_manager",
+    "TEAM_LEADER": "team_leader",
+    "TEAM_MEMBER": "team_member",
+}
+
+
+def _ensure_user_exists(user_id):
+    try:
+        return User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return None
+
+
+def _validate_not_inactive(user):
+    if not user.is_active:
+        raise ValueError("Usuário não encontrado.")
+
+
+def _validate_username(data):
+    username = data.get("username")
+    if username is not None and (not username or username.strip() == ""):
+        raise ValueError("O nome de usuário não pode ser vazio.")
+
+
+def _validate_email(data, user_id):
+    email = data.get("email")
+    if email is not None:
+        if not email or email.strip() == "":
+            raise ValueError("O email não pode ser vazio.")
+
+        if User.objects.filter(email=email).exclude(id=user_id).exists():
+            raise ValueError("Já existe um usuário com esse email.")
+
+
+def _validate_permissions(data, user):
+    if "permissions" not in data:
+        return
+
+    permissions = data.get("permissions", {})
+
+    has_permission = any(
+        bool(permissions.get(api_field, getattr(user, model_field)))
+        for api_field, model_field in PERMISSION_MAP.items()
+    )
+
+    if not has_permission:
+        raise ValueError("O usuário deve ter pelo menos uma permissão ativa.")
+
+
+def _apply_updates(user, data):
+    if "username" in data:
+        user.username = data["username"]
+
+    if "email" in data:
+        user.email = data["email"]
+
+    if "permissions" in data:
+        permissions = data["permissions"]
+
+        for api_field, model_field in PERMISSION_MAP.items():
+            if api_field in permissions:
+                setattr(user, model_field, bool(permissions[api_field]))
+
+    user.save()
+
+
+def update_user_service(user_id, data):
+    user = _ensure_user_exists(user_id)
+    if user is None:
+        return None
+
+    _validate_not_inactive(user)
+    _validate_username(data)
+    _validate_email(data, user_id)
+    _validate_permissions(data, user)
+
+    _apply_updates(user, data)
+
+    return user

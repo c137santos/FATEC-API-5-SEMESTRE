@@ -22,18 +22,18 @@
         <v-row>
           <v-col cols="12">
             <div class="text-h5 mb-4">
-              Tem certeza que deseja deletar o usuário
-              <strong>{{ userToDelete?.name || userToDelete?.username }}</strong>?
+              Tem certeza que deseja desativar o usuário
+              <strong>{{ userDisplayName }}</strong>?
             </div>
             <div class="text-body-1 text-grey">
-              Esta ação não pode ser desfeita.
+              Tem certeza que deseja desativar este usuário? Esta ação não pode ser desfeita.
             </div>
           </v-col>
         </v-row>
 
         <v-card-actions class="pa-0 pt-4 justify-end">
           <v-btn
-            color="green"
+            color="grey"
             @click="cancelar"
             :disabled="loading"
             class="mr-2"
@@ -44,12 +44,12 @@
 
           <v-btn
             type="submit"
-            :disabled="loading"
+            :disabled="loading || !valid"
             color="red"
             :loading="loading"
           >
-            <v-icon left>mdi-check</v-icon>
-            Deletar
+            <v-icon left>mdi-delete</v-icon>
+            Desativar Usuário
           </v-btn>
         </v-card-actions>
       </v-form>
@@ -59,7 +59,6 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import accountsApi from "@/api/accounts.api";
 
 const props = defineProps({
   userToDelete: {
@@ -74,28 +73,44 @@ const loading = ref(false);
 const errorMessage = ref('');
 
 const valid = computed(() => {
-  return props.userToDelete !== null;
+  return props.userToDelete !== null && props.userToDelete.id;
+});
+
+const userDisplayName = computed(() => {
+  if (!props.userToDelete) return '';
+  return props.userToDelete.name || props.userToDelete.username || props.userToDelete.email || 'Usuário';
 });
 
 const deleteUser = async () => {
-  if (!valid.value) return;
-
   loading.value = true;
   errorMessage.value = '';
 
   try {
-    console.log('Deletando usuário:', props.userToDelete);
+    const response = await fetch(`/api/accounts/users/${props.userToDelete.id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
 
-    await accountsApi.deleteUser(props.userToDelete.id);
+    let errorData;
+    try {
+      errorData = await response.json();
+    } catch {
+      errorData = null;
+    }
 
-    console.log('Usuário deletado com sucesso');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     emit('deleted');
+    emit('close');
 
   } catch (error) {
     console.error('Erro ao deletar usuário:', error);
-    errorMessage.value = error.response?.data?.message || error.message || 'Erro ao deletar usuário. Tente novamente.';
-  } finally {
-    loading.value = false;
+    errorMessage.value = error.message || 'Erro ao deletar usuário. Tente novamente.';
   }
 }
 

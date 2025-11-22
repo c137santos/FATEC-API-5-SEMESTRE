@@ -52,6 +52,14 @@
       />
     </v-dialog>
 
+    <v-dialog v-model="dialogEdit" max-width="800" persistent>
+      <EditUser
+        :user-to-edit="userToEdit"
+        @close="fecharEdit"
+        @saved="onUsuarioSalvo"
+      />
+    </v-dialog>
+
     <v-dialog v-model="dialogDelete" max-width="600" persistent>
       <DeleteUser
         :user-to-delete="userToDelete"
@@ -67,10 +75,11 @@ import { ref, onMounted } from "vue";
 import accountsApi from "@/api/accounts.api";
 import CadastrarUser from "./CadastrarUser.vue";
 import DeleteUser from "./DeleteUser.vue";
+import EditUser from "./EditUser.vue";
 
 const headers = ref([
   { title: "Id", key: "id", align: "start" },
-  { title: "Nome", key: "name", align: "start" },
+  { title: "Nome", key: "username", align: "start" },
   { title: "E-mail", key: "email", align: "start" },
   { title: "Tipo de acesso", key: "permissions", align: "start" },
   { key: "actions", align: "center", sortable: false },
@@ -83,6 +92,8 @@ const loading = ref(true);
 const dialogCadastro = ref(false);
 const dialogDelete = ref(false);
 const userToDelete = ref(null);
+const dialogEdit = ref(false);
+const userToEdit = ref(null);
 
 const abrirCadastro = () => {
   dialogCadastro.value = true;
@@ -103,26 +114,45 @@ const fecharDelete = () => {
   userToDelete.value = null;
 };
 
+const abrirEdit = (user) => {
+  console.log('Editar usuário:', user);
+  userToEdit.value = user;
+  dialogEdit.value = true;
+};
+
+const fecharEdit = () => {
+  dialogEdit.value = false;
+  userToEdit.value = null;
+};
+
 const onUsuarioSalvo = () => {
   fecharCadastro();
-  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
+  fecharEdit();
+  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value });
 };
 
 const onUsuarioDeletado = () => {
   fecharDelete();
-  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
+  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value });
 };
 
-const abrirEdit = (user) => {
-  console.log('Editar usuário:', user);
-};
-
-const searchUsers = async (page = 1, limit = itemsPerPage.value, sortBy = []) => {
+const searchUsers = async (page = 1, itemsPerPage = itemsPerPage.value) => {
   loading.value = true;
+
   try {
-    const response = await accountsApi.getUsers(page, limit, sortBy);
-    users.value = response.users || [];
-    totalUsers.value = response.total_items || 0;
+    const response = await accountsApi.getUsers(page, itemsPerPage);
+
+    if (response.results && Array.isArray(response.results)) {
+      users.value = response.results;
+      totalUsers.value = response.count || 0;
+    } else if (response.users && Array.isArray(response.users)) {
+      users.value = response.users;
+      totalUsers.value = response.total_items || 0;
+    } else {
+      users.value = [];
+      totalUsers.value = 0;
+    }
+
   } catch (error) {
     console.error("Erro ao buscar usuários:", error);
     users.value = [];
@@ -132,11 +162,11 @@ const searchUsers = async (page = 1, limit = itemsPerPage.value, sortBy = []) =>
   }
 };
 
-const loadUsers = async ({ page, itemsPerPage, sortBy }) => {
-  await searchUsers(page, itemsPerPage, sortBy);
+const loadUsers = ({ page, itemsPerPage }) => {
+  searchUsers(page, itemsPerPage);
 };
 
-onMounted(async () => {
-  await loadUsers({ page: 1, itemsPerPage: itemsPerPage.value, sortBy: [] });
+onMounted(() => {
+  loadUsers({ page: 1, itemsPerPage: itemsPerPage.value });
 });
 </script>

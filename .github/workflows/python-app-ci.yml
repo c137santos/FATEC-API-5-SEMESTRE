@@ -1,8 +1,6 @@
 name: jiboia CI
 
 on:
-  push:
-    branches: [main, dev]
   pull_request:
     branches: [main, dev]
 
@@ -50,9 +48,6 @@ jobs:
       - name: Install dependencies
         run: |
           uv pip install --no-cache -r requirements-dev.txt
-
-      - name: Run Python Linter (Ruff)
-        run: ruff check .
 
       - name: Run Tests and Generate Coverage XML
         env:

@@ -11,6 +11,8 @@ from django.views.decorators.http import require_http_methods
 
 from jiboia.accounts.models import User
 from jiboia.accounts.services import create_user as create_user_service
+from jiboia.accounts.services import delete_user as delete_user_service
+from jiboia.accounts.services import update_user_service
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +62,8 @@ def whoami(request):
     return JsonResponse(user_data)
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
 def create_user(request):
     try:
         json.loads(request.body)
@@ -88,6 +92,7 @@ def create_user(request):
         return JsonResponse({"message": str(e)}, safe=False, status=400)
 
 
+@require_http_methods(["GET"])
 def get_all_users(request):
     page = request.GET.get("page", 1)
     try:
@@ -96,7 +101,7 @@ def get_all_users(request):
     except ValueError:
         page_size = 10
 
-    users = User.objects.all().order_by("id")
+    users = User.objects.filter(is_active=True).order_by("id")
 
     if not users.exists():
         return JsonResponse({"message": "Nenhum usuário encontrado."}, status=404)
@@ -117,18 +122,49 @@ def get_all_users(request):
         "results": [user.to_get_user_json() for user in users_page],
     }
 
-    return JsonResponse(data, safe=False, status=200)
-
-
-# This view intentionally allows both GET (safe) and POST (unsafe) methods
-# to handle user listing and creation in one endpoint.
-# CSRF protection is disabled because this is a JSON API authenticated by token.
+    return JsonResponse(data, status=200)
 
 
 @csrf_exempt
-@require_http_methods(["GET", "POST"])
-def users_view(request):
-    if request.method == "GET":
-        return get_all_users(request)
-    elif request.method == "POST":
-        return create_user(request)
+@require_http_methods(["DELETE"])
+def delete_user_view(request, user_id):
+    logger.info(f"API delete_user: {user_id}")
+
+    deleted = delete_user_service(user_id)
+
+    if deleted:
+        logger.info("API delete_user success")
+        return JsonResponse({"message": "Usuário deletado com sucesso"}, status=200)
+
+    logger.warning("API delete_user user not found")
+    return JsonResponse({"message": "Usuário não encontrado"}, status=404)
+
+
+@csrf_exempt
+@require_http_methods(["PATCH"])
+def update_user_view(request, user_id):
+    logger.info(f"API update_user called with user_id={user_id}")
+
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        logger.error("API update_user: JSON inválido")
+        return JsonResponse({"message": "JSON inválido"}, status=400)
+
+    try:
+        user = update_user_service(user_id, data)
+    except ValueError as e:
+        logger.warning(f"API update_user validation error: {str(e)}")
+        return JsonResponse({"message": str(e)}, status=400)
+
+    if user is None:
+        logger.warning("API update_user: usuário não encontrado")
+        return JsonResponse({"message": "Usuário não encontrado"}, status=404)
+
+    logger.info(f"API update_user success for user_id={user_id}")
+    return JsonResponse(
+        {
+            "message": "Usuário atualizado com sucesso",
+        },
+        status=200,
+    )

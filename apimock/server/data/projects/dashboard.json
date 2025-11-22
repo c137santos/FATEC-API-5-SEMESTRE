@@ -203,6 +203,38 @@
 				"name": "Aline Dominique",
 				"hours": 1
 			}
+		],
+		"concluded_issues": [
+			{
+				"key": "SM2-93",
+				"timespent": 2700,
+				"status": "Concluído"
+			},
+			{
+				"key": "SM2-92",
+				"timespent": 3600,
+				"status": "Concluído"
+			},
+			{
+				"key": "SM2-86",
+				"timespent": 1800,
+				"status": "Concluído"
+			},
+			{
+				"key": "SM2-83",
+				"timespent": 3600,
+				"status": "Concluído"
+			},
+			{
+				"key": "SM2-79",
+				"timespent": 2400,
+				"status": "Concluído"
+			},
+			{
+				"key": "SM2-81",
+				"timespent": 0,
+				"status": "Concluído"
+			}
 		]
 	},
 	{
@@ -398,6 +430,23 @@
 				"dev_id": 3,
 				"name": "Lucas Paiva",
 				"hours": 4
+			}
+		],
+		"concluded_issues": [
+			{
+				"key": "MNT-45",
+				"timespent": 9000,
+				"status": "Concluído"
+			},
+			{
+				"key": "MNT-42",
+				"timespent": 11520,
+				"status": "Concluído"
+			},
+			{
+				"key": "MNT-38",
+				"timespent": 6480,
+				"status": "Concluído"
 			}
 		]
 	}
