@@ -101,8 +101,7 @@ class DimensionalService:
                     total_issue = Issue.objects.filter(
                         project__jira_id=projeto["id_project_jira"],
                         type_issue__jira_id=issue_type["id_type_jira"],
-                        status__jira_id=status["id_status_jira"],
-                        end_date=None,
+                        status__id=status["id_status_jiba"],
                     ).count()
 
                     FactIssue.objects.create(
