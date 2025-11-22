@@ -62,6 +62,8 @@ def whoami(request):
     return JsonResponse(user_data)
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
 def create_user(request):
     try:
         json.loads(request.body)
@@ -90,6 +92,7 @@ def create_user(request):
         return JsonResponse({"message": str(e)}, safe=False, status=400)
 
 
+@require_http_methods(["GET"])
 def get_all_users(request):
     page = request.GET.get("page", 1)
     try:
@@ -98,7 +101,7 @@ def get_all_users(request):
     except ValueError:
         page_size = 10
 
-    users = User.objects.all().order_by("id")
+    users = User.objects.filter(is_active=True).order_by("id")
 
     if not users.exists():
         return JsonResponse({"message": "Nenhum usuário encontrado."}, status=404)
@@ -119,23 +122,10 @@ def get_all_users(request):
         "results": [user.to_get_user_json() for user in users_page],
     }
 
-    return JsonResponse(data, safe=False, status=200)
-
-
-# This view intentionally allows both GET (safe) and POST (unsafe) methods
-# to handle user listing and creation in one endpoint.
-# CSRF protection is disabled because this is a JSON API authenticated by token.
+    return JsonResponse(data, status=200)
 
 
 @csrf_exempt
-@require_http_methods(["GET", "POST"])
-def users_view(request):
-    if request.method == "GET":
-        return get_all_users(request)
-    elif request.method == "POST":
-        return create_user(request)
-
-
 @require_http_methods(["DELETE"])
 def delete_user_view(request, user_id):
     logger.info(f"API delete_user: {user_id}")
@@ -150,6 +140,7 @@ def delete_user_view(request, user_id):
     return JsonResponse({"message": "Usuário não encontrado"}, status=404)
 
 
+@csrf_exempt
 @require_http_methods(["PATCH"])
 def update_user_view(request, user_id):
     logger.info(f"API update_user called with user_id={user_id}")
