@@ -1,12 +1,11 @@
 import pytest
-
-BASE_URL = "/api/accounts/users/"
+from django.urls import reverse
 
 
 @pytest.mark.django_db
 class TestUsersView:
     def test_get_users_success(self, client):
-        response = client.get(BASE_URL)
+        response = client.get(reverse("users_list"))
         assert response.status_code in (200, 404)
         assert "application/json" in response["Content-Type"]
 
@@ -25,7 +24,7 @@ def test_post_create_user_success(client):
         },
     }
 
-    response = client.post(BASE_URL, user_data, content_type="application/json")
+    response = client.post(reverse("users_create"), user_data, content_type="application/json")
 
     assert response.status_code in (200, 201)
     assert "application/json" in response["Content-Type"]

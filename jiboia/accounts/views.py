@@ -140,6 +140,7 @@ def delete_user_view(request, user_id):
     return JsonResponse({"message": "Usuário não encontrado"}, status=404)
 
 
+@csrf_exempt
 @require_http_methods(["PATCH"])
 def update_user_view(request, user_id):
     logger.info(f"API update_user called with user_id={user_id}")
