@@ -106,54 +106,7 @@ export default {
     async login() {
       const user = await this.accountsStore.login(this.username, this.password)
       if (!user) {
-        this.baseStore.showSnackbar("Usuário ou senha invalida", "danger")
-        return
-      }
-      console.log("logged")
-      this.showIssues()
-    },
-    showIssues() {
-      this.$router.push({ path: "/projects/overview" })
-      console.log("--> issues")
-    },
-  },
-}
-</script>
-
-<script>
-import { mapState } from "pinia"
-import { useBaseStore } from "@/stores/baseStore"
-import { useAccountsStore } from "@/stores/accountsStore"
-
-export default {
-  setup() {
-    const baseStore = useBaseStore()
-    const accountsStore = useAccountsStore()
-    return { baseStore, accountsStore }
-  },
-  data: () => {
-    return {
-      valid: false,
-      username: "",
-      password: "",
-    }
-  },
-  computed: {
-    ...mapState(useAccountsStore, ["loggedUser"]),
-  },
-  async mounted() {
-    console.log(this.loggedUser)
-    await this.accountsStore.whoAmI()
-    if (this.loggedUser) {
-      this.baseStore.showSnackbar("Usuário já logado", "warning")
-      this.showIssues()
-    }
-  },
-  methods: {
-    async login() {
-      const user = await this.accountsStore.login(this.username, this.password)
-      if (!user) {
-        this.baseStore.showSnackbar("Usuário ou senha invalida", "error")
+        this.baseStore.showSnackbar("Usuário ou senha inválida", "warning")
         return
       }
       console.log("logged")

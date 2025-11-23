@@ -3,7 +3,7 @@
     
     <!-- BACKGROUND SHAPE (A ONDA AZUL) -->
     <div class="background-shape">
-       <svg viewBox="0 0 500 800" preserveAspectRatio="none" class="wave-svg">
+       <svg viewBox="0 0 500 800" preserveAspectRatio="none" class="wave-svg" aria-hidden="true">
           <!-- Curva suave "S" para criar o efeito split-screen orgânico -->
           <path d="M120,0 C260,200 -20,400 100,800 L500,800 L500,0 Z" 
                 style="stroke: none; fill: rgb(var(--v-theme-primary));">
@@ -18,7 +18,7 @@
         <div style="max-width: 600px;">
           
           <h1 class="text-h3 text-lg-h2 font-weight-black mb-6 text-high-emphasis lh-tight">
-            Bem vindo ao <span class="text-primary">Jiboia!</span>
+            Bem-vindo ao <span class="text-primary">Jiboia!</span>
           </h1>
 
           <p class="text-h6 text-medium-emphasis font-weight-regular mb-10" style="line-height: 1.6;">
