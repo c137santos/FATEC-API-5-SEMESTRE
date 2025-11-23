@@ -1,0 +1,55 @@
+name: CI - Run Liquibase
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+env:
+  DB_PASS: liquibase_pwd
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: liquibase_ci
+          POSTGRES_USER: liquibase
+          POSTGRES_PASSWORD: liquibase_pwd
+        options: >-
+          --health-cmd="pg_isready -U liquibase -d liquibase_ci"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Liquibase
+        run: |
+          curl -sLo liquibase.zip https://github.com/liquibase/liquibase/releases/download/v4.29.2/liquibase-4.29.2.zip
+          unzip -o liquibase.zip -d liquibase-cli
+          sudo mv liquibase-cli/liquibase /usr/local/bin/liquibase
+          sudo mv liquibase-cli/internal /usr/local/bin/internal
+          sudo chmod +x /usr/local/bin/liquibase
+          liquibase --version
+
+      - name: Create liquibase.properties
+        run: |
+          cat <<EOF > liquibase.properties
+          url=jdbc:postgresql://localhost:5432/liquibase_ci
+          username=liquibase
+          password=liquibase_pwd
+          changeLogFile=db.changelog-master.yaml
+          searchPath=liquibase/changelog
+          EOF
+      - name: Run Liquibase migrations
+        run: |
+          liquibase update
