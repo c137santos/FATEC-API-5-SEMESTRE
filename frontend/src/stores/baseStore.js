@@ -13,10 +13,20 @@ export const useBaseStore = defineStore("baseStore", {
       this.errorMessage = errorMessage
       this.showErrorMessage = !!errorMessage
     },
-    showSnackbar(message, type) {
+    showSnackbar(message, type, options = {}) {
       this.type = type
       this.snackbarMessage = message
-      this.showSnackbarMessage = !!message
+      this.showSnackbarMessage = true
+
+      if (options.timeout && options.timeout > 0) {
+        setTimeout(() => {
+          this.hideSnackbar()
+        }, options.timeout)
+      }
+    },
+    hideSnackbar() {
+      this.showSnackbarMessage = false
+      this.snackbarMessage = undefined
     },
   },
 })

@@ -26,7 +26,8 @@ export function responseError(error) {
 
   // Redireciona erro de autênticação para página de login
   if (error.response && error.response.status === 401) {
-    baseStore.showSnackbar("Usuário sem autênticação. Efetue o login!", "warning")
+    baseStore.showSnackbar("Usuário sem autênticação. Efetue o login!", "warning",
+      { timeout: 2000 })
     router.push({
       name: "accounts-login",
     })
