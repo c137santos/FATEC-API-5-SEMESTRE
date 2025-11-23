@@ -7,7 +7,17 @@ from django.utils import timezone
 from jiboia.core.service import issues_type_svc
 from jiboia.core.service.dimensional_svc import DimIntervaloTemporalService, TipoGranularidade
 
-from ..models import DimIntervaloTemporal, FactIssue, Issue, IssueType, Project, StatusType, TimeLog
+from ..models import (
+    DimIntervaloTemporal,
+    DimProjeto,
+    DimStatus,
+    FactIssue,
+    Issue,
+    IssueType,
+    Project,
+    StatusType,
+    TimeLog,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -149,6 +159,45 @@ def _get_dev_hours(project):
     return dev_hours
 
 
+def _get_percentual_task_done(project):
+    dim_interval = (
+        DimIntervaloTemporal.objects.filter(granularity_type=TipoGranularidade.DIA.value)
+        .order_by("-start_date")
+        .first()
+    )
+
+    if not dim_interval:
+        return 0
+
+    status_done = DimStatus.objects.filter(status_name="Concluído").first()
+    if not status_done:
+        return 0
+
+    dim_project = DimProjeto.objects.filter(id_project_jiba=project.id).first()
+    if not dim_project:
+        return 0
+
+    total_issue_done = (
+        FactIssue.objects.filter(project=dim_project, worklog_interval=dim_interval, status=status_done).aggregate(
+            total=Sum("total_issue")
+        )["total"]
+        or 0
+    )
+
+    total_issues = (
+        FactIssue.objects.filter(project=dim_project, worklog_interval=dim_interval).aggregate(
+            total=Sum("total_issue")
+        )["total"]
+        or 0
+    )
+
+    if total_issues == 0:
+        return 0
+
+    percentual = (total_issue_done * 100) / total_issues
+    return round(percentual, 2)
+
+
 def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5):
     """
     Get detailed overview of a specific project
@@ -179,6 +228,7 @@ def get_project_overview(project_id, issues_breakdown_months=6, burndown_days=5)
         "total_worked_hours": _get_total_worked_hours(project),
         "issues_status": _get_issues_by_type(project),
         "dev_hours": _get_dev_hours(project),
+        "percentual_task": _get_percentual_task_done(project),
     }
 
     logger.info(f"Successfully generated overview for project {project_id}")
