@@ -18,7 +18,6 @@ export const useBaseStore = defineStore("baseStore", {
       this.snackbarMessage = message
       this.showSnackbarMessage = true
 
-      // Se um timeout for passado nas opções, usa-o para esconder o snackbar
       if (options.timeout && options.timeout > 0) {
         setTimeout(() => {
           this.hideSnackbar()

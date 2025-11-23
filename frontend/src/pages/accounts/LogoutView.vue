@@ -75,6 +75,7 @@ export default {
         this.$router.push({ name: 'base-home' })
       } catch (error) {
         console.error("Erro ao sair", error)
+        this.baseStore.showSnackbar("Ocorreu um erro ao tentar sair.", "error", { timeout: 2000 })
       } finally {
         this.loading = false
       }
