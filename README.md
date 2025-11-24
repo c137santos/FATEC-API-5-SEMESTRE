@@ -23,12 +23,12 @@
   <a href ="#equipe"> Equipe</a> |
 </p>
 
-> Status do Projeto: Em progresso  🚧
+> Status do Projeto: Finalizado ✅
 >
 >
 > Pasta de Documentação: [Link](./documentacao) 📄
 >
-> Video do Projeto:  Em progresso  📽️
+> Video do Projeto:  [Link](https://drive.google.com/file/d/1zEdlCajJSd0xh-kXPzS_CFgMDfQ7k5ZS/view?usp=drive_link)  📽️
 
 ## 🏅 Desafio <a id="desafio"></a>
 
@@ -70,7 +70,7 @@ Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentac
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) | [Sprint 2 entrega](https://drive.google.com/file/d/1ts-Tc75Hhq3WGDdZoDllG1HI9AAI6o32/view?usp=sharing) |
-| 🔖 **SPRINT 3** | 03/11 - 23/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) |  |
+| 🔖 **SPRINT 3** | 03/11 - 23/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) | [Sprint  entrega 3](https://drive.google.com/file/d/1xewwLSdpO3ofHaGYaPtFlJGpLL3pktHb/view?usp=drive_link) |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
 ## 📅 Board de priorização  <a id="sprint"></a>
@@ -95,7 +95,7 @@ Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentac
 </h4>
 
 ## 📖 Manual de Instalação e testagem <a id="manual"></a>
-[manual de instalação](./documentacao/tecnica/manual_de_instalacao.md)
+[Manual de instalação](./documentacao/tecnica/manual_de_instalacao.md)
 
 ## 🪵 Estrutura de branchs  <a id="branchs"></a>
 [Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
@@ -148,18 +148,6 @@ Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentac
       <td>Desenvolvedora</td>
       <td><a href="https://github.com/c137santos"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/c137santos/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
-    </tr>
-    <tr>
-      <td>Ricardo Campos</td>
-      <td>Desenvolvedor</td>
-      <td><a href="https://github.com/r1cardvs"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/ricardo-campos-ba56091b5/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
-    </tr>
-    <tr>
-      <td>Vinícius Monteiro</td>
-      <td>Desenvolvedor</td>
-      <td><a href="https://github.com/viniciusvasmonteiro"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/viniciusvasm/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
     <tr>
       <td>Yan Yamim</td>
