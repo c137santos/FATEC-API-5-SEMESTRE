@@ -1,48 +1,91 @@
-version: '3.8'
-
 services:
+
+  backend:
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-c137santos}/fatec-api-5-semestre-backend:${IMAGE_TAG:-latest}
+    hostname: back-jiboia
+    container_name: jiboia-backend
+    environment:
+      JIRA_API_URL: ${JIRA_API_URL}
+      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
+    env_file:
+      - .env
+    command: >
+      bash -c "
+      uv venv --python $(which python3) &&
+      source .venv/bin/activate &&
+      uv pip install --no-cache -r requirements-dev.txt &&
+      python manage.py migrate --noinput &&
+      python manage.py collectstatic --noinput &&
+      service cron start &&
+      python manage.py crontab remove &&
+      python manage.py crontab add &&
+      gunicorn jiboia.jiboia.wsgi:application --bind 0.0.0.0:8000 --workers 3
+      "
+    ports:
+      - 8000:8000
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - jiboia-network
+
   postgres:
     image: postgres:15-alpine
     container_name: jiboia-postgres
     ports:
-      - "15432:5432"
+      - 15432:5432
+    expose:
+      - 15432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
       - jiboia-network
 
-  backend:
-    image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-c137santos}/fatec-api-5-semestre-backend:${IMAGE_TAG:-latest}
-    container_name: jiboia-backend
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    environment:
-      JIRA_API_URL: ${JIRA_API_URL}
-      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
-      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
-    command: bash -c 'uv venv --python $$(which python3) && source .venv/bin/activate && uv pip install --no-cache -r requirements-dev.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput && service cron start && python manage.py crontab remove && python manage.py crontab add && gunicorn jiboia.jiboia.wsgi:application --bind 0.0.0.0:8000 --workers 3'
+  liquibase:
+    image: liquibase/liquibase:latest
+    container_name: liquibase
     depends_on:
       postgres:
         condition: service_healthy
-    restart: unless-stopped
+    volumes:
+      - ./liquibase/changelog:/liquibase/changelog
+      - ./liquibase/drivers:/liquibase/drivers
+    env_file:
+      - .env
+    command:
+      [
+        "--changeLogFile=db.changelog-master.yaml",
+        "--url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}",
+        "--username=${POSTGRES_USER}",
+        "--password=${POSTGRES_PASSWORD}",
+        "--classpath=/liquibase/drivers/postgresql-42.7.8.jar",
+        "update"
+      ]
     networks:
       - jiboia-network
 
   frontend:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER:-c137santos}/fatec-api-5-semestre-frontend:${IMAGE_TAG:-latest}
+    hostname: front-jiboia
     container_name: jiboia-frontend
     ports:
-      - "3000:3000"
+      - 3000:3000
+    expose:
+      - "3000"
     env_file:
       - .env
     command: sh -c "npm run build && npm run preview -- --host 0.0.0.0 --port 3000"
@@ -56,8 +99,8 @@ services:
     image: nginx:latest
     container_name: jiboia-nginx
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
     volumes:
       - ./docker/nginx/default_prod:/etc/nginx/conf.d/default.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
