@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
     command: >
-      bash -c "
+      bash -c '
       uv venv --python $(which python3) &&
       source .venv/bin/activate &&
       uv pip install --no-cache -r requirements-dev.txt &&
@@ -21,7 +21,7 @@ services:
       python manage.py crontab remove &&
       python manage.py crontab add &&
       gunicorn jiboia.jiboia.wsgi:application --bind 0.0.0.0:8000 --workers 3
-      "
+      '
     ports:
       - 8000:8000
     expose:
