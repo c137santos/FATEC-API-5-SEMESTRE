@@ -52,7 +52,7 @@ class SyncIssuesStrategy(JiraStrategy[int]):
             return 0
 
         start_at = 0
-        max_results = 100
+        max_results = 101
         total_issues = None
         page_count = 0
 
