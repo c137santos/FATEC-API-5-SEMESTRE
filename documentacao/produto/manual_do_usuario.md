@@ -67,7 +67,7 @@ Aqui você encontra os controles de exibição e acesso pessoal.
 ### 5.1. Visão Geral dos Projetos (Project Overview)
 Ao fazer login no sistema Jibóia, esta é a sua tela inicial. Este painel centraliza a saúde de todos os projetos conectados ao Jira.
 
-![Visão Geral](../assets/overview.png)
+<img width="1353" height="596" alt="image" src="https://github.com/user-attachments/assets/f4da1f27-d6c0-40ea-b01c-c1c4b2fd0719" />
 
 #### 5.1.1. Elementos da Tela
 * **Botão "Atualizar Dados":** Localizado no canto superior direito. Clique aqui sempre que quiser garantir que os números na tela estejam sincronizados com a última versão do Jira.
@@ -97,7 +97,7 @@ A proporção de tarefas entre os projetos.
 ### 5.2. Painel Detalhado do Projeto (Project Dashboard)
 Ao clicar em qualquer projeto na tela inicial, você será direcionado para este Dashboard exclusivo. Aqui, o gestor tem acesso a métricas de Agile (Burndown), Financeiro e Qualidade.
 
-![Project Dashboard](../assets/projects.png)
+<img width="988" height="518" alt="image" src="https://github.com/user-attachments/assets/ed73e0ec-b7f1-4f46-8d0b-759f9355822f" />
 
 #### 5.2.1. Movimentação de Issues (Esquerda)
 Mostra o histórico de batalha entre o que precisa ser feito e o que já foi entregue.
@@ -135,7 +135,7 @@ Categoriza o tipo de demanda que a equipe está enfrentando:
 ### 5.3. Gestão de Custos e Métricas Gerais
 Na parte inferior do dashboard, você encontra a visão detalhada de recursos humanos e o resumo estatístico do projeto.
 
-![Gestão de Custos](../assets/projects2.png)
+<img width="1062" height="575" alt="image" src="https://github.com/user-attachments/assets/9062b8b8-3e81-4ad8-a344-ceeca61c6d15" />
 
 #### Tabela: Valor x Hora dos Desenvolvedores
 Esta lista detalha o esforço individual de cada membro da equipe.
@@ -163,7 +163,7 @@ Quatro indicadores fundamentais para entender o volume e a velocidade do projeto
 
 Para adicionar um novo membro à equipe, acesse a opção **Usuários** no menu lateral e clique no botão de cadastro. A janela abaixo será aberta:
 
-![Tela de Cadastro](image.png)
+<img width="815" height="441" alt="image" src="https://github.com/user-attachments/assets/a271a1ad-c47d-4c93-99ee-a4284c1dc4fe" />
 
 #### Preenchimento dos Campos
 * **Nome de Usuário:** Digite o user ou a identificação do colaborador (será utilizado para o login).
