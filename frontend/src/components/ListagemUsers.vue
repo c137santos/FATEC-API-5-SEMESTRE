@@ -1,17 +1,16 @@
 <template>
+  <div class="d-flex justify-space-between align-center mb-4" style="width: 100%;">
+    <h2>Users</h2> 
+    <v-btn
+      style="background-color: #172B4D; color: white"
+      prepend-icon="mdi-account-plus"
+      @click="abrirCadastro"
+    >
+      Cadastrar novo usuário
+    </v-btn>
+  </div>
+
   <v-container>
-    <div class="d-flex justify-space-between align-center mb-4">
-      <div class="text-h2 ma-2 pa-2">Users</div>
-
-      <v-btn
-        color="blue-darken-4"
-        prepend-icon="mdi-account-plus"
-        @click="abrirCadastro"
-      >
-        Cadastrar novo usuário
-      </v-btn>
-    </div>
-
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
@@ -20,6 +19,11 @@
       :loading="loading"
       @update:options="loadUsers"
     >
+  
+      <template v-slot:item.permissions="{ item }">
+        <span>{{ formatarPermissao(item.permissions) }}</span>
+      </template>
+
       <template v-slot:item.actions="{ item }">
         <v-btn
           icon
@@ -169,4 +173,18 @@ const loadUsers = ({ page, itemsPerPage }) => {
 onMounted(() => {
   loadUsers({ page: 1, itemsPerPage: itemsPerPage.value });
 });
+
+function formatarPermissao(perms) {
+  if (!perms) return "-";
+  const nomes = {
+    PROJECT_ADMIN: "Administrador",
+    PROJECT_MANAGER: "Gestor",
+    TEAM_LEADER: "Líder de Equipe",
+    TEAM_MEMBER: "Membro de Equipe"
+  };
+  const tipos = Object.entries(perms)
+    .filter(([_, v]) => v)
+    .map(([k]) => nomes[k] || k);
+  return tipos.length ? tipos.join(', ') : 'Nenhum';
+}
 </script>

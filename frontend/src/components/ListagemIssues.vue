@@ -1,7 +1,17 @@
 <template>
-  <div class="text-h2 ma-2 pa-2">Issues</div>
-
-  <v-container class="d-flex justify-center align-center">
+  <div class="d-flex justify-space-between align-center mb-4">
+    <v-btn
+      icon
+      variant="text"
+      @click="voltar"
+      class="mr-2"
+      style="fill: rgb(var(--v-theme-primary))"
+    >
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
+					<h2>Issues</h2> 										
+  </div>
+  <v-container class="justify-center align-center">
     <v-data-table-server
       v-model:items-per-page="itemsPerPage"
       :headers="headers"
@@ -22,9 +32,7 @@
         </v-btn>
       </template>
 
-      <template v-slot:item.author="{ item }">
-          {{ item.user_related?.user_name || 'Não foi encontrado ou não existe autor para essa issue' }}
-      </template>
+
 
       <template v-slot:item.timeCreated="{ item }">
         {{ formatDate(item.created_at) }}
@@ -52,7 +60,6 @@ import PopUpIssue from './PopUpIssue.vue';
 const headers = ref([
   { title: "Id da Issue", key: "jira_id", align: "start" },
   { title: "Sumário issue ", key: "description", align: "start" },
-  { title: "Autor", key: "author", align: "start" },
   { title: "Data de criação", key: "timeCreated", align: "start" },
   { key: "actions", align: "center", sortable: false },
 ]);
@@ -109,4 +116,8 @@ const formatDate = (dateString) => {
 onMounted(async () => {
   searchIssues(1);
 });
+
+const voltar = () => {
+  window.history.back();
+};
 </script>

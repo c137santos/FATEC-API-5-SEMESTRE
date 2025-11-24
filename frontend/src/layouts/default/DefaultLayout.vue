@@ -7,7 +7,6 @@
       <VMain>
         <RouterView />
       </VMain>
-      <app-footer :fixed="true" :user="loggedUser" />
     </VApp>
   </VLayout>
 </template>
@@ -29,7 +28,6 @@ import { useAccountsStore } from "@/stores/accountsStore"
 import AppSnackbar from "@/components/AppSnackbar.vue"
 import AppErrorDialog from "@/components/AppErrorDialog.vue"
 import AppNavBar from "@/components/AppNavBar.vue"
-import AppFooter from "@/components/AppFooter.vue"
 
 export default {
   name: "DefaultLayout",
@@ -37,7 +35,6 @@ export default {
     AppSnackbar,
     AppErrorDialog,
     AppNavBar,
-    AppFooter,
   },
   setup() {
     const baseStore = useBaseStore()
