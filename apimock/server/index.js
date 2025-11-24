@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const base = require("./controllers/base");
 const accounts = require("./controllers/accounts");
 const core = require("./controllers/core");
-const projects = require('./controllers/projects')
+const projects = require('./controllers/projects');
 
 const YELLOW = "\x1b[33m%s\x1b[0m";
 const WHITE = "\x1b[37m";
@@ -32,6 +32,7 @@ app.get("dapau", base.dapau);
 app.post("/api/accounts/login", accounts.login);
 app.post("/api/accounts/logout", accounts.logout);
 app.get("/api/accounts/whoami", accounts.whoami);
+app.get("/api/accounts/users", accounts.getUsers);
 
 // Issues
 app.get("/api/core/projects/:id/issues", core.find);

@@ -10,6 +10,7 @@
 <p align="center">
   | <a href ="#desafio"> Desafio</a>  |
   <a href ="#solucao"> Solução</a>  |
+  <a href ="#requisitos"> Requisitos do Cliente</a>  |
   <a href ="#backlog"> Backlog do Produto</a>  |
   <a href ="#dor">DoR</a>  |
   <a href ="#dod">DoD</a>  |
@@ -22,12 +23,12 @@
   <a href ="#equipe"> Equipe</a> |
 </p>
 
-> Status do Projeto: Em progresso  🚧
+> Status do Projeto: Finalizado ✅
 >
 >
 > Pasta de Documentação: [Link](./documentacao) 📄
 >
-> Video do Projeto:  Em progresso  📽️
+> Video do Projeto:  [Link](https://drive.google.com/file/d/1zEdlCajJSd0xh-kXPzS_CFgMDfQ7k5ZS/view?usp=drive_link)  📽️
 
 ## 🏅 Desafio <a id="desafio"></a>
 
@@ -39,32 +40,37 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 
 ---
 
-## 📋 Backlog do Produto <a id="backlog"></a>
+## 🔗 Requisitos do Cliente <a id="requisitos"></a>
+Essa sessão indica os requisitos, tanto funcionais quanto não funcionais, que representam determinada user story. Cada requisito possui um ID único para rastreamento e referência.
 
-## Backlog
-| Rank | Prioridade | User Story | Estimativa (Story Points) | Sprint |
-| :--- | :--- | :--- | :--- | :--- |
-| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | 3| 1 |
-| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | 3| 1 |
-| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. |8| 1 |
-| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. |3 | 2 |
-| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. |2 | 2 |
-| 6 | Alta | Como gerente desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto | 8| 2 |
-| 7 | Alta| Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. |3 | 2 |
-| 8 | Alta | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | 5| 2 |
-| 9 | Média | Como administrador, quero um formulário para cadastrar novos usuários e definir seu nível de acesso: gerente, líder ou membro de equipe. |5| 3 |
-| 10 | Média | Como gestor, quero visualizar no dashboard de projetos a taxa de conclusão de issues e o tempo médio de resolução do projeto. | 3| 3 |
-| 11 | Baixa | Como gestor, quero aplicar filtros por projeto e por intervalo de datas (início e fim) no dashboard. | 3| 3 |
-| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | 5| 3 |
+Todos os requisitos detalhados estão aqui: [Requisitos Detalhados](./documentacao/produto/requisitos.md)
 
 ---
+
+## 📋 Backlog do Produto <a id="backlog"></a>
+
+| Rank | Prioridade | User Story | Requisitos Relacionados | Estimativa (Story Points) |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | Alta | Como gestor, quero visualizar uma lista dos projetos disponíveis na API do Jira, mostrando para cada um o nome, data de início e fim. | [`RF1-PROJ-LIST`](/documentacao/produto/requisitos.md#rf1-proj-list---listagem-de-projetos) | 3 |
+| 2 | Alta | Como gestor, quero visualizar para cada projeto a quantidade de issues e o total de horas registradas. | [`RF1-PROJ-DETAIL`](/documentacao/produto/requisitos.md#rf1-proj-detail---detalhes-do-projeto) | 3 |
+| 3 | Alta | Como gestor, quero um dashboard inicial que mostre a quantidade de issues e horas trabalhadas para um projeto. | [`RF4-DASH-PROJ`](/documentacao/produto/requisitos.md#rf4-dash-proj---dashboard-de-projetos) | 8 |
+| 4 | Alta | Como gestor, ao selecionar um projeto, quero ver uma lista das issues, exibindo o autor, ID da issue e a data de criação. | [`RF2-ISSUE-LIST`](/documentacao/produto/requisitos.md#rf2-issue-list---listagem-de-issues) | 3 |
+| 5 | Alta | Como gestor, ao visualizar as issues de um projeto, quero ver o tempo total gasto e a data de início de cada uma. | [`RF2-ISSUE-DETAIL`](/documentacao/produto/requisitos.md#rf2-issue-detail---detalhes-da-issue) | 5 |
+| 6 | Alta | Como gerente, desejo poder cadastrar e analisar os custos do valor da hora trabalhado por dev em cada projeto. | [`RF1-PROJ-DETAIL`](/documentacao/produto/requisitos.md#rf1-proj-detail---detalhes-do-projeto), [`RNF2-SEC-ACCESS`](/documentacao/produto/requisitos.md#rnf2-sec-access---controle-de-acesso) | 5 |
+| 7 | Alta | Como administrador, quero um formulário para cadastrar novos usuários. | [`RF3-USER-MANAGE`](/documentacao/produto/requisitos.md#rf3-user-manage---gestão-de-usuários) | 8 |
+| 8 | Alta | Como usuário, quero que ao logar no sistema, apresente minhas permissões as quais condizem com meu cargo (gerente, líder ou membro de equipe). | [`RNF2-SEC-AUTH`](/documentacao/produto/requisitos.md#rnf2-sec-auth---autenticação), [`RNF2-SEC-ACCESS`](/documentacao/produto/requisitos.md#rnf2-sec-access---controle-de-acesso) | 3 |
+| 9 | Média | Como gestor, quero visualizar no dashboard a quantidade de membros ativos e as horas trabalhadas por cada um. | [`RF4-DASH-PROJ`](/documentacao/produto/requisitos.md#rf4-dash-proj---dashboard-de-projetos) | 3 |
+| 10 | Média | Como líder de equipe, quero aplicar filtros por intervalo de datas de criação e por membro no dashboard de issues. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 3 |
+| 11 | Média | Como gestor, quero visualizar um dashboard de um projeto específico que mostra a taxa de conclusão de issues e o tempo médio de resolução do projeto. | [`RF4-DASH-ISSUE`](/documentacao/produto/requisitos.md#rf4-dash-issue---dashboard-de-issues) | 5 |
+| 12 | Baixa | Como gestor, quero que o sistema calcule e exiba o valor total de horas gastas (horas x valor_hora) de um projeto. | [`RF1-PROJ-DETAIL`](/documentacao/produto/requisitos.md#rf1-proj-detail---detalhes-do-projeto) | 5 |
+
 
 ## 📅 Cronograma de Sprints <a id="sprint"></a>
 | Sprint          |    Período    | Documentação                                     | Vídeo Entrega                                     |
 | --------------- | :-----------: | ------------------------------------------------ | ------------------------------------------------ |
 | 🔖 **SPRINT 1** | 08/09 - 28/09 | [Sprint 1 Docs](./documentacao/produto/backlog%20sprints/sprint1.md) | [Sprint 1 entrega](https://drive.google.com/file/d/1lTRNIouHLhvxYD-sD-3FFqk2J7dnPl_7/view?usp=sharing) |
 | 🔖 **SPRINT 2** | 06/10 - 26/10 | [Sprint 2 Docs](./documentacao/produto/backlog%20sprints/sprint2.md) | [Sprint 2 entrega](https://drive.google.com/file/d/1ts-Tc75Hhq3WGDdZoDllG1HI9AAI6o32/view?usp=sharing) |
-| 🔖 **SPRINT 3** | 03/11 - 28/11 | [Sprint 3 Docs]() |  |
+| 🔖 **SPRINT 3** | 03/11 - 23/11 | [Sprint 3 Docs](./documentacao/produto/backlog%20sprints/sprint3.md) | [Sprint  entrega 3](https://drive.google.com/file/d/1xewwLSdpO3ofHaGYaPtFlJGpLL3pktHb/view?usp=drive_link) |
 | ⚡️ **feira de soluções** | 04/12 |  |  |
 
 ## 📅 Board de priorização  <a id="sprint"></a>
@@ -89,13 +95,13 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
 </h4>
 
 ## 📖 Manual de Instalação e testagem <a id="manual"></a>
-[manual de instalação](./documentacao/tecnica/manual_de_instalacao.md)
+[Manual de instalação](./documentacao/tecnica/manual_de_instalacao.md)
 
 ## 🪵 Estrutura de branchs  <a id="branchs"></a>
 [Estrutura de branchs](./documentacao/tecnica/estrutura_de_branchs.md)
 
 ## 📦 Product Backlog -> DOR e DOD  <a id="pb"></a>
-[Product backlog](./documentacao/tecnica/estrutura_de_branchs.md)
+[Product backlog](./documentacao/produto/product_backlog.md)
 
 ## 📖 Manual do usuário  <a id="manual_usuario"></a>
 [Manual do usuário](./documentacao/produto/manual_do_usuario.md)
@@ -114,6 +120,24 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
       <th>Linkedin</th>
     </tr>
     <tr>
+      <td>Jean Rodrigues</td>
+      <td>Scrum Master</td>
+      <td><a href="https://github.com/JeanRodrigues1"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/jean-rodrigues-0569a0251/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Paloma Soares</td>
+      <td>Product Owner</td>
+      <td><a href="https://github.com/PalomaSoaresR"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/paloma-soares-rocha/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
+      <td>Isaque de Souza</td>
+      <td>Desenvolvedor</td>
+      <td><a href="https://github.com/Isaque-BD"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
+      <td><a href="https://www.linkedin.com/in/isaque-souza-6760b8270/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
+    </tr>
+    <tr>
       <td>Marília Moraes</td>
       <td>Desenvolvedora</td>
       <td><a href="https://github.com/marilia-borgo"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
@@ -127,15 +151,9 @@ O objetivo é dar visibilidade sobre o andamento, esforço e performance das equ
     </tr>
     <tr>
       <td>Yan Yamim</td>
-      <td>Product Owner</td>
+      <td>Desenvolvedor</td>
       <td><a href="https://github.com/YanYamim"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
       <td><a href="https://www.linkedin.com/in/yan-yamim-185220278/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
-    </tr>
-    <tr>
-      <td>Jean Rodrigues</td>
-      <td>Scrum Master</td>
-      <td><a href="https://github.com/JeanRodrigues1"><img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"></a></td>
-      <td><a href="https://www.linkedin.com/in/jean-rodrigues-0569a0251/"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white"></a></td>
     </tr>
   </table>
 </div>

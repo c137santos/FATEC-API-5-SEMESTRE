@@ -101,7 +101,7 @@ def test_add_issue_unauthorized():
 
 
 @pytest.mark.django_db
-def test_list_paginable_issues_success(client):
+def test_list_paginable_issues_success(authenticated_client):
     """
     Tests if the list_paginable_issues endpoint successfully returns 200
     with real paginated data.
@@ -122,7 +122,7 @@ def test_list_paginable_issues_success(client):
 
     url = reverse("list_paginable_issues", kwargs={"project_id": TEST_PROJECT_ID})
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 200
 
@@ -137,7 +137,7 @@ def test_list_paginable_issues_success(client):
 
 
 @pytest.mark.django_db
-def test_list_paginable_issues_with_invalid_page_parameter_string(client):
+def test_list_paginable_issues_with_invalid_page_parameter_string(authenticated_client):
     """
     Tests if the endpoint handles an invalid page parameter (string) and defaults to page 1.
     """
@@ -148,7 +148,7 @@ def test_list_paginable_issues_with_invalid_page_parameter_string(client):
 
     url = reverse("list_paginable_issues", kwargs={"project_id": TEST_PROJECT_ID})
 
-    response = client.get(f"{url}?page=abc")
+    response = authenticated_client.get(f"{url}?page=abc")
 
     assert response.status_code == 200
 
@@ -157,15 +157,15 @@ def test_list_paginable_issues_with_invalid_page_parameter_string(client):
 
 
 @pytest.mark.django_db
-def test_list_paginable_issues_empty_database(client):
+def test_list_paginable_issues_empty_database(authenticated_client):
     """
-    Tests if the endpoint returns 200 when there are no issues (apenas o projeto existe).
+    Tests if the endpoint returns 200 when there are no issues
     """
     Project.objects.create(id=TEST_PROJECT_ID, name="Projeto Vazio", description="", jira_id=1)
 
     url = reverse("list_paginable_issues", kwargs={"project_id": TEST_PROJECT_ID})
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 200
 

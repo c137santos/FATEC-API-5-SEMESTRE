@@ -5,6 +5,7 @@
 		<v-btn
 			class="mb-4"
 			variant="outlined"
+			style="background-color: #172B4D; color: white"
 			@click="listaIssues"
 		> Issues </v-btn>
 			<v-row>
@@ -45,7 +46,14 @@
 						</v-card>
 						<v-card class="d-flex flex-column ga-2 pa-4">
 							<h3 class="d-flex justify-center">Gasto por hora (R$)</h3>
-							<span class="text-h4 d-flex justify-center">{{ workedHours * hourValue }}</span>
+							<span class="text-h4 d-flex justify-center">
+								<template v-if="hasProjectPermission">
+									{{ formatCurrency(workedHours * hourValue) }}
+								</template>
+								<template v-else>
+									<v-icon size="22">mdi-lock</v-icon>
+								</template>
+							</span>
 						</v-card>
 					</div>
 				</v-col>
@@ -81,15 +89,26 @@
 							class="elevation-1"
 						>
 							<template v-slot:item.actions="{ item }">
-								<v-btn
-									icon="mdi-pencil"
-									size="small"
-									variant="text"
-									@click="editDeveloper(item)"
-								></v-btn>
+								<!-- show edit only for users with project permissions, otherwise show lock -->
+								<template v-if="hasProjectPermission">
+									<v-btn
+										icon="mdi-pencil"
+										size="small"
+										variant="text"
+										@click="editDeveloper(item)"
+									></v-btn>
+								</template>
+								<template v-else>
+									<v-icon size="18">mdi-lock</v-icon>
+								</template>
 							</template>
 							<template v-slot:item.valorHora="{ item }">
-								{{ formatCurrency(item.valorHora) }}
+								<template v-if="hasProjectPermission">
+									{{ formatCurrency(item.valorHora) }}
+								</template>
+								<template v-else>
+									<v-icon size="18">mdi-lock</v-icon>
+								</template>
 							</template>
 						</v-data-table>
 					</v-card>
@@ -104,12 +123,6 @@
 				</v-col>
 				<v-col>
 					<v-card class="d-flex flex-column ga-2 pa-4">
-						<h3 class="d-flex justify-center">Horas trabalhadas</h3>
-						<span class="text-h4 d-flex justify-center">{{ workedHours }}</span>
-					</v-card>
-				</v-col>
-				<v-col>
-					<v-card class="d-flex flex-column ga-2 pa-4">
 						<h3 class="d-flex justify-center">Issues Ativas</h3>
 						<span class="text-h4 d-flex justify-center">{{ activeIssues || 0 }}</span>
 					</v-card>
@@ -118,6 +131,12 @@
 					<v-card class="d-flex flex-column ga-2 pa-4">
 						<h3 class="d-flex justify-center">Issues Concluidas</h3>
 						<span class="text-h4 d-flex justify-center">{{ concludedIssues || 0}}</span>
+					</v-card>
+				</v-col>
+				<v-col>
+					<v-card class="d-flex flex-column ga-2 pa-4">
+						<h3 class="d-flex justify-center">Tempo médio Issue</h3>
+						<span class="text-h4 d-flex justify-center">{{ formatAverageTime }}</span>
 					</v-card>
 				</v-col>
 			</v-row>
@@ -195,6 +214,7 @@ import DashboardLayout from '@/layouts/default/DashboardLayout.vue';
 import StatusBreakdownGraph from '@/components/StatusBreakdownGraph.vue'
 import { chartColors } from '@/utils/chart-utils';
 import { useRoute, useRouter } from 'vue-router';
+import { useAccountsStore } from '@/stores/accountsStore.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -205,6 +225,13 @@ const name = ref('')
 const developersTableData = ref([])
 
 const hourValue = ref(0)
+
+const accountsStore = useAccountsStore()
+const hasProjectPermission = computed(() => {
+	const perms = accountsStore.loggedUser?.permissions || {}
+	return Boolean(perms.PROJECT_ADMIN) || Boolean(perms.PROJECT_MANAGER)
+})
+console.log(accountsStore.loggedUser?.permissions)
 
 const developersTableHeaders = [
 	{ title: 'Desenvolvedor', key: 'nome', align: 'start' },
@@ -319,7 +346,54 @@ const activeIssues = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
 	return Object.values(today).reduce((total, value) => total + value, 0) - today['Concluído']
 })() : 0)
+
 const concludedIssues = computed(() => dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
+
+const averageIssueTimeHours = computed(() => {
+	if (!dataRef.value) {
+		return 0
+	}
+	if (!dataRef.value.concluded_issues) {
+		return 0
+	}
+	if (dataRef.value.concluded_issues.length === 0) {
+		return 0
+	}
+
+	const filteredIssues = dataRef.value.concluded_issues.filter(issue => issue.timespent && issue.timespent > 0)
+
+	if (filteredIssues.length === 0) {
+		return 0
+	}
+
+	const totalHours = filteredIssues.reduce((total, issue) => {
+		const timeSpentSeconds = issue.timespent || 0
+		const timeSpentHours = timeSpentSeconds / 3600
+		return total + timeSpentHours
+	}, 0)
+
+	const averageHours = totalHours / filteredIssues.length
+	return averageHours
+})
+
+const formatAverageTime = computed(() => {
+	const avgHours = averageIssueTimeHours.value
+
+	switch (true) {
+		case avgHours === 0:
+			return '0h'
+
+		case avgHours < 1:
+			const minutes = Math.round(avgHours * 60)
+			return `${minutes}m`
+
+		case avgHours < 10:
+			return `${avgHours.toFixed(1)}h`
+
+		default:
+			return `${Math.round(avgHours)}h`
+	}
+})
 
 const issuesTotal = computed(() => dataRef.value ? (() => {
 	const today = dataRef.value.issues_today
@@ -338,6 +412,8 @@ const editingDeveloper = ref(null)
 const newHourValue = ref(0)
 
 const editDeveloper = (item) => {
+ 	if (!hasProjectPermission.value) return
+
 	editingDeveloper.value = item
 	newHourValue.value = item.valorHora
 	editDialogVisible.value = true
@@ -383,11 +459,16 @@ const loadDevelopers = async () => {
 }
 
 onMounted(async () => {
-	const data = await projectsApi.dashboard(route.params.id)
-	name.value = data.name
-	dataRef.value = data
-	issuesList.value = data.issues_per_month
-	await loadDevelopers()
+    if (!accountsStore.loggedUser) {
+        await accountsStore.whoAmI()
+    }
+
+    const data = await projectsApi.dashboard(route.params.id)
+    name.value = data.name
+    dataRef.value = data
+    issuesList.value = data.issues_per_month || []
+    await loadDevelopers()
 })
+
 
 </script>

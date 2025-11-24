@@ -54,7 +54,7 @@ def setup_update_view_data():
 
 
 @pytest.mark.django_db
-def test_update_developer_hour_value_view_success(client, setup_update_view_data):
+def test_update_developer_hour_value_view_success(authenticated_client, setup_update_view_data):
     """Test successful update through the view"""
     data = setup_update_view_data
     developer = data["developer"]
@@ -67,7 +67,7 @@ def test_update_developer_hour_value_view_success(client, setup_update_view_data
 
     payload = {"valorHora": 85.50}
 
-    response = client.patch(
+    response = authenticated_client.patch(
         url,
         data=json.dumps(payload),
         content_type="application/json",
@@ -87,7 +87,7 @@ def test_update_developer_hour_value_view_success(client, setup_update_view_data
 
 
 @pytest.mark.django_db
-def test_update_developer_hour_value_view_decimal_precision(client, setup_update_view_data):
+def test_update_developer_hour_value_view_decimal_precision(authenticated_client, setup_update_view_data):
     """Test update with decimal values"""
     data = setup_update_view_data
     developer = data["developer"]
@@ -100,7 +100,7 @@ def test_update_developer_hour_value_view_decimal_precision(client, setup_update
 
     payload = {"valorHora": 123.45}
 
-    response = client.patch(
+    response = authenticated_client.patch(
         url,
         data=json.dumps(payload),
         content_type="application/json",
@@ -112,7 +112,7 @@ def test_update_developer_hour_value_view_decimal_precision(client, setup_update
 
 
 @pytest.mark.django_db
-def test_update_developer_hour_value_view_wrong_http_method(client, setup_update_view_data):
+def test_update_developer_hour_value_view_wrong_http_method(authenticated_client, setup_update_view_data):
     """Test that only PATCH method is allowed"""
     data = setup_update_view_data
     developer = data["developer"]
@@ -125,7 +125,7 @@ def test_update_developer_hour_value_view_wrong_http_method(client, setup_update
 
     payload = {"valorHora": 100.0}
 
-    response = client.post(
+    response = authenticated_client.post(
         url,
         data=json.dumps(payload),
         content_type="application/json",
@@ -133,7 +133,7 @@ def test_update_developer_hour_value_view_wrong_http_method(client, setup_update
 
     assert response.status_code == 405  # Method Not Allowed
 
-    response = client.put(
+    response = authenticated_client.put(
         url,
         data=json.dumps(payload),
         content_type="application/json",
@@ -141,6 +141,6 @@ def test_update_developer_hour_value_view_wrong_http_method(client, setup_update
 
     assert response.status_code == 405  # Method Not Allowed
 
-    response = client.get(url)
+    response = authenticated_client.get(url)
 
     assert response.status_code == 405  # Method Not Allowed

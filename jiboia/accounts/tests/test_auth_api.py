@@ -9,8 +9,8 @@ from jiboia.accounts.models import User
 def test_deve_retornar_usuario_nao_logado(client):
     resp = client.get("/api/accounts/whoami")
 
-    assert resp.status_code == 200
-    assert resp.json() == {"authenticated": False}
+    assert resp.status_code == 401
+    assert resp.json() == {"not_authenticated": True}
 
 
 @pytest.mark.django_db
@@ -28,7 +28,14 @@ def test_deve_retornar_usuario_logado(client, logged_jon):
             "last_name": "Snow",
             "email": "jon@example.com",
             "valor_hora": 0.0,
-            "permissions": {"ADMIN": False, "STAFF": False},
+            "permissions": {
+                "ADMIN": False,
+                "PROJECT_ADMIN": False,
+                "PROJECT_MANAGER": False,
+                "STAFF": False,
+                "TEAM_LEADER": False,
+                "TEAM_MEMBER": False,
+            },
             "jira_id": None,
         },
         "authenticated": True,
@@ -67,7 +74,14 @@ def test_deve_fazer_login(client):
             "last_name": "Snow",
             "email": "jon@example.com",
             "valor_hora": 0.00,
-            "permissions": {"ADMIN": False, "STAFF": False},
+            "permissions": {
+                "ADMIN": False,
+                "STAFF": False,
+                "PROJECT_ADMIN": False,
+                "PROJECT_MANAGER": False,
+                "TEAM_LEADER": False,
+                "TEAM_MEMBER": False,
+            },
             "jira_id": None,
         },
         "authenticated": True,
@@ -85,4 +99,4 @@ def test_deve_fazer_logout_quando_estiver_logado(client, logged_jon):
 @pytest.mark.django_db
 def test_deve_fazer_logout_mesmo_sem_login(client):
     resp = client.post("/api/accounts/logout")
-    assert resp.status_code == 200
+    assert resp.status_code == 401

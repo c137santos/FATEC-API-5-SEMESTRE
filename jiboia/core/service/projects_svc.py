@@ -71,6 +71,7 @@ def serialize_project(project, project_issues):
         TimeLog.objects.filter(id_issue__in=project_issues)
         .values("id_user_id", "id_user__username")
         .annotate(hours=Sum(F("seconds") * 1.0) / 3600)
+        .order_by("id_user_id")
     )
     dev_hours_list = [
         {

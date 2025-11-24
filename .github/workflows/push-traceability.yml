@@ -1,0 +1,104 @@
+name: Push Traceability - Complete Lint Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  complete_lint_analysis:
+    name: Análise Lint (Files Changed)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1.1 - Identificar arquivos modificados
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v40
+        with:
+          base_sha: ${{ github.event.before }}
+          sha: ${{ github.sha }}
+
+      # 1.2 - Configurar Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 1.3 - Instalar UV
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      # 1.4 - Configurar ambiente Python com dependências do projeto
+      - name: Setup Python Environment
+        run: |
+          uv venv
+          source .venv/bin/activate
+
+          # Instalar o projeto com grupos de dependência
+          uv sync --group dev
+
+          # Verificar instalações
+          uv pip list
+
+      # 1.5 - Análise Lint Completa (Arquivos Alterados)
+      - name: Complete Lint Analysis (Changed Files)
+        run: |
+          source .venv/bin/activate
+
+          CHANGED_FILES="${{ steps.changed-files.outputs.all_changed_files }}"
+          PYTHON_FILES=()
+          YAML_FILES=()
+
+          for file in $CHANGED_FILES; do
+            if [[ "$file" == *.py ]]; then
+              PYTHON_FILES+=("$file")
+            elif [[ "$file" == *.yml || "$file" == *.yaml ]]; then
+              YAML_FILES+=("$file")
+            fi
+          done
+
+          echo "Arquivos modificados detectados:"
+          echo "Python: ${#PYTHON_FILES[@]}"
+          echo "YAML: ${#YAML_FILES[@]}"
+
+          # LINT PARA ARQUIVOS PYTHON
+          if [ ${#PYTHON_FILES[@]} -gt 0 ]; then
+            echo "::group::Análise Python (${#PYTHON_FILES[@]} arquivos)"
+            echo "Arquivos: ${PYTHON_FILES[*]}"
+
+            # Formatação com Black (usando configuração do pyproject.toml)
+            echo "--- Formatando com Black ---"
+            uv run black --check "${PYTHON_FILES[@]}" || echo "Black encontrou issues de formatação"
+
+            # Análise com Ruff (usando configuração do pyproject.toml)
+            echo "--- Analisando com Ruff ---"
+            uv run ruff check --output-format=github "${PYTHON_FILES[@]}"
+
+            echo "::endgroup::"
+          else
+            echo "Nenhum arquivo Python para análise"
+          fi
+
+          # LINT PARA YAML
+          if [ ${#YAML_FILES[@]} -gt 0 ]; then
+            echo "::group::Lint YAML (${#YAML_FILES[@]} arquivos)"
+            for yaml_file in "${YAML_FILES[@]}"; do
+              echo "Analisando: $yaml_file"
+              uv add yamllint || echo "Yamllint não disponível"
+              uv run yamllint "$yaml_file" --format github || true
+            done
+            echo "::endgroup::"
+          fi

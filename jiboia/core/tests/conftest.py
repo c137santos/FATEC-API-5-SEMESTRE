@@ -1,6 +1,7 @@
 from datetime import date, timedelta
 
 import pytest
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from jiboia.core.models import Issue, IssueType, Project, StatusType
@@ -38,3 +39,19 @@ def setup_issues_data(db):
         )
 
     return project
+
+
+@pytest.fixture
+def authenticated_user(db):
+    """Creates an authenticated user for tests"""
+    User = get_user_model()
+    return User.objects.create_user(
+        username="testuser", first_name="Test", last_name="User", email="test@example.com", password="testpass"
+    )
+
+
+@pytest.fixture
+def authenticated_client(client, authenticated_user):
+    """Creates a client with an authenticated user"""
+    client.force_login(authenticated_user)
+    return client

@@ -2,7 +2,7 @@
 
 import DefaultLayout from "@/layouts/default/DefaultLayout.vue"
 import OverviewView from "@/pages/core/OverviewView"
-import UserView from "@/pages/core/UserView"
+import UsersView from "@/pages/accounts/UsersView.vue"
 
 export default [
   {
@@ -17,7 +17,7 @@ export default [
       {
         path: "user",
         name: "user",
-        component: UserView,
+        component: UsersView,
       },
     ],
   }

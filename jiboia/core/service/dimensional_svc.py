@@ -101,7 +101,7 @@ class DimensionalService:
                     total_issue = Issue.objects.filter(
                         project__jira_id=projeto["id_project_jira"],
                         type_issue__jira_id=issue_type["id_type_jira"],
-                        status__jira_id=status["id_status_jira"],
+                        status__id=status["id_status_jiba"],
                     ).count()
 
                     FactIssue.objects.create(
@@ -110,13 +110,6 @@ class DimensionalService:
                         status=status["dimstatus"],
                         total_issue=total_issue if total_issue else 0,
                         worklog_interval=intervalo_tempo.dimtemporal,
-                    )
-                    logger.debug(
-                        "[DIM LOAD]: FactIssue criado. Projeto: %s, Tipo: %s, Status: %s, Total: %s",
-                        projeto["project"],
-                        issue_type["issue_type"],
-                        status["dimstatus"],
-                        total_issue,
                     )
         logger.info("[DIM LOAD]: FactIssue salvo com sucesso para o intervalo: %s", intervalo_tempo.dimtemporal)
         return True
@@ -372,6 +365,59 @@ class DimIntervaloTemporalService:
         )
         return self.dimtemporal
 
+    @classmethod
+    def create_interval_retro(
+        cls,
+        tipo: TipoGranularidade,
+        issues_breakdown_months: int = 0,
+        refer: datetime.datetime = None,
+    ):
+        """
+        Cria múltiplos intervalos retroativos com base na granularidade e quantidade de meses.
+        Exemplo: gerar intervalos para os últimos 3 meses.
+        """
+        if refer is None:
+            refer = timezone.now()
+
+        interval_methods = {
+            TipoGranularidade.DIA: cls._interval_dia,
+            TipoGranularidade.SEMANA: cls._interval_semana,
+            TipoGranularidade.MES: lambda r: cls._interval_mes_retro(r, issues_breakdown_months),
+            TipoGranularidade.TRIMESTRE: cls._interval_trimestre,
+            TipoGranularidade.SEMESTRE: cls._interval_semestre,
+            TipoGranularidade.ANO: cls._interval_ano,
+        }
+
+        try:
+            return interval_methods[tipo](refer)
+        except KeyError:
+            raise ValueError("Tipo de granularidade inválido")
+
+    @staticmethod
+    def _interval_mes_retro(refer, months_back: int):
+        """
+        Retorna um dicionário com os intervalos dos últimos N meses a partir da data de referência.
+        Usa a mesma lógica de _interval_mes.
+        """
+        interval_dict = {}
+        for i in range(months_back):
+            month = refer.month - i
+            year = refer.year
+            if month <= 0:
+                month += 12
+                year -= 1
+
+            ref_date = refer.replace(year=year, month=month)
+
+            start_date, end_date = DimIntervaloTemporalService._interval_mes(ref_date)
+            key = f"{ref_date.year}-{ref_date.month:02d}"
+            interval_dict[key] = {
+                "start_date": start_date,
+                "end_date": end_date,
+            }
+
+        return interval_dict
+
 
 class DimIssueTypesService:
     def __init__(self):
@@ -438,6 +484,7 @@ class DimStatusTypeService:
                 "id_status_jiba": dim_status_type.id_status_jiba,
                 "id_status_jira": dim_status_type.id_status_jira,
                 "status_name": dim_status_type.status_name,
+                "key": dim_status_type.key,
             }
             filtros.append(filtro)
 
@@ -448,9 +495,7 @@ class DimStatusTypeService:
         dim_status, _ = DimStatus.objects.update_or_create(
             id_status_jira=status["jira_id"],
             id_status_jiba=status["statustype_id"],
-            defaults={
-                "status_name": status["name"],
-            },
+            defaults={"status_name": status["name"], "key": status["key"]},
         )
         return dim_status
 

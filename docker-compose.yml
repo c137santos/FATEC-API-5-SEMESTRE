@@ -12,8 +12,17 @@ services:
       JIRA_API_TOKEN: ${JIRA_API_TOKEN}
     env_file:
       - .env
-    command: bash -c "uv venv --python $(which python3) && source .venv/bin/activate && uv pip install --no-cache -r requirements-dev.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput && service cron start && python manage.py crontab remove && python manage.py crontab add && python manage.py runserver 0.0.0.0:8000"
-
+    command: >
+      bash -c "
+      uv venv --python $(which python3) &&
+      source .venv/bin/activate &&
+      uv pip install --no-cache -r requirements-dev.txt &&
+      python manage.py collectstatic --noinput &&
+      service cron start &&
+      python manage.py crontab remove &&
+      python manage.py crontab add &&
+      python manage.py runserver 0.0.0.0:8000
+      "
     ports:
       - 8000:8000
     expose:
@@ -23,30 +32,48 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      liquibase:
+        condition: service_completed_successfully
 
   postgres:
-    image: "postgres:15-alpine"
+    image: postgres:15-alpine
     ports:
       - 15432:5432
     expose:
-      - "15432"
+      - 15432
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
       - .env
     restart: on-failure
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"
-        ]
+      test: ["CMD-SHELL", "pg_isready -d $POSTGRES_DB -U $POSTGRES_USER"]
       interval: 10s
       timeout: 5s
       retries: 5
-      #- "./docker/postgres/pg_hba.conf:/usr/local/etc/postgres/postgres.conf"
-      
-     
+
+
+  liquibase:
+    image: liquibase/liquibase:latest
+    container_name: liquibase
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./liquibase/changelog:/liquibase/changelog
+      - ./liquibase/drivers:/liquibase/drivers
+    env_file:
+      - .env
+    command:
+      [
+        "--changeLogFile=db.changelog-master.yaml",
+        "--url=jdbc:postgresql://postgres:5432/${POSTGRES_DB}",
+        "--username=${POSTGRES_USER}",
+        "--password=${POSTGRES_PASSWORD}",
+        "--classpath=/liquibase/drivers/postgresql-42.7.8.jar",
+        "update"
+      ]
+
   frontend:
     build:
       context: ./frontend
@@ -58,12 +85,10 @@ services:
       - "3000"
     env_file:
       - .env
-    
     command: npm run dev -- --host
     volumes:
       - /frontend/node_modules
       - ./frontend:/frontend
-    
 
   nginx:
     image: nginx

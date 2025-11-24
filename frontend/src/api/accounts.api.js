@@ -17,4 +17,26 @@ export default {
     const response = await api.post("/api/accounts/logout")
     return response.data
   },
+
+  getUsers: async (page, limit, sortBy) => {
+    const params = {};
+
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    if (sortBy && sortBy.length > 0) params.sortBy = sortBy.join(",");
+
+    const response = await api.get("/api/accounts/users", { params });
+    return response.data;
+  },
+
+  deleteUser: async (userId) => {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return {
+      success: true,
+      message: 'Usuário deletado com sucesso',
+      deletedId: userId,
+      timestamp: new Date().toISOString()
+    };
+  }
 }

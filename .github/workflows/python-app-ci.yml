@@ -1,8 +1,6 @@
 name: jiboia CI
 
 on:
-  push:
-    branches: [main, dev]
   pull_request:
     branches: [main, dev]
 
@@ -51,14 +49,11 @@ jobs:
         run: |
           uv pip install --no-cache -r requirements-dev.txt
 
-      - name: Run Python Linter (Ruff)
-        run: ruff check .
-
       - name: Run Tests and Generate Coverage XML
         env:
           DATABASE_URL: postgres://postgres:db_test_pwd_ci@localhost:5432/db_test
         run: |
-          pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing
+          pytest --cache-clear --cov=. --cov-report=xml --cov-report=term-missing --cov-fail-under=80
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
