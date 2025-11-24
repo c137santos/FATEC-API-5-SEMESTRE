@@ -94,8 +94,9 @@ jobs:
             cd /home/ubuntu/FATEC-API-5-SEMESTRE
 
             echo "📥 Pulling latest code..."
-            git fetch origin
-            git reset --hard origin/${{ github.ref_name }}
+            git fetch origin $BRANCH_NAME
+            git checkout -B $BRANCH_NAME origin/$BRANCH_NAME
+            git reset --hard origin/$BRANCH_NAME
 
             export GITHUB_REPOSITORY_OWNER=$GITHUB_REPOSITORY_OWNER
 
@@ -115,7 +116,6 @@ jobs:
             docker system prune -f
 
             echo "✅ Deployment completed!"
-
       - name: Health Check
         uses: appleboy/ssh-action@v1.0.0
         with:
