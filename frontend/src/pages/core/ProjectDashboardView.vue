@@ -5,6 +5,7 @@
 		<v-btn
 			class="mb-4"
 			variant="outlined"
+			style="background-color: #172B4D; color: white"
 			@click="listaIssues"
 		> Issues </v-btn>
 			<v-row>
@@ -118,12 +119,6 @@
 					<v-card class="d-flex flex-column ga-2 pa-4">
 						<h3 class="d-flex justify-center">Total de Issues</h3>
 						<span class="text-h4 d-flex justify-center">{{ issuesTotal }}</span>
-					</v-card>
-				</v-col>
-				<v-col>
-					<v-card class="d-flex flex-column ga-2 pa-4">
-						<h3 class="d-flex justify-center">Horas trabalhadas</h3>
-						<span class="text-h4 d-flex justify-center">{{ workedHours }}</span>
 					</v-card>
 				</v-col>
 				<v-col>

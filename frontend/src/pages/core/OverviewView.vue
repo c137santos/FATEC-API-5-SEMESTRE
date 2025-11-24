@@ -23,6 +23,7 @@
 										<v-slide-group-item v-for="(project, i) in projectList" :key="i">
 											<v-btn
 												class="ma-2"
+												style="background-color: #172B4D; color: white"
 												@click="() => { router.push({ path: `/projects/${project.project_id}` }) }"
 											> {{ project.name }} </v-btn>
 										</v-slide-group-item>
