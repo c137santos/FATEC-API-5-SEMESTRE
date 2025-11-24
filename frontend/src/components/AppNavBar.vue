@@ -2,7 +2,17 @@
   <v-app-bar app>
     <v-app-bar-nav-icon @click="drawer = !drawer" />
 
-    <v-btn :to="{ name: 'overview'}">{{ title }}</v-btn>
+    <v-btn :to="{ name: 'overview'}"
+     style=" margin-top:-40px;"
+     class="btn-logo pa-0"
+     ripple="false">
+     
+      <v-img
+        src="@/assets/logo-jiboia.png"
+        max-height="80"
+        width="80"
+      />
+    </v-btn>
 
     <template #append>
       <v-btn
@@ -87,3 +97,20 @@ export default {
 }
 
 </script>
+
+<style>
+.btn-logo .v-btn__overlay,
+.btn-logo.v-btn--active .v-btn__overlay,
+.btn-logo:active .v-btn__overlay {
+  background: transparent !important;
+}
+.btn-logo,
+.btn-logo.v-btn--active,
+.btn-logo:active {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.btn-logo .v-ripple__container {
+  display: none !important;
+}
+</style>
