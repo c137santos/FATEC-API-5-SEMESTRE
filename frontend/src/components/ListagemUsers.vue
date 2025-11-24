@@ -1,14 +1,14 @@
 <template>
-    <div class="d-flex justify-space-between align-center mb-4" style="width: 100%;">
-						<h2>Users</h2> 
-            <v-btn
-              style="background-color: #172B4D; color: white"
-              prepend-icon="mdi-account-plus"
-              @click="abrirCadastro"
-            >
-              Cadastrar novo usuário
-            </v-btn>									
-    </div>
+  <div class="d-flex justify-space-between align-center mb-4" style="width: 100%;">
+    <h2>Users</h2> 
+    <v-btn
+      style="background-color: #172B4D; color: white"
+      prepend-icon="mdi-account-plus"
+      @click="abrirCadastro"
+    >
+      Cadastrar novo usuário
+    </v-btn>
+  </div>
 
   <v-container>
     <v-data-table-server
