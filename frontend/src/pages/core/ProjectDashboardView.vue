@@ -89,7 +89,6 @@
 							class="elevation-1"
 						>
 							<template v-slot:item.actions="{ item }">
-								<!-- show edit only for users with project permissions, otherwise show lock -->
 								<template v-if="hasProjectPermission">
 									<v-btn
 										icon="mdi-pencil"
@@ -161,7 +160,6 @@
 			</v-row>
 		</v-container>
 
-		<!-- Dialog para editar valor da hora -->
 		<v-dialog v-model="editDialogVisible" max-width="500px">
 			<v-card>
 				<v-card-title class="text-h5">
@@ -220,7 +218,7 @@ const route = useRoute()
 const router = useRouter()
 
 const issuesList = ref([])
-const dataRef = ref()
+const dataRef = ref(null)
 const name = ref('')
 const developersTableData = ref([])
 
@@ -231,7 +229,6 @@ const hasProjectPermission = computed(() => {
 	const perms = accountsStore.loggedUser?.permissions || {}
 	return Boolean(perms.PROJECT_ADMIN) || Boolean(perms.PROJECT_MANAGER)
 })
-console.log(accountsStore.loggedUser?.permissions)
 
 const developersTableHeaders = [
 	{ title: 'Desenvolvedor', key: 'nome', align: 'start' },
@@ -251,11 +248,13 @@ const listaIssues = () => {
 
 const burndownData = computed(() => {
 	const burndown = dataRef.value?.burndown
-	if (!burndown) return emptyDataset
+	if (!burndown || !burndown.pending_per_day || burndown.pending_per_day.length === 0) return emptyDataset
 
-	const daysRange = dateDiffInDays(toISODate(burndown.end_date), toISODate(burndown.pending_per_day[0].date))
+	const firstDate = burndown.pending_per_day[0].date
+	const lastDate = burndown.end_date
+	const daysRange = Math.max(1, dateDiffInDays(toISODate(lastDate), toISODate(firstDate)))
 
-	const endDateTimestamp = new Date(toISODate(burndown.end_date)).getTime()
+	const endDateTimestamp = new Date(toISODate(lastDate)).getTime()
 	const formatter = new Intl.DateTimeFormat('pt-BR', {
 		year: 'numeric',
 		month: '2-digit',
@@ -270,19 +269,19 @@ const burndownData = computed(() => {
 		daysLabelList.unshift(dateString)
 	}
 
-	const burndownMax = burndown.pending_per_day[0].pending
-	const step = burndownMax / daysLabelList.length
+	const burndownMax = Number(burndown.pending_per_day[0].pending) || 0
+	const step = daysLabelList.length > 0 ? (burndownMax / daysLabelList.length) : 0
 
 	return {
 		labels: [...daysLabelList, ''],
 		datasets: [
 			{
 				label: 'Burndown',
-				data: [...daysLabelList.map((_, i) => burndownMax - (step * i)), 0],
+				data: [...daysLabelList.map((_, i) => Math.max(0, Math.round(burndownMax - (step * i)))), 0],
 				borderColor: chartColors[1]
 			},
 			{
-				label: 'Pedencias',
+				label: 'Pendências',
 				data: burndown.pending_per_day.map(p => p.pending),
 				borderColor: chartColors[2]
 			}
@@ -291,16 +290,18 @@ const burndownData = computed(() => {
 })
 
 const issueStatusData = computed(() => {
-	const issuesStatus = dataRef.value?.issues_today
+	const issuesToday = dataRef.value?.issues_today
+	if (!issuesToday) return emptyDataset
 
-	if(!issuesStatus) return emptyDataset
-	delete issuesStatus.date
+	const { date, ...status } = issuesToday || {}
+	const labels = Object.keys(status)
+	const values = Object.values(status).map(v => Number(v) || 0)
 
 	return {
-		labels: Object.keys(issuesStatus),
+		labels,
 		datasets: [
 			{
-				data: Object.values(issuesStatus),
+				data: values,
 				backgroundColor: chartColors,
 				borderColor: 'rgba(0,0,0,0)'
 			},
@@ -312,11 +313,14 @@ const issuesTypeData = computed(() => {
 	const issuesType = dataRef.value?.issues_status
 	if(!issuesType) return emptyDataset
 
+	const labels = Object.keys(issuesType)
+	const values = Object.values(issuesType).map(v => Number(v) || 0)
+
 	return {
-		labels: Object.keys(issuesType),
+		labels,
 		datasets: [
 			{
-				data: Object.values(issuesType),
+				data: values,
 				borderColor: 'rgba(0, 0, 0, 0)',
 				backgroundColor: chartColors,
 			}
@@ -326,7 +330,6 @@ const issuesTypeData = computed(() => {
 
 const devHoursData = computed(() => {
 	const devData = dataRef.value?.dev_hours
-
 	if(!devData) return emptyDataset
 	return {
 		labels: devData.map(d => d.name),
@@ -340,65 +343,51 @@ const devHoursData = computed(() => {
 	}
 })
 
-const workedHours = computed(() => dataRef.value ? dataRef.value.total_worked_hours: 0)
+const workedHours = computed(() => dataRef.value ? dataRef.value.total_worked_hours : 0)
 
-const activeIssues = computed(() => dataRef.value ? (() => {
-	const today = dataRef.value.issues_today
-	return Object.values(today).reduce((total, value) => total + value, 0) - today['Concluído']
-})() : 0)
+const activeIssues = computed(() => {
+	if (!dataRef.value) return 0
+	const status = dataRef.value.issues_status || {}
+	return Object.values(status).reduce((total, v) => total + (Number(v) || 0), 0)
+})
 
-const concludedIssues = computed(() => dataRef.value ? dataRef.value.issues_today['Concluído'] : 0)
+const concludedIssues = computed(() => {
+	if (!dataRef.value) return 0
+	return Number(dataRef.value.issues_today?.done) || 0
+})
 
 const averageIssueTimeHours = computed(() => {
-	if (!dataRef.value) {
-		return 0
-	}
-	if (!dataRef.value.concluded_issues) {
-		return 0
-	}
-	if (dataRef.value.concluded_issues.length === 0) {
-		return 0
-	}
+	if (!dataRef.value) return 0
 
-	const filteredIssues = dataRef.value.concluded_issues.filter(issue => issue.timespent && issue.timespent > 0)
-
-	if (filteredIssues.length === 0) {
-		return 0
+	// If API provides detailed concluded_issues with timespent, use it
+	if (Array.isArray(dataRef.value.concluded_issues) && dataRef.value.concluded_issues.length > 0) {
+		const filtered = dataRef.value.concluded_issues.filter(i => i.timespent && Number(i.timespent) > 0)
+		if (filtered.length === 0) return 0
+		const totalSeconds = filtered.reduce((sum, it) => sum + (Number(it.timespent) || 0), 0)
+		return (totalSeconds / 3600) / filtered.length
 	}
 
-	const totalHours = filteredIssues.reduce((total, issue) => {
-		const timeSpentSeconds = issue.timespent || 0
-		const timeSpentHours = timeSpentSeconds / 3600
-		return total + timeSpentHours
-	}, 0)
-
-	const averageHours = totalHours / filteredIssues.length
-	return averageHours
+	// Fallback: use total_worked_hours divided by concluded issues (today.done)
+	const done = concludedIssues.value
+	if (done === 0) return 0
+	const totalWorked = Number(dataRef.value.total_worked_hours) || 0
+	return totalWorked / done
 })
 
 const formatAverageTime = computed(() => {
-	const avgHours = averageIssueTimeHours.value
-
-	switch (true) {
-		case avgHours === 0:
-			return '0h'
-
-		case avgHours < 1:
-			const minutes = Math.round(avgHours * 60)
-			return `${minutes}m`
-
-		case avgHours < 10:
-			return `${avgHours.toFixed(1)}h`
-
-		default:
-			return `${Math.round(avgHours)}h`
-	}
+	const avg = averageIssueTimeHours.value
+	if (avg === 0) return '0h'
+	if (avg < 1) return `${Math.round(avg * 60)}m`
+	if (avg < 10) return `${avg.toFixed(1)}h`
+	return `${Math.round(avg)}h`
 })
 
-const issuesTotal = computed(() => dataRef.value ? (() => {
-	const today = dataRef.value.issues_today
-	return Object.values(today).reduce((total, value) => total + value, 0)
-})() : 0)
+const issuesTotal = computed(() => {
+	if (!dataRef.value) return 0
+	const today = dataRef.value.issues_today || {}
+	const { date, ...rest } = today
+	return Object.values(rest).reduce((t, v) => t + (Number(v) || 0), 0)
+})
 
 const formatCurrency = (value) => {
 	return new Intl.NumberFormat('pt-BR', {
@@ -413,7 +402,6 @@ const newHourValue = ref(0)
 
 const editDeveloper = (item) => {
  	if (!hasProjectPermission.value) return
-
 	editingDeveloper.value = item
 	newHourValue.value = item.valorHora
 	editDialogVisible.value = true
@@ -426,11 +414,8 @@ const saveHourValue = async () => {
 			editingDeveloper.value.id,
 			newHourValue.value
 		)
-
 		editingDeveloper.value.valorHora = newHourValue.value
-
 		await loadDevelopers()
-
 		editDialogVisible.value = false
 	} catch (error) {
 		console.error('Erro ao atualizar valor da hora:', error)
@@ -448,11 +433,10 @@ const loadDevelopers = async () => {
 		const res = await projectsApi.getDevelopers(route.params.id)
 		const developers = res.developers || []
 		developersTableData.value = developers
-
 		dataRef.value = dataRef.value || {}
 		dataRef.value.dev_hours = developers.map(d => ({ name: d.nome, hours: d.horasTrabalhadas }))
-		dataRef.value.total_worked_hours = res.total_worked_hours || 0
-		hourValue.value = res.hourValue || 0
+		dataRef.value.total_worked_hours = res.total_worked_hours || dataRef.value.total_worked_hours || 0
+		hourValue.value = res.hourValue || hourValue.value || 0
 	} catch (error) {
 		console.error('Erro ao carregar desenvolvedores:', error)
 	}
@@ -469,6 +453,4 @@ onMounted(async () => {
     issuesList.value = data.issues_per_month || []
     await loadDevelopers()
 })
-
-
 </script>
