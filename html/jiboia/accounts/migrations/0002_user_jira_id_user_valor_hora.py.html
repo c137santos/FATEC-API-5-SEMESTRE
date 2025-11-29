@@ -1,0 +1,67 @@
+<html><body><h1>jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py</h1>Killed 10 out of 16 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 369</h3><pre>--- jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
++++ jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
+@@ -14,7 +14,7 @@
+         migrations.AddField(
+             model_name='user',
+             name='jira_id',
+-            field=models.CharField(blank=True, max_length=100, null=True),
++            field=models.CharField(blank=False, max_length=100, null=True),
+         ),
+         migrations.AddField(
+             model_name='user',
+</pre><h3>Mutant 370</h3><pre>--- jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
++++ jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
+@@ -14,7 +14,7 @@
+         migrations.AddField(
+             model_name='user',
+             name='jira_id',
+-            field=models.CharField(blank=True, max_length=100, null=True),
++            field=models.CharField(blank=True, max_length=101, null=True),
+         ),
+         migrations.AddField(
+             model_name='user',
+</pre><h3>Mutant 374</h3><pre>--- jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
++++ jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
+@@ -19,7 +19,7 @@
+         migrations.AddField(
+             model_name='user',
+             name='valor_hora',
+-            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=10, verbose_name='Valor por Hora'),
++            field=models.DecimalField(decimal_places=3, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=10, verbose_name='Valor por Hora'),
+         ),
+     ]
+ 
+</pre><h3>Mutant 376</h3><pre>--- jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
++++ jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
+@@ -19,7 +19,7 @@
+         migrations.AddField(
+             model_name='user',
+             name='valor_hora',
+-            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=10, verbose_name='Valor por Hora'),
++            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='XXValor cobrado por hora de trabalhoXX', max_digits=10, verbose_name='Valor por Hora'),
+         ),
+     ]
+ 
+</pre><h3>Mutant 377</h3><pre>--- jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
++++ jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
+@@ -19,7 +19,7 @@
+         migrations.AddField(
+             model_name='user',
+             name='valor_hora',
+-            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=10, verbose_name='Valor por Hora'),
++            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=11, verbose_name='Valor por Hora'),
+         ),
+     ]
+ 
+</pre><h3>Mutant 378</h3><pre>--- jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
++++ jiboia/accounts/migrations/0002_user_jira_id_user_valor_hora.py
+@@ -19,7 +19,7 @@
+         migrations.AddField(
+             model_name='user',
+             name='valor_hora',
+-            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=10, verbose_name='Valor por Hora'),
++            field=models.DecimalField(decimal_places=2, default=Decimal('0.00'), help_text='Valor cobrado por hora de trabalho', max_digits=10, verbose_name='XXValor por HoraXX'),
+         ),
+     ]
+ 
+</pre></body></html>

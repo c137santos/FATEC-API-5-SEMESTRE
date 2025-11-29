@@ -1,0 +1,221 @@
+<html><body><h1>jiboia/accounts/services.py</h1>Killed 60 out of 80 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 206</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -13,7 +13,7 @@
+ 
+ def create_user(username, password, email, permissions):
+     if not username or not password or not email:
+-        raise ValueError("Name, password, and email are required to create a user.")
++        raise ValueError("XXName, password, and email are required to create a user.XX")
+ 
+     if not any(permissions.values()):
+         raise ValueError("At least one permission must be granted to the user.")
+</pre><h3>Mutant 208</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -16,7 +16,7 @@
+         raise ValueError("Name, password, and email are required to create a user.")
+ 
+     if not any(permissions.values()):
+-        raise ValueError("At least one permission must be granted to the user.")
++        raise ValueError("XXAt least one permission must be granted to the user.XX")
+ 
+     if User.objects.filter(email=email).exists():
+         raise ValueError("A user with this email already exists.")
+</pre><h3>Mutant 209</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -19,7 +19,7 @@
+         raise ValueError("At least one permission must be granted to the user.")
+ 
+     if User.objects.filter(email=email).exists():
+-        raise ValueError("A user with this email already exists.")
++        raise ValueError("XXA user with this email already exists.XX")
+ 
+     user = User(
+         username=username,
+</pre><h3>Mutant 210</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -24,7 +24,7 @@
+     user = User(
+         username=username,
+         email=email,
+-        project_admin=permissions.get("PROJECT_ADMIN", False),
++        project_admin=permissions.get("XXPROJECT_ADMINXX", False),
+         project_manager=permissions.get("PROJECT_MANAGER", False),
+         team_leader=permissions.get("TEAM_LEADER", False),
+         team_member=permissions.get("TEAM_MEMBER", True),
+</pre><h3>Mutant 211</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -24,7 +24,7 @@
+     user = User(
+         username=username,
+         email=email,
+-        project_admin=permissions.get("PROJECT_ADMIN", False),
++        project_admin=permissions.get("PROJECT_ADMIN", True),
+         project_manager=permissions.get("PROJECT_MANAGER", False),
+         team_leader=permissions.get("TEAM_LEADER", False),
+         team_member=permissions.get("TEAM_MEMBER", True),
+</pre><h3>Mutant 213</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -25,7 +25,7 @@
+         username=username,
+         email=email,
+         project_admin=permissions.get("PROJECT_ADMIN", False),
+-        project_manager=permissions.get("PROJECT_MANAGER", False),
++        project_manager=permissions.get("PROJECT_MANAGER", True),
+         team_leader=permissions.get("TEAM_LEADER", False),
+         team_member=permissions.get("TEAM_MEMBER", True),
+     )
+</pre><h3>Mutant 214</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -26,7 +26,7 @@
+         email=email,
+         project_admin=permissions.get("PROJECT_ADMIN", False),
+         project_manager=permissions.get("PROJECT_MANAGER", False),
+-        team_leader=permissions.get("TEAM_LEADER", False),
++        team_leader=permissions.get("XXTEAM_LEADERXX", False),
+         team_member=permissions.get("TEAM_MEMBER", True),
+     )
+     user.set_password(password)
+</pre><h3>Mutant 215</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -26,7 +26,7 @@
+         email=email,
+         project_admin=permissions.get("PROJECT_ADMIN", False),
+         project_manager=permissions.get("PROJECT_MANAGER", False),
+-        team_leader=permissions.get("TEAM_LEADER", False),
++        team_leader=permissions.get("TEAM_LEADER", True),
+         team_member=permissions.get("TEAM_MEMBER", True),
+     )
+     user.set_password(password)
+</pre><h3>Mutant 217</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -27,7 +27,7 @@
+         project_admin=permissions.get("PROJECT_ADMIN", False),
+         project_manager=permissions.get("PROJECT_MANAGER", False),
+         team_leader=permissions.get("TEAM_LEADER", False),
+-        team_member=permissions.get("TEAM_MEMBER", True),
++        team_member=permissions.get("TEAM_MEMBER", False),
+     )
+     user.set_password(password)
+     user.save()
+</pre><h3>Mutant 228</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -46,7 +46,7 @@
+ 
+ PERMISSION_MAP = {
+     "PROJECT_ADMIN": "project_admin",
+-    "PROJECT_MANAGER": "project_manager",
++    "XXPROJECT_MANAGERXX": "project_manager",
+     "TEAM_LEADER": "team_leader",
+     "TEAM_MEMBER": "team_member",
+ }
+</pre><h3>Mutant 230</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -47,7 +47,7 @@
+ PERMISSION_MAP = {
+     "PROJECT_ADMIN": "project_admin",
+     "PROJECT_MANAGER": "project_manager",
+-    "TEAM_LEADER": "team_leader",
++    "XXTEAM_LEADERXX": "team_leader",
+     "TEAM_MEMBER": "team_member",
+ }
+ 
+</pre><h3>Mutant 232</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -48,7 +48,7 @@
+     "PROJECT_ADMIN": "project_admin",
+     "PROJECT_MANAGER": "project_manager",
+     "TEAM_LEADER": "team_leader",
+-    "TEAM_MEMBER": "team_member",
++    "XXTEAM_MEMBERXX": "team_member",
+ }
+ 
+ 
+</pre><h3>Mutant 242</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -66,7 +66,7 @@
+ 
+ def _validate_username(data):
+     username = data.get("username")
+-    if username is not None and (not username or username.strip() == ""):
++    if username is not None and (not username or username.strip() == "XXXX"):
+         raise ValueError("O nome de usuário não pode ser vazio.")
+ 
+ 
+</pre><h3>Mutant 243</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -66,7 +66,7 @@
+ 
+ def _validate_username(data):
+     username = data.get("username")
+-    if username is not None and (not username or username.strip() == ""):
++    if username is not None and (not username and username.strip() == ""):
+         raise ValueError("O nome de usuário não pode ser vazio.")
+ 
+ 
+</pre><h3>Mutant 245</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -67,7 +67,7 @@
+ def _validate_username(data):
+     username = data.get("username")
+     if username is not None and (not username or username.strip() == ""):
+-        raise ValueError("O nome de usuário não pode ser vazio.")
++        raise ValueError("XXO nome de usuário não pode ser vazio.XX")
+ 
+ 
+ def _validate_email(data, user_id):
+</pre><h3>Mutant 251</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -73,7 +73,7 @@
+ def _validate_email(data, user_id):
+     email = data.get("email")
+     if email is not None:
+-        if not email or email.strip() == "":
++        if not email or email.strip() == "XXXX":
+             raise ValueError("O email não pode ser vazio.")
+ 
+         if User.objects.filter(email=email).exclude(id=user_id).exists():
+</pre><h3>Mutant 252</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -73,7 +73,7 @@
+ def _validate_email(data, user_id):
+     email = data.get("email")
+     if email is not None:
+-        if not email or email.strip() == "":
++        if not email and email.strip() == "":
+             raise ValueError("O email não pode ser vazio.")
+ 
+         if User.objects.filter(email=email).exclude(id=user_id).exists():
+</pre><h3>Mutant 253</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -74,7 +74,7 @@
+     email = data.get("email")
+     if email is not None:
+         if not email or email.strip() == "":
+-            raise ValueError("O email não pode ser vazio.")
++            raise ValueError("XXO email não pode ser vazio.XX")
+ 
+         if User.objects.filter(email=email).exclude(id=user_id).exists():
+             raise ValueError("Já existe um usuário com esse email.")
+</pre><h3>Mutant 270</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -102,7 +102,7 @@
+     if "email" in data:
+         user.email = data["email"]
+ 
+-    if "permissions" in data:
++    if "XXpermissionsXX" in data:
+         permissions = data["permissions"]
+ 
+         for api_field, model_field in PERMISSION_MAP.items():
+</pre><h3>Mutant 274</h3><pre>--- jiboia/accounts/services.py
++++ jiboia/accounts/services.py
+@@ -106,7 +106,7 @@
+         permissions = data["permissions"]
+ 
+         for api_field, model_field in PERMISSION_MAP.items():
+-            if api_field in permissions:
++            if api_field not in permissions:
+                 setattr(user, model_field, bool(permissions[api_field]))
+ 
+     user.save()
+</pre></body></html>

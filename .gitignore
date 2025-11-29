@@ -30,6 +30,7 @@ staticfiles/
 # Environments
 .idea/
 .venv*
+venv*
 venv/
 ENV/
 .python-version
