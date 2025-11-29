@@ -1,0 +1,20 @@
+[mutmut]
+# Mutation testing configuration for accounts app only
+paths_to_mutate=jiboia/accounts/
+
+# Test command optimized for mutation testing
+test_command=python -m pytest jiboia/accounts/tests/ --no-cov -x --tb=no
+
+# Exclude migrations, tests, and cache directories
+paths_to_exclude=jiboia/accounts/migrations/,jiboia/accounts/tests/,jiboia/accounts/__pycache__/
+
+# Performance optimizations
+backup=False
+show_times=True
+use_coverage=False
+
+# Output settings for analysis
+runner=python
+dict_synonyms=Struct,NamedStuple
+
+enable_mutation_types=arithmetic_operator,assignment_operator,break_continue,comparison_operator,decorator,exception_handler,f_string,if_stmt,lambda,logical_operator,loop,name,number,slice,string,unary_operator

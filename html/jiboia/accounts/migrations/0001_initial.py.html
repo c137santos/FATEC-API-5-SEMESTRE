@@ -1,0 +1,529 @@
+<html><body><h1>jiboia/accounts/migrations/0001_initial.py</h1>Killed 25 out of 73 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 291</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -7,7 +7,7 @@
+ 
+ 
+ class Migration(migrations.Migration):
+-    initial = True
++    initial = False
+ 
+     dependencies = [
+         ("auth", "0012_alter_user_first_name_max_length"),
+</pre><h3>Mutant 292</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -7,7 +7,7 @@
+ 
+ 
+ class Migration(migrations.Migration):
+-    initial = True
++    initial = None
+ 
+     dependencies = [
+         ("auth", "0012_alter_user_first_name_max_length"),
+</pre><h3>Mutant 298</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -20,7 +20,7 @@
+                 (
+                     "id",
+                     models.BigAutoField(
+-                        auto_created=True,
++                        auto_created=False,
+                         primary_key=True,
+                         serialize=False,
+                         verbose_name="ID",
+</pre><h3>Mutant 299</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -21,7 +21,7 @@
+                     "id",
+                     models.BigAutoField(
+                         auto_created=True,
+-                        primary_key=True,
++                        primary_key=False,
+                         serialize=False,
+                         verbose_name="ID",
+                     ),
+</pre><h3>Mutant 300</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -22,7 +22,7 @@
+                     models.BigAutoField(
+                         auto_created=True,
+                         primary_key=True,
+-                        serialize=False,
++                        serialize=True,
+                         verbose_name="ID",
+                     ),
+                 ),
+</pre><h3>Mutant 301</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -23,7 +23,7 @@
+                         auto_created=True,
+                         primary_key=True,
+                         serialize=False,
+-                        verbose_name="ID",
++                        verbose_name="XXIDXX",
+                     ),
+                 ),
+                 ("password", models.CharField(max_length=128, verbose_name="password")),
+</pre><h3>Mutant 303</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -26,7 +26,7 @@
+                         verbose_name="ID",
+                     ),
+                 ),
+-                ("password", models.CharField(max_length=128, verbose_name="password")),
++                ("password", models.CharField(max_length=129, verbose_name="password")),
+                 (
+                     "last_login",
+                     models.DateTimeField(
+</pre><h3>Mutant 304</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -26,7 +26,7 @@
+                         verbose_name="ID",
+                     ),
+                 ),
+-                ("password", models.CharField(max_length=128, verbose_name="password")),
++                ("password", models.CharField(max_length=128, verbose_name="XXpasswordXX")),
+                 (
+                     "last_login",
+                     models.DateTimeField(
+</pre><h3>Mutant 306</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -30,7 +30,7 @@
+                 (
+                     "last_login",
+                     models.DateTimeField(
+-                        blank=True, null=True, verbose_name="last login"
++                        blank=False, null=True, verbose_name="last login"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 308</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -30,7 +30,7 @@
+                 (
+                     "last_login",
+                     models.DateTimeField(
+-                        blank=True, null=True, verbose_name="last login"
++                        blank=True, null=True, verbose_name="XXlast loginXX"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 310</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -36,7 +36,7 @@
+                 (
+                     "is_superuser",
+                     models.BooleanField(
+-                        default=False,
++                        default=True,
+                         help_text="Designates that this user has all permissions without explicitly assigning them.",
+                         verbose_name="superuser status",
+                     ),
+</pre><h3>Mutant 311</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -37,7 +37,7 @@
+                     "is_superuser",
+                     models.BooleanField(
+                         default=False,
+-                        help_text="Designates that this user has all permissions without explicitly assigning them.",
++                        help_text="XXDesignates that this user has all permissions without explicitly assigning them.XX",
+                         verbose_name="superuser status",
+                     ),
+                 ),
+</pre><h3>Mutant 312</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -38,7 +38,7 @@
+                     models.BooleanField(
+                         default=False,
+                         help_text="Designates that this user has all permissions without explicitly assigning them.",
+-                        verbose_name="superuser status",
++                        verbose_name="XXsuperuser statusXX",
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 314</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -45,7 +45,7 @@
+                     "username",
+                     models.CharField(
+                         error_messages={
+-                            "unique": "A user with that username already exists."
++                            "XXuniqueXX": "A user with that username already exists."
+                         },
+                         help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                         max_length=150,
+</pre><h3>Mutant 315</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -45,7 +45,7 @@
+                     "username",
+                     models.CharField(
+                         error_messages={
+-                            "unique": "A user with that username already exists."
++                            "unique": "XXA user with that username already exists.XX"
+                         },
+                         help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                         max_length=150,
+</pre><h3>Mutant 316</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -47,7 +47,7 @@
+                         error_messages={
+                             "unique": "A user with that username already exists."
+                         },
+-                        help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
++                        help_text="XXRequired. 150 characters or fewer. Letters, digits and @/./+/-/_ only.XX",
+                         max_length=150,
+                         unique=True,
+                         validators=[
+</pre><h3>Mutant 317</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -48,7 +48,7 @@
+                             "unique": "A user with that username already exists."
+                         },
+                         help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+-                        max_length=150,
++                        max_length=151,
+                         unique=True,
+                         validators=[
+                             django.contrib.auth.validators.UnicodeUsernameValidator()
+</pre><h3>Mutant 318</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -49,7 +49,7 @@
+                         },
+                         help_text="Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.",
+                         max_length=150,
+-                        unique=True,
++                        unique=False,
+                         validators=[
+                             django.contrib.auth.validators.UnicodeUsernameValidator()
+                         ],
+</pre><h3>Mutant 319</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -53,7 +53,7 @@
+                         validators=[
+                             django.contrib.auth.validators.UnicodeUsernameValidator()
+                         ],
+-                        verbose_name="username",
++                        verbose_name="XXusernameXX",
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 321</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -59,7 +59,7 @@
+                 (
+                     "first_name",
+                     models.CharField(
+-                        blank=True, max_length=150, verbose_name="first name"
++                        blank=False, max_length=150, verbose_name="first name"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 322</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -59,7 +59,7 @@
+                 (
+                     "first_name",
+                     models.CharField(
+-                        blank=True, max_length=150, verbose_name="first name"
++                        blank=True, max_length=151, verbose_name="first name"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 323</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -59,7 +59,7 @@
+                 (
+                     "first_name",
+                     models.CharField(
+-                        blank=True, max_length=150, verbose_name="first name"
++                        blank=True, max_length=150, verbose_name="XXfirst nameXX"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 325</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -65,7 +65,7 @@
+                 (
+                     "last_name",
+                     models.CharField(
+-                        blank=True, max_length=150, verbose_name="last name"
++                        blank=False, max_length=150, verbose_name="last name"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 326</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -65,7 +65,7 @@
+                 (
+                     "last_name",
+                     models.CharField(
+-                        blank=True, max_length=150, verbose_name="last name"
++                        blank=True, max_length=151, verbose_name="last name"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 327</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -65,7 +65,7 @@
+                 (
+                     "last_name",
+                     models.CharField(
+-                        blank=True, max_length=150, verbose_name="last name"
++                        blank=True, max_length=150, verbose_name="XXlast nameXX"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 329</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -71,7 +71,7 @@
+                 (
+                     "email",
+                     models.EmailField(
+-                        blank=True, max_length=254, verbose_name="email address"
++                        blank=False, max_length=254, verbose_name="email address"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 330</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -71,7 +71,7 @@
+                 (
+                     "email",
+                     models.EmailField(
+-                        blank=True, max_length=254, verbose_name="email address"
++                        blank=True, max_length=255, verbose_name="email address"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 331</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -71,7 +71,7 @@
+                 (
+                     "email",
+                     models.EmailField(
+-                        blank=True, max_length=254, verbose_name="email address"
++                        blank=True, max_length=254, verbose_name="XXemail addressXX"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 333</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -77,7 +77,7 @@
+                 (
+                     "is_staff",
+                     models.BooleanField(
+-                        default=False,
++                        default=True,
+                         help_text="Designates whether the user can log into this admin site.",
+                         verbose_name="staff status",
+                     ),
+</pre><h3>Mutant 334</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -78,7 +78,7 @@
+                     "is_staff",
+                     models.BooleanField(
+                         default=False,
+-                        help_text="Designates whether the user can log into this admin site.",
++                        help_text="XXDesignates whether the user can log into this admin site.XX",
+                         verbose_name="staff status",
+                     ),
+                 ),
+</pre><h3>Mutant 335</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -79,7 +79,7 @@
+                     models.BooleanField(
+                         default=False,
+                         help_text="Designates whether the user can log into this admin site.",
+-                        verbose_name="staff status",
++                        verbose_name="XXstaff statusXX",
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 337</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -85,7 +85,7 @@
+                 (
+                     "is_active",
+                     models.BooleanField(
+-                        default=True,
++                        default=False,
+                         help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+                         verbose_name="active",
+                     ),
+</pre><h3>Mutant 338</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -86,7 +86,7 @@
+                     "is_active",
+                     models.BooleanField(
+                         default=True,
+-                        help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
++                        help_text="XXDesignates whether this user should be treated as active. Unselect this instead of deleting accounts.XX",
+                         verbose_name="active",
+                     ),
+                 ),
+</pre><h3>Mutant 339</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -87,7 +87,7 @@
+                     models.BooleanField(
+                         default=True,
+                         help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.",
+-                        verbose_name="active",
++                        verbose_name="XXactiveXX",
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 341</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -93,7 +93,7 @@
+                 (
+                     "date_joined",
+                     models.DateTimeField(
+-                        default=django.utils.timezone.now, verbose_name="date joined"
++                        default=django.utils.timezone.now, verbose_name="XXdate joinedXX"
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 343</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -99,7 +99,7 @@
+                 (
+                     "groups",
+                     models.ManyToManyField(
+-                        blank=True,
++                        blank=False,
+                         help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                         related_name="user_set",
+                         related_query_name="user",
+</pre><h3>Mutant 344</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -100,7 +100,7 @@
+                     "groups",
+                     models.ManyToManyField(
+                         blank=True,
+-                        help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
++                        help_text="XXThe groups this user belongs to. A user will get all permissions granted to each of their groups.XX",
+                         related_name="user_set",
+                         related_query_name="user",
+                         to="auth.group",
+</pre><h3>Mutant 345</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -101,7 +101,7 @@
+                     models.ManyToManyField(
+                         blank=True,
+                         help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+-                        related_name="user_set",
++                        related_name="XXuser_setXX",
+                         related_query_name="user",
+                         to="auth.group",
+                         verbose_name="groups",
+</pre><h3>Mutant 346</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -102,7 +102,7 @@
+                         blank=True,
+                         help_text="The groups this user belongs to. A user will get all permissions granted to each of their groups.",
+                         related_name="user_set",
+-                        related_query_name="user",
++                        related_query_name="XXuserXX",
+                         to="auth.group",
+                         verbose_name="groups",
+                     ),
+</pre><h3>Mutant 348</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -104,7 +104,7 @@
+                         related_name="user_set",
+                         related_query_name="user",
+                         to="auth.group",
+-                        verbose_name="groups",
++                        verbose_name="XXgroupsXX",
+                     ),
+                 ),
+                 (
+</pre><h3>Mutant 350</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -110,7 +110,7 @@
+                 (
+                     "user_permissions",
+                     models.ManyToManyField(
+-                        blank=True,
++                        blank=False,
+                         help_text="Specific permissions for this user.",
+                         related_name="user_set",
+                         related_query_name="user",
+</pre><h3>Mutant 351</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -111,7 +111,7 @@
+                     "user_permissions",
+                     models.ManyToManyField(
+                         blank=True,
+-                        help_text="Specific permissions for this user.",
++                        help_text="XXSpecific permissions for this user.XX",
+                         related_name="user_set",
+                         related_query_name="user",
+                         to="auth.permission",
+</pre><h3>Mutant 352</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -112,7 +112,7 @@
+                     models.ManyToManyField(
+                         blank=True,
+                         help_text="Specific permissions for this user.",
+-                        related_name="user_set",
++                        related_name="XXuser_setXX",
+                         related_query_name="user",
+                         to="auth.permission",
+                         verbose_name="user permissions",
+</pre><h3>Mutant 353</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -113,7 +113,7 @@
+                         blank=True,
+                         help_text="Specific permissions for this user.",
+                         related_name="user_set",
+-                        related_query_name="user",
++                        related_query_name="XXuserXX",
+                         to="auth.permission",
+                         verbose_name="user permissions",
+                     ),
+</pre><h3>Mutant 355</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -115,7 +115,7 @@
+                         related_name="user_set",
+                         related_query_name="user",
+                         to="auth.permission",
+-                        verbose_name="user permissions",
++                        verbose_name="XXuser permissionsXX",
+                     ),
+                 ),
+             ],
+</pre><h3>Mutant 357</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -120,7 +120,7 @@
+                 ),
+             ],
+             options={
+-                "verbose_name": "user",
++                "verbose_name": "XXuserXX",
+                 "verbose_name_plural": "users",
+                 "abstract": False,
+             },
+</pre><h3>Mutant 359</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -121,7 +121,7 @@
+             ],
+             options={
+                 "verbose_name": "user",
+-                "verbose_name_plural": "users",
++                "verbose_name_plural": "XXusersXX",
+                 "abstract": False,
+             },
+             managers=[
+</pre><h3>Mutant 362</h3><pre>--- jiboia/accounts/migrations/0001_initial.py
++++ jiboia/accounts/migrations/0001_initial.py
+@@ -125,7 +125,7 @@
+                 "abstract": False,
+             },
+             managers=[
+-                ("objects", django.contrib.auth.models.UserManager()),
++                ("XXobjectsXX", django.contrib.auth.models.UserManager()),
+             ],
+         ),
+     ]
+</pre></body></html>

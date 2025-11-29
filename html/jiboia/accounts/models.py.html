@@ -1,0 +1,309 @@
+<html><body><h1>jiboia/accounts/models.py</h1>Killed 40 out of 68 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 1</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -6,7 +6,7 @@
+ 
+ class User(AbstractUser):
+     valor_hora = models.DecimalField(
+-        max_digits=10,
++        max_digits=11,
+         decimal_places=2,
+         default=Decimal("0.00"),
+         verbose_name="Valor por Hora",
+</pre><h3>Mutant 2</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -7,7 +7,7 @@
+ class User(AbstractUser):
+     valor_hora = models.DecimalField(
+         max_digits=10,
+-        decimal_places=2,
++        decimal_places=3,
+         default=Decimal("0.00"),
+         verbose_name="Valor por Hora",
+         help_text="Valor cobrado por hora de trabalho",
+</pre><h3>Mutant 4</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -9,7 +9,7 @@
+         max_digits=10,
+         decimal_places=2,
+         default=Decimal("0.00"),
+-        verbose_name="Valor por Hora",
++        verbose_name="XXValor por HoraXX",
+         help_text="Valor cobrado por hora de trabalho",
+     )
+     jira_id = models.CharField(max_length=100, null=True, blank=True)
+</pre><h3>Mutant 5</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -10,7 +10,7 @@
+         decimal_places=2,
+         default=Decimal("0.00"),
+         verbose_name="Valor por Hora",
+-        help_text="Valor cobrado por hora de trabalho",
++        help_text="XXValor cobrado por hora de trabalhoXX",
+     )
+     jira_id = models.CharField(max_length=100, null=True, blank=True)
+     project_admin = models.BooleanField(default=False)
+</pre><h3>Mutant 7</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -12,7 +12,7 @@
+         verbose_name="Valor por Hora",
+         help_text="Valor cobrado por hora de trabalho",
+     )
+-    jira_id = models.CharField(max_length=100, null=True, blank=True)
++    jira_id = models.CharField(max_length=101, null=True, blank=True)
+     project_admin = models.BooleanField(default=False)
+     project_manager = models.BooleanField(default=False)
+     team_leader = models.BooleanField(default=False)
+</pre><h3>Mutant 9</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -12,7 +12,7 @@
+         verbose_name="Valor por Hora",
+         help_text="Valor cobrado por hora de trabalho",
+     )
+-    jira_id = models.CharField(max_length=100, null=True, blank=True)
++    jira_id = models.CharField(max_length=100, null=True, blank=False)
+     project_admin = models.BooleanField(default=False)
+     project_manager = models.BooleanField(default=False)
+     team_leader = models.BooleanField(default=False)
+</pre><h3>Mutant 29</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -29,7 +29,7 @@
+             "first_name": getattr(self, "first_name", None),
+             "last_name": getattr(self, "last_name", None),
+             "email": self.email,
+-            "valor_hora": 0.0 if getattr(self, "valor_hora", None) is None else float(self.valor_hora),
++            "valor_hora": 1.0 if getattr(self, "valor_hora", None) is None else float(self.valor_hora),
+             "jira_id": getattr(self, "jira_id", None),
+             "permissions": {
+                 "ADMIN": getattr(self, "is_superuser", False),
+</pre><h3>Mutant 36</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -32,7 +32,7 @@
+             "valor_hora": 0.0 if getattr(self, "valor_hora", None) is None else float(self.valor_hora),
+             "jira_id": getattr(self, "jira_id", None),
+             "permissions": {
+-                "ADMIN": getattr(self, "is_superuser", False),
++                "ADMIN": getattr(self, "XXis_superuserXX", False),
+                 "STAFF": getattr(self, "is_staff", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+</pre><h3>Mutant 37</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -32,7 +32,7 @@
+             "valor_hora": 0.0 if getattr(self, "valor_hora", None) is None else float(self.valor_hora),
+             "jira_id": getattr(self, "jira_id", None),
+             "permissions": {
+-                "ADMIN": getattr(self, "is_superuser", False),
++                "ADMIN": getattr(self, "is_superuser", True),
+                 "STAFF": getattr(self, "is_staff", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+</pre><h3>Mutant 39</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -33,7 +33,7 @@
+             "jira_id": getattr(self, "jira_id", None),
+             "permissions": {
+                 "ADMIN": getattr(self, "is_superuser", False),
+-                "STAFF": getattr(self, "is_staff", False),
++                "STAFF": getattr(self, "XXis_staffXX", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+</pre><h3>Mutant 40</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -33,7 +33,7 @@
+             "jira_id": getattr(self, "jira_id", None),
+             "permissions": {
+                 "ADMIN": getattr(self, "is_superuser", False),
+-                "STAFF": getattr(self, "is_staff", False),
++                "STAFF": getattr(self, "is_staff", True),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+</pre><h3>Mutant 42</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -34,7 +34,7 @@
+             "permissions": {
+                 "ADMIN": getattr(self, "is_superuser", False),
+                 "STAFF": getattr(self, "is_staff", False),
+-                "PROJECT_ADMIN": getattr(self, "project_admin", False),
++                "PROJECT_ADMIN": getattr(self, "XXproject_adminXX", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+</pre><h3>Mutant 43</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -34,7 +34,7 @@
+             "permissions": {
+                 "ADMIN": getattr(self, "is_superuser", False),
+                 "STAFF": getattr(self, "is_staff", False),
+-                "PROJECT_ADMIN": getattr(self, "project_admin", False),
++                "PROJECT_ADMIN": getattr(self, "project_admin", True),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+</pre><h3>Mutant 45</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -35,7 +35,7 @@
+                 "ADMIN": getattr(self, "is_superuser", False),
+                 "STAFF": getattr(self, "is_staff", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+-                "PROJECT_MANAGER": getattr(self, "project_manager", False),
++                "PROJECT_MANAGER": getattr(self, "XXproject_managerXX", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+</pre><h3>Mutant 46</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -35,7 +35,7 @@
+                 "ADMIN": getattr(self, "is_superuser", False),
+                 "STAFF": getattr(self, "is_staff", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+-                "PROJECT_MANAGER": getattr(self, "project_manager", False),
++                "PROJECT_MANAGER": getattr(self, "project_manager", True),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+</pre><h3>Mutant 48</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -36,7 +36,7 @@
+                 "STAFF": getattr(self, "is_staff", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+-                "TEAM_LEADER": getattr(self, "team_leader", False),
++                "TEAM_LEADER": getattr(self, "XXteam_leaderXX", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+         }
+</pre><h3>Mutant 49</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -36,7 +36,7 @@
+                 "STAFF": getattr(self, "is_staff", False),
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+-                "TEAM_LEADER": getattr(self, "team_leader", False),
++                "TEAM_LEADER": getattr(self, "team_leader", True),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+         }
+</pre><h3>Mutant 51</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -37,7 +37,7 @@
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+-                "TEAM_MEMBER": getattr(self, "team_member", False),
++                "TEAM_MEMBER": getattr(self, "XXteam_memberXX", False),
+             },
+         }
+ 
+</pre><h3>Mutant 52</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -37,7 +37,7 @@
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+-                "TEAM_MEMBER": getattr(self, "team_member", False),
++                "TEAM_MEMBER": getattr(self, "team_member", True),
+             },
+         }
+ 
+</pre><h3>Mutant 57</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -47,7 +47,7 @@
+             "username": self.username,
+             "email": self.email,
+             "permissions": {
+-                "PROJECT_ADMIN": getattr(self, "project_admin", False),
++                "XXPROJECT_ADMINXX": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+</pre><h3>Mutant 58</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -47,7 +47,7 @@
+             "username": self.username,
+             "email": self.email,
+             "permissions": {
+-                "PROJECT_ADMIN": getattr(self, "project_admin", False),
++                "PROJECT_ADMIN": getattr(self, "XXproject_adminXX", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+</pre><h3>Mutant 59</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -47,7 +47,7 @@
+             "username": self.username,
+             "email": self.email,
+             "permissions": {
+-                "PROJECT_ADMIN": getattr(self, "project_admin", False),
++                "PROJECT_ADMIN": getattr(self, "project_admin", True),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+</pre><h3>Mutant 62</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -48,7 +48,7 @@
+             "email": self.email,
+             "permissions": {
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+-                "PROJECT_MANAGER": getattr(self, "project_manager", False),
++                "PROJECT_MANAGER": getattr(self, "project_manager", True),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+</pre><h3>Mutant 63</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -49,7 +49,7 @@
+             "permissions": {
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+-                "TEAM_LEADER": getattr(self, "team_leader", False),
++                "XXTEAM_LEADERXX": getattr(self, "team_leader", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+         }
+</pre><h3>Mutant 64</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -49,7 +49,7 @@
+             "permissions": {
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+-                "TEAM_LEADER": getattr(self, "team_leader", False),
++                "TEAM_LEADER": getattr(self, "XXteam_leaderXX", False),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+         }
+</pre><h3>Mutant 65</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -49,7 +49,7 @@
+             "permissions": {
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+-                "TEAM_LEADER": getattr(self, "team_leader", False),
++                "TEAM_LEADER": getattr(self, "team_leader", True),
+                 "TEAM_MEMBER": getattr(self, "team_member", False),
+             },
+         }
+</pre><h3>Mutant 67</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -50,7 +50,7 @@
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+-                "TEAM_MEMBER": getattr(self, "team_member", False),
++                "TEAM_MEMBER": getattr(self, "XXteam_memberXX", False),
+             },
+         }
+ 
+</pre><h3>Mutant 68</h3><pre>--- jiboia/accounts/models.py
++++ jiboia/accounts/models.py
+@@ -50,7 +50,7 @@
+                 "PROJECT_ADMIN": getattr(self, "project_admin", False),
+                 "PROJECT_MANAGER": getattr(self, "project_manager", False),
+                 "TEAM_LEADER": getattr(self, "team_leader", False),
+-                "TEAM_MEMBER": getattr(self, "team_member", False),
++                "TEAM_MEMBER": getattr(self, "team_member", True),
+             },
+         }
+ 
+</pre></body></html>

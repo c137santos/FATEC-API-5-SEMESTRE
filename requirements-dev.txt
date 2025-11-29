@@ -8,6 +8,7 @@ pytest==8.3.3
 pytest-django==4.9.0
 mock==5.1.0
 freezegun==1.4.0
+mutmut==2.4.3
 
 # Better Dev Experience
 ipython==8.28.0

@@ -1,0 +1,33 @@
+<html><body><h1>jiboia/accounts/urls.py</h1>Killed 9 out of 12 mutants<h2>Survived</h2>Survived mutation testing. These mutants show holes in your test suite.<h3>Mutant 284</h3><pre>--- jiboia/accounts/urls.py
++++ jiboia/accounts/urls.py
+@@ -7,7 +7,7 @@
+     path("logout", views.logout),
+     path("whoami", views.whoami),
+     path("users/", views.get_all_users, name="users_list"),
+-    path("users/create", views.create_user, name="users_create"),
++    path("XXusers/createXX", views.create_user, name="users_create"),
+     path("users/<int:user_id>", views.delete_user_view, name="delete_user"),
+     path("users/edit/<int:user_id>", views.update_user_view, name="update_user"),
+ ]
+</pre><h3>Mutant 287</h3><pre>--- jiboia/accounts/urls.py
++++ jiboia/accounts/urls.py
+@@ -8,7 +8,7 @@
+     path("whoami", views.whoami),
+     path("users/", views.get_all_users, name="users_list"),
+     path("users/create", views.create_user, name="users_create"),
+-    path("users/<int:user_id>", views.delete_user_view, name="delete_user"),
++    path("users/<int:user_id>", views.delete_user_view, name="XXdelete_userXX"),
+     path("users/edit/<int:user_id>", views.update_user_view, name="update_user"),
+ ]
+ 
+</pre><h3>Mutant 288</h3><pre>--- jiboia/accounts/urls.py
++++ jiboia/accounts/urls.py
+@@ -9,6 +9,6 @@
+     path("users/", views.get_all_users, name="users_list"),
+     path("users/create", views.create_user, name="users_create"),
+     path("users/<int:user_id>", views.delete_user_view, name="delete_user"),
+-    path("users/edit/<int:user_id>", views.update_user_view, name="update_user"),
++    path("XXusers/edit/<int:user_id>XX", views.update_user_view, name="update_user"),
+ ]
+ 
+</pre></body></html>
