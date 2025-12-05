@@ -26,5 +26,6 @@ urlpatterns = [
         "api/core/",
         include("jiboia.core.urls"),
     ),
+    path("metrics/", include("django_prometheus.urls")),
     path("", TemplateView.as_view(template_name="base/apihome.html")),
 ]

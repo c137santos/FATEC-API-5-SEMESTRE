@@ -3,6 +3,14 @@ from datetime import datetime
 
 from django.utils import timezone
 
+from monitoring.cron_metrics import(
+    jira_cron_duration,
+    jira_cron_success,
+    jira_cron_fail,
+    jira_cron_last_run,
+    jira_cron_last_status
+)
+
 from jiboia.core.models import DimIntervaloTemporal, Project
 from jiboia.core.service.dimensional_svc import DimensionalService, DimIntervaloTemporalService, TipoGranularidade
 
@@ -59,15 +67,22 @@ def jira_project():
     """
     start_time = datetime.now()
     logger.info(f"[CRON] Starting Jira API projects at {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
-
-    success, message = JiraService.get_projects()
+    
+    jira_cron_last_run.set(start_time.timestamp())
+    
+    with jira_cron_duration.time():
+        success, message = JiraService.get_projects()
 
     end_time = datetime.now()
     duration = (end_time - start_time).total_seconds()
 
     if success:
+        jira_cron_success.inc()
+        jira_cron_last_status.set(1)
         logger.info(f"[CRON] Jira API healthcheck completed successfully in {duration:.2f}s: {message}")
     else:
+        jira_cron_fail.inc()
+        jira_cron_last_status.set(0)
         logger.error(f"[CRON] Jira API healthcheck failed after {duration:.2f}s: {message}")
 
     return success

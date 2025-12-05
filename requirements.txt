@@ -25,3 +25,6 @@ python-decouple==3.8
 # CRON JOB
 django-crontab==0.7.1
 requests==2.31.0
+
+# MONITORING
+django-prometheus==2.2.0
